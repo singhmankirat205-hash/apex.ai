@@ -1,0 +1,390 @@
+{
+  "qc_records": [
+    {
+      "id": "QC-2026-0904",
+      "batch_id": "BT-904",
+      "fabric_type": "100% Ring Spun Cotton Twill 3/1",
+      "inspection_standard": "ASTM D5430 4-Point",
+      "defect_type": "Broken Pick",
+      "defect_count": 3,
+      "penalty_points": 4,
+      "status": "QUARANTINE_HOLD",
+      "assigned_inspector": "Shift Lead Alex R.",
+      "loom_id": "Picanol OmniPlus-i #04",
+      "updated_at": "2026-10-03T08:25:53.976162+00:00",
+      "defect": "Broken Pick",
+      "timestamp": "2026-10-03T08:26:00Z"
+    },
+    {
+      "id": "QC-2026-0881",
+      "batch_id": "BT-881",
+      "fabric_type": "Polyester Microfiber Interlock",
+      "inspection_standard": "ASTM D5430 4-Point",
+      "defect_type": "Center-to-Selvedge Shade Variation",
+      "defect_count": 1,
+      "penalty_points": 2,
+      "status": "APPROVED_GRADE_A",
+      "assigned_inspector": "Lead Chemist Priya M.",
+      "loom_id": "Tsudakoma ZAX9200i #02",
+      "updated_at": "2026-10-02T16:40:00Z"
+    },
+    {
+      "id": "REC-0003",
+      "created_at": "2026-10-04T11:00:36.385177+00:00",
+      "updated_at": "2026-10-04T11:00:36.385177+00:00"
+    },
+    {
+      "id": "REC-0004",
+      "created_at": "2026-10-04T14:17:22.175234+00:00",
+      "updated_at": "2026-10-04T14:17:22.175234+00:00"
+    },
+    {
+      "id": "REC-0005",
+      "created_at": "2026-10-04T14:19:03.635260+00:00",
+      "updated_at": "2026-10-04T14:19:03.635260+00:00"
+    },
+    {
+      "id": "REC-0006",
+      "created_at": "2026-10-04T14:19:20.474489+00:00",
+      "updated_at": "2026-10-04T14:19:20.474489+00:00"
+    },
+    {
+      "id": "REC-0007",
+      "created_at": "2026-10-04T14:19:41.574204+00:00",
+      "updated_at": "2026-10-04T14:19:41.574204+00:00"
+    },
+    {
+      "id": "REC-0008",
+      "created_at": "2026-10-04T18:51:54.947402+00:00",
+      "updated_at": "2026-10-04T18:51:54.947402+00:00"
+    }
+  ],
+  "inventory": [
+    {
+      "sku": "YRN-COT-40S-COMBED",
+      "description": "40s Ne Combed Ring Spun Cotton Yarn",
+      "quantity_kg": 14200.0,
+      "warehouse_bay": "Bay B-04",
+      "lot_number": "LOT-CT-4091",
+      "allocated_batches": [
+        "BT-904",
+        "BT-905"
+      ],
+      "status": "AVAILABLE",
+      "updated_at": "2026-10-03T09:00:00Z"
+    },
+    {
+      "sku": "DYE-REACT-BLUE-19",
+      "description": "Reactive Blue 19 Pure Vinyl Sulfone Dyestuff",
+      "quantity_kg": 340.5,
+      "warehouse_bay": "Chemical Store Chem-02",
+      "lot_number": "LOT-RB-771",
+      "allocated_batches": [
+        "BT-881"
+      ],
+      "status": "RESERVED",
+      "updated_at": "2026-10-03T08:30:00Z"
+    },
+    {
+      "sku": "FAB-TWILL-220GSM",
+      "description": "Greige Heavy Cotton Twill 220 GSM Rolls",
+      "quantity_meters": 6800.0,
+      "warehouse_bay": "Roll Yard R-12",
+      "lot_number": "LOT-TW-904",
+      "allocated_batches": [
+        "BT-904"
+      ],
+      "status": "QUARANTINE_HOLD",
+      "updated_at": "2026-10-03T11:00:00Z"
+    }
+  ],
+  "maintenance_schedule": [
+    {
+      "booking_id": "MNT-2026-104",
+      "machine_id": "Picanol OmniPlus-i Airjet #04",
+      "facility": "Plant 1 \u2014 Weaving Shed Line 4",
+      "slot": "2026-10-03 14:00 - 15:30 UTC",
+      "technician": "Sr. Maintenance Eng. Marco V.",
+      "purpose": "Optical weft feeler recalibration & nozzle pressure adjustment",
+      "status": "SCHEDULED",
+      "created_at": "2026-10-03T11:20:00Z"
+    },
+    {
+      "booking_id": "MNT-2026-098",
+      "machine_id": "Monforts Montex 8500 Stenter #02",
+      "facility": "Plant 1 \u2014 Finishing Department",
+      "slot": "2026-10-04 06:00 - 08:00 UTC",
+      "technician": "Thermal Systems Specialist Chen W.",
+      "purpose": "Burner temperature sensor calibration & exhaust duct cleaning",
+      "status": "CONFIRMED",
+      "created_at": "2026-10-02T18:00:00Z"
+    },
+    {
+      "id": "MAINT-2026-1003-01",
+      "equipment_id": "Picanol-OmniPlus-i-04",
+      "priority": "CRITICAL",
+      "action_required": "Replace coalescing filter, flush solenoid manifold, recalibrate air pressure sensors.",
+      "assigned_team": "Maintenance Engineering - Shift A",
+      "created_at": "2026-10-03T10:29:40.490492+00:00",
+      "updated_at": "2026-10-03T10:29:40.490492+00:00"
+    }
+  ],
+  "equipment_slots": [
+    {
+      "slot_id": "SLOT-EQ-401",
+      "equipment": "Datacolor 800 Spectrophotometer",
+      "reserved_by": "Dyehouse Chemist Priya M.",
+      "time_window": "2026-10-03 13:00 - 14:00 UTC",
+      "purpose": "Batch BT-881 Delta E Lab Shade Confirmation",
+      "status": "ACTIVE"
+    },
+    {
+      "slot_id": "SLOT-EQ-402",
+      "equipment": "Shimadzu Prominence HPLC-01",
+      "reserved_by": "QC Analytical Chemist Sarah L.",
+      "time_window": "2026-10-03 15:00 - 17:00 UTC",
+      "purpose": "Active Ingredient Assay Run (USP Monograph)",
+      "status": "BOOKED"
+    }
+  ],
+  "capa_workflows": [
+    {
+      "capa_id": "CAPA-2026-031",
+      "title": "Broken Pick Weft Tension Instability on Loom #04",
+      "source_incident": "QC-2026-0904",
+      "root_cause_analysis": "Accumulated micro-lint on optical weft detector causing false arrival trigger and premature cutter trip.",
+      "corrective_actions": [
+        "Air-blast clean sensor lens and yarn clamp assembly",
+        "Recalibrate yarn arrival threshold window to \u00b12.5 ms",
+        "Verify electronic weft brake (TED) holding torque"
+      ],
+      "owner": "Weaving Maintenance Lead",
+      "status": "IN_PROGRESS",
+      "target_completion": "2026-10-04"
+    }
+  ],
+  "incident_logs": [
+    {
+      "incident_id": "INC-2026-019",
+      "severity": "MEDIUM",
+      "title": "Weft Intermittent Stop Fault on Line 4",
+      "logged_by": "APEX Autonomous System / Operator Lead",
+      "timestamp": "2026-10-03T10:14:22Z",
+      "summary": "Repetitive broken pick defect detected during 4-point inspection.",
+      "containment_action": "Line speed throttled from 720 to 650 RPM; maintenance ticket MNT-2026-104 booked."
+    },
+    {
+      "id": "INC-2026-1003-001",
+      "line_id": "Line 4 / Stenter 2",
+      "status": "CRITICAL_HALT",
+      "priority": "SEV-1",
+      "action_taken": "System-wide production freeze and engineering dispatch triggered.",
+      "created_at": "2026-10-03T08:26:30.844460+00:00",
+      "updated_at": "2026-10-03T08:26:30.844460+00:00"
+    }
+  ],
+  "execution_audit_log": [
+    {
+      "execution_id": "EXEC-1791015744433",
+      "tool": "update_record",
+      "target": "qc_records",
+      "status": "EXECUTED_AND_COMMITTED",
+      "timestamp": "2026-10-03T08:22:24.433335+00:00",
+      "author": "APEX Autonomous Engine",
+      "summary": "Updated Batch #BT-904 defect status",
+      "action_type": "RECORD_UPDATED",
+      "record": {
+        "id": "QC-2026-0904",
+        "batch_id": "BT-904",
+        "fabric_type": "100% Ring Spun Cotton Twill 3/1",
+        "inspection_standard": "ASTM D5430 4-Point",
+        "defect_type": "Broken Pick (Weft Discontinuity)",
+        "defect_count": 3,
+        "penalty_points": 4,
+        "status": "QUARANTINE",
+        "assigned_inspector": "Shift Lead Alex R.",
+        "loom_id": "Picanol OmniPlus-i #04",
+        "updated_at": "2026-10-03T08:22:24.433335+00:00",
+        "defect": "Broken Pick"
+      }
+    },
+    {
+      "execution_id": "EXEC-1791015925535",
+      "tool": "update_record",
+      "target": "qc_records",
+      "status": "EXECUTED_AND_COMMITTED",
+      "timestamp": "2026-10-03T08:25:25.535807+00:00",
+      "author": "APEX Autonomous (OPERATOR)",
+      "summary": "Updated Batch #BT-904 status to QUARANTINE_HOLD due to 4-point broken pick defect.",
+      "action_type": "RECORD_UPDATED",
+      "record": {
+        "id": "QC-2026-0904",
+        "batch_id": "BT-904",
+        "fabric_type": "100% Ring Spun Cotton Twill 3/1",
+        "inspection_standard": "ASTM D5430 4-Point",
+        "defect_type": "Broken Pick",
+        "defect_count": 3,
+        "penalty_points": 4,
+        "status": "QUARANTINE_HOLD",
+        "assigned_inspector": "System_APEX",
+        "loom_id": "Picanol OmniPlus-i #04",
+        "updated_at": "2026-10-03T08:25:25.535807+00:00",
+        "defect": "Broken Pick",
+        "timestamp": "2026-10-03T08:26:00Z"
+      }
+    },
+    {
+      "execution_id": "EXEC-1791015953976",
+      "tool": "update_record",
+      "target": "qc_records",
+      "status": "EXECUTED_AND_COMMITTED",
+      "timestamp": "2026-10-03T08:25:53.976162+00:00",
+      "author": "APEX Autonomous (OPERATOR)",
+      "summary": "Updated Batch #BT-904 defect status to 4-Point Broken Pick Hold.",
+      "action_type": "RECORD_UPDATED",
+      "record": {
+        "id": "QC-2026-0904",
+        "batch_id": "BT-904",
+        "fabric_type": "100% Ring Spun Cotton Twill 3/1",
+        "inspection_standard": "ASTM D5430 4-Point",
+        "defect_type": "Broken Pick",
+        "defect_count": 3,
+        "penalty_points": 4,
+        "status": "QUARANTINE_HOLD",
+        "assigned_inspector": "Shift Lead Alex R.",
+        "loom_id": "Picanol OmniPlus-i #04",
+        "updated_at": "2026-10-03T08:25:53.976162+00:00",
+        "defect": "Broken Pick",
+        "timestamp": "2026-10-03T08:26:00Z"
+      }
+    },
+    {
+      "execution_id": "EXEC-1791015990844",
+      "tool": "update_record",
+      "target": "incident_logs",
+      "status": "EXECUTED_AND_COMMITTED",
+      "timestamp": "2026-10-03T08:26:30.844460+00:00",
+      "author": "APEX Autonomous (OPERATOR)",
+      "summary": "Line stoppage and critical production failure reported. Initiating emergency containment.",
+      "action_type": "RECORD_CREATED",
+      "record": {
+        "id": "INC-2026-1003-001",
+        "line_id": "Line 4 / Stenter 2",
+        "status": "CRITICAL_HALT",
+        "priority": "SEV-1",
+        "action_taken": "System-wide production freeze and engineering dispatch triggered.",
+        "created_at": "2026-10-03T08:26:30.844460+00:00",
+        "updated_at": "2026-10-03T08:26:30.844460+00:00"
+      }
+    },
+    {
+      "execution_id": "EXEC-1791023380490",
+      "tool": "update_record",
+      "target": "maintenance_schedule",
+      "status": "EXECUTED_AND_COMMITTED",
+      "timestamp": "2026-10-03T10:29:40.490492+00:00",
+      "author": "APEX Autonomous (OPERATOR)",
+      "summary": "Emergency maintenance for Picanol OmniPlus-i #04: Solenoid manifold cleaning and filter replacement.",
+      "action_type": "RECORD_CREATED",
+      "record": {
+        "id": "MAINT-2026-1003-01",
+        "equipment_id": "Picanol-OmniPlus-i-04",
+        "priority": "CRITICAL",
+        "action_required": "Replace coalescing filter, flush solenoid manifold, recalibrate air pressure sensors.",
+        "assigned_team": "Maintenance Engineering - Shift A",
+        "created_at": "2026-10-03T10:29:40.490492+00:00",
+        "updated_at": "2026-10-03T10:29:40.490492+00:00"
+      }
+    },
+    {
+      "execution_id": "EXEC-1791111636385",
+      "tool": "update_record",
+      "target": "qc_records",
+      "status": "EXECUTED_AND_COMMITTED",
+      "timestamp": "2026-10-04T11:00:36.385177+00:00",
+      "author": "APEX Autonomous (GENERAL)",
+      "summary": "Created new record 'REC-0003' in 'qc_records'.",
+      "action_type": "RECORD_CREATED",
+      "record": {
+        "id": "REC-0003",
+        "created_at": "2026-10-04T11:00:36.385177+00:00",
+        "updated_at": "2026-10-04T11:00:36.385177+00:00"
+      }
+    },
+    {
+      "execution_id": "EXEC-1791123442175",
+      "tool": "update_record",
+      "target": "qc_records",
+      "status": "EXECUTED_AND_COMMITTED",
+      "timestamp": "2026-10-04T14:17:22.175234+00:00",
+      "author": "APEX Autonomous (INSPECTOR)",
+      "summary": "Created new record 'REC-0004' in 'qc_records'.",
+      "action_type": "RECORD_CREATED",
+      "record": {
+        "id": "REC-0004",
+        "created_at": "2026-10-04T14:17:22.175234+00:00",
+        "updated_at": "2026-10-04T14:17:22.175234+00:00"
+      }
+    },
+    {
+      "execution_id": "EXEC-1791123543635",
+      "tool": "update_record",
+      "target": "qc_records",
+      "status": "EXECUTED_AND_COMMITTED",
+      "timestamp": "2026-10-04T14:19:03.635260+00:00",
+      "author": "APEX Autonomous (INSPECTOR)",
+      "summary": "Created new record 'REC-0005' in 'qc_records'.",
+      "action_type": "RECORD_CREATED",
+      "record": {
+        "id": "REC-0005",
+        "created_at": "2026-10-04T14:19:03.635260+00:00",
+        "updated_at": "2026-10-04T14:19:03.635260+00:00"
+      }
+    },
+    {
+      "execution_id": "EXEC-1791123560474",
+      "tool": "update_record",
+      "target": "qc_records",
+      "status": "EXECUTED_AND_COMMITTED",
+      "timestamp": "2026-10-04T14:19:20.474489+00:00",
+      "author": "APEX Autonomous (INSPECTOR)",
+      "summary": "Created new record 'REC-0006' in 'qc_records'.",
+      "action_type": "RECORD_CREATED",
+      "record": {
+        "id": "REC-0006",
+        "created_at": "2026-10-04T14:19:20.474489+00:00",
+        "updated_at": "2026-10-04T14:19:20.474489+00:00"
+      }
+    },
+    {
+      "execution_id": "EXEC-1791123581574",
+      "tool": "update_record",
+      "target": "qc_records",
+      "status": "EXECUTED_AND_COMMITTED",
+      "timestamp": "2026-10-04T14:19:41.574204+00:00",
+      "author": "APEX Autonomous (INSPECTOR)",
+      "summary": "Created new record 'REC-0007' in 'qc_records'.",
+      "action_type": "RECORD_CREATED",
+      "record": {
+        "id": "REC-0007",
+        "created_at": "2026-10-04T14:19:41.574204+00:00",
+        "updated_at": "2026-10-04T14:19:41.574204+00:00"
+      }
+    },
+    {
+      "execution_id": "EXEC-1791139914947",
+      "tool": "update_record",
+      "target": "qc_records",
+      "status": "EXECUTED_AND_COMMITTED",
+      "timestamp": "2026-10-04T18:51:54.947402+00:00",
+      "author": "APEX Autonomous (OPERATOR)",
+      "summary": "Created new record 'REC-0008' in 'qc_records'.",
+      "action_type": "RECORD_CREATED",
+      "record": {
+        "id": "REC-0008",
+        "created_at": "2026-10-04T18:51:54.947402+00:00",
+        "updated_at": "2026-10-04T18:51:54.947402+00:00"
+      }
+    }
+  ]
+}

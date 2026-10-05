@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+data/cloudflared.log
+data/server.log
+data/app_profile/
+cloudflared.exe
+.env.local
+.env

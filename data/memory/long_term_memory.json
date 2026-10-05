@@ -1,0 +1,161 @@
+{
+  "user_profile": {
+    "title": "Industrial Operations & Quality Director",
+    "current_industry": "textile",
+    "preferred_role": "GENERAL",
+    "tone_preference": "Action-oriented, authoritative, highly precise, concise when appropriate",
+    "last_active": "2026-10-05T15:35:02.562118+00:00"
+  },
+  "enterprise_context": {
+    "primary_facility": "Apex Mills \u2014 Plant 1 (Weaving & Wet Finishing Complex)",
+    "production_lines": [
+      "Line 4 High-Speed Airjet Shed",
+      "Finishing Stenter Line 2"
+    ],
+    "critical_machinery": [
+      {
+        "machine_id": "Picanol OmniPlus-i Airjet #04",
+        "type": "Airjet Weaving Loom",
+        "status": "MONITORED",
+        "last_event": "Weft feeler sensitivity adjustment scheduled (MNT-2026-104)"
+      },
+      {
+        "machine_id": "Monforts Montex 8500 Stenter #02",
+        "type": "Finishing Stenter Frame",
+        "status": "OPERATIONAL",
+        "last_event": "Temperature drift verification passed"
+      },
+      {
+        "machine_id": "Datacolor 800 Benchtop Spectrophotometer",
+        "type": "Color QC Instrument",
+        "status": "CALIBRATED",
+        "last_event": "Delta E tolerance set to max 1.0 (CMC 2:1)"
+      },
+      {
+        "machine_id": "Unit #STOPPED",
+        "type": "Plant Equipment",
+        "status": "ACTIVE",
+        "last_event": "Referenced in active session (2026-10-03)"
+      },
+      {
+        "machine_id": "Unit #3",
+        "type": "Plant Equipment",
+        "status": "ACTIVE",
+        "last_event": "Referenced in active session (2026-10-03)"
+      },
+      {
+        "machine_id": "Unit #1",
+        "type": "Plant Equipment",
+        "status": "ACTIVE",
+        "last_event": "Referenced in active session (2026-10-03)"
+      },
+      {
+        "machine_id": "Unit #BEST",
+        "type": "Plant Equipment",
+        "status": "ACTIVE",
+        "last_event": "Referenced in active session (2026-10-03)"
+      },
+      {
+        "machine_id": "Unit #WORKING",
+        "type": "Plant Equipment",
+        "status": "ACTIVE",
+        "last_event": "Referenced in active session (2026-10-04)"
+      },
+      {
+        "machine_id": "Unit #CHART",
+        "type": "Plant Equipment",
+        "status": "ACTIVE",
+        "last_event": "Referenced in active session (2026-10-04)"
+      },
+      {
+        "machine_id": "Unit #DURING",
+        "type": "Plant Equipment",
+        "status": "ACTIVE",
+        "last_event": "Referenced in active session (2026-10-05)"
+      },
+      {
+        "machine_id": "Unit #-01",
+        "type": "Plant Equipment",
+        "status": "ACTIVE",
+        "last_event": "Referenced in active session (2026-10-05)"
+      },
+      {
+        "machine_id": "Unit #OUTPUT",
+        "type": "Plant Equipment",
+        "status": "ACTIVE",
+        "last_event": "Referenced in active session (2026-10-05)"
+      }
+    ],
+    "active_batches": [
+      {
+        "batch_id": "BT-904",
+        "fabric_type": "100% Ring Spun Cotton Twill 3/1",
+        "status": "QUARANTINE_HOLD",
+        "latest_defect": "Broken Pick (4 ASTM penalty points)",
+        "assigned_inspector": "Shift Lead Alex R.",
+        "action_taken": "Automated QC record QC-2026-0904 logged & maintenance booked"
+      },
+      {
+        "batch_id": "BT-881",
+        "fabric_type": "Polyester Microfiber Interlock",
+        "status": "PASSED_GRADE_A",
+        "latest_defect": "Minor selvedge shade variation (resolved)",
+        "assigned_inspector": "Lead Chemist Priya M.",
+        "action_taken": "Released to garment cutting"
+      },
+      {
+        "batch_id": "BT-order",
+        "status": "ACTIVE_MONITORING",
+        "noted_at": "2026-10-04T19:01:14.339290+00:00",
+        "source": "Discovered from user dialogue"
+      },
+      {
+        "batch_id": "BT-count",
+        "status": "ACTIVE_MONITORING",
+        "noted_at": "2026-10-04T19:01:33.661107+00:00",
+        "source": "Discovered from user dialogue"
+      }
+    ],
+    "quality_standards": [
+      "ASTM D5430 4-Point Fabric Inspection System",
+      "AATCC Color Fastness & Delta E CMC 2:1 Standard",
+      "ISO 9001:2015 Quality Management System",
+      "cGMP 21 CFR Part 211 (Pharma division standard)"
+    ]
+  },
+  "session_milestones": [
+    {
+      "timestamp": "2026-10-03T10:15:00Z",
+      "note": "Audited Batch #BT-904 for broken pick weft fault; flagged 4 penalty points under ASTM D5430."
+    },
+    {
+      "timestamp": "2026-10-03T11:20:00Z",
+      "note": "Committed maintenance booking MNT-2026-104 for Loom #04 optical sensor recalibration."
+    },
+    {
+      "timestamp": "2026-10-03T12:05:00Z",
+      "note": "Connected interactive Chart.js visualization engine with Pareto defect analysis."
+    },
+    {
+      "timestamp": "2026-10-03T08:25:25.537103+00:00",
+      "note": "Executed: Updated Batch #BT-904 status to QUARANTINE_HOLD due to 4-point broken pick defect."
+    },
+    {
+      "timestamp": "2026-10-03T08:25:53.978264+00:00",
+      "note": "Executed: Updated Batch #BT-904 defect status to 4-Point Broken Pick Hold."
+    },
+    {
+      "timestamp": "2026-10-03T08:26:30.845648+00:00",
+      "note": "Executed: Line stoppage and critical production failure reported. Initiating emergency containment."
+    },
+    {
+      "timestamp": "2026-10-03T10:29:40.507873+00:00",
+      "note": "Executed: Emergency maintenance for Picanol OmniPlus-i #04: Solenoid manifold cleaning and filter replacement."
+    }
+  ],
+  "learned_preferences": [
+    "Prefers proactive autonomous tool execution and record commits over generic passive text advice.",
+    "Expects direct root-cause identification and ASTM / ISO technical precision.",
+    "Requires immediate containment protocol and escalation HUD during operational distress or line halts."
+  ]
+}

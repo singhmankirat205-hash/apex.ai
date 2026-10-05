@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover"/>
+  <meta name="theme-color" content="#030712"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <title>APEX — Quantum AI Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/static/css/style.css?v=2.4.1"/>
+</head>
+<body>
+
+<!-- ── AMBIENT CYBER GLOW & MESH ───────────────────────────────────────── -->
+<div class="cyber-aurora"></div>
+<div class="cyber-grid-overlay"></div>
+
+<!-- ── SPLASH SCREEN ──────────────────────────────────────────────────────── -->
+<div id="splash" class="splash">
+  <div class="splash-rings">
+    <div class="splash-ring"></div>
+    <div class="splash-ring"></div>
+    <div class="splash-ring"></div>
+    <div class="splash-logo-inner">
+      <img src="/static/apex_logo.jpg" alt="APEX"/>
+    </div>
+  </div>
+  <div class="splash-title">APEX</div>
+  <div class="splash-subtitle">Premium AI Intelligence</div>
+  <div class="splash-bar-wrap"><div class="splash-bar"></div></div>
+  <div class="splash-msg">Initialising your intelligence partner…</div>
+</div>
+
+<!-- ── AUTHENTICATION GATE (Email Login & Create Account) ──────────── -->
+<div id="authOverlay" class="auth-overlay">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-logo-wrap">
+        <img src="/static/apex_logo.jpg" alt="APEX" class="auth-logo-img"/>
+        <div class="auth-glow"></div>
+      </div>
+      <h2 class="auth-title">APEX ACCESS PORTAL</h2>
+      <p class="auth-subtitle">Sign in or register an account to access APEX Intelligence Core</p>
+    </div>
+
+    <!-- Tabs: Sign In / Create Account -->
+    <div class="auth-tabs">
+      <button class="auth-tab-btn active" id="tabSignInBtn" type="button">🔐 Sign In</button>
+      <button class="auth-tab-btn" id="tabRegisterBtn" type="button">✨ Create Account</button>
+    </div>
+
+    <!-- Alert / notification box -->
+    <div id="authAlert" class="auth-alert" style="display:none"></div>
+
+    <!-- Sign In Form -->
+    <form id="signInForm" class="auth-form" onsubmit="return false;">
+      <div class="auth-form-group">
+        <label class="auth-label" for="loginEmail">EMAIL ADDRESS</label>
+        <div class="auth-input-wrap">
+          <span class="auth-input-icon">✉</span>
+          <input type="email" id="loginEmail" class="auth-input" placeholder="e.g. name@company.com" required autocomplete="email"/>
+        </div>
+      </div>
+
+      <div class="auth-form-group">
+        <label class="auth-label" for="loginPassword">PASSWORD</label>
+        <div class="auth-input-wrap">
+          <span class="auth-input-icon">🔒</span>
+          <input type="password" id="loginPassword" class="auth-input" placeholder="••••••••" required autocomplete="current-password"/>
+          <button type="button" class="auth-toggle-pwd" id="toggleLoginPwd" title="Show/Hide Password">👁</button>
+        </div>
+      </div>
+
+      <div class="auth-row-options">
+        <label class="auth-checkbox-label">
+          <input type="checkbox" id="rememberMe" checked/>
+          <span>Keep me signed in</span>
+        </label>
+      </div>
+
+      <button type="submit" id="signInSubmitBtn" class="auth-submit-btn">
+        <span class="auth-btn-glow"></span>
+        <span>🚀 Sign In to APEX</span>
+      </button>
+
+      <div class="auth-divider"><span>OR QUICK START</span></div>
+
+      <button type="button" id="quickDemoBtn" class="auth-demo-btn">
+        ⚡ 1-Click Demo Login (Lead Engineer)
+      </button>
+
+      <div class="auth-switch-text">
+        Don't have an account? <a href="#" id="linkToRegister">Create account here →</a>
+      </div>
+    </form>
+
+    <!-- Create Account Form -->
+    <form id="registerForm" class="auth-form" style="display:none" onsubmit="return false;">
+      <div class="auth-form-group">
+        <label class="auth-label" for="regName">FULL NAME</label>
+        <div class="auth-input-wrap">
+          <span class="auth-input-icon">👤</span>
+          <input type="text" id="regName" class="auth-input" placeholder="e.g. Alex Singh" required autocomplete="name"/>
+        </div>
+      </div>
+
+      <div class="auth-form-group">
+        <label class="auth-label" for="regEmail">EMAIL ADDRESS</label>
+        <div class="auth-input-wrap">
+          <span class="auth-input-icon">✉</span>
+          <input type="email" id="regEmail" class="auth-input" placeholder="e.g. alex@company.com" required autocomplete="email"/>
+        </div>
+      </div>
+
+      <div class="auth-form-group">
+        <label class="auth-label" for="regPassword">CREATE PASSWORD</label>
+        <div class="auth-input-wrap">
+          <span class="auth-input-icon">🔒</span>
+          <input type="password" id="regPassword" class="auth-input" placeholder="At least 4 characters" required autocomplete="new-password"/>
+          <button type="button" class="auth-toggle-pwd" id="toggleRegPwd" title="Show/Hide Password">👁</button>
+        </div>
+      </div>
+
+      <div class="auth-form-row">
+        <div class="auth-form-group" style="flex:1">
+          <label class="auth-label" for="regIndustry">PRIMARY INDUSTRY</label>
+          <select id="regIndustry" class="auth-select">
+            <option value="general">💼 General / Business</option>
+            <option value="textile">🧵 Textile &amp; Apparel</option>
+            <option value="pharma">💊 Pharma &amp; Biotech</option>
+            <option value="auto">🚗 Automotive &amp; OEM</option>
+            <option value="food">🍽️ Food &amp; Beverage</option>
+            <option value="construction">🏗️ Construction</option>
+            <option value="logistics">📦 Logistics &amp; Supply</option>
+          </select>
+        </div>
+
+        <div class="auth-form-group" style="flex:1">
+          <label class="auth-label" for="regRole">ROLE PERSONA</label>
+          <select id="regRole" class="auth-select">
+            <option value="GENERAL">🌐 General User</option>
+            <option value="ENGINEER">⚡ Engineer / Specialist</option>
+            <option value="OPERATOR">🔧 Machine Operator</option>
+            <option value="INSPECTOR">🔍 QC Inspector</option>
+            <option value="SUPERVISOR">👷 Plant Supervisor</option>
+            <option value="MANAGER">📊 Operations Manager</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="submit" id="registerSubmitBtn" class="auth-submit-btn">
+        <span class="auth-btn-glow"></span>
+        <span>✨ Create &amp; Launch APEX</span>
+      </button>
+
+      <div class="auth-switch-text">
+        Already have an account? <a href="#" id="linkToSignIn">Sign in here →</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ── PARTICLES ──────────────────────────────────────────────────────── -->
+<canvas id="particleCanvas"></canvas>
+
+<!-- ── MOBILE BACKDROP OVERLAY ─────────────────────────────────────────── -->
+<div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+
+<!-- ── SIDEBAR (Role, Industry & Options on LEFT) ───────────────────────── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <img src="/static/apex_logo.jpg" alt="APEX" class="logo-img"/>
+      <span class="logo-text">APEX</span>
+    </div>
+    <button class="sidebar-toggle" id="sidebarToggle" title="Collapse sidebar">☰</button>
+  </div>
+
+  <!-- Role -->
+  <div class="sidebar-section">
+    <label class="sidebar-label">YOUR ROLE</label>
+    <select id="roleSelect" class="role-select">
+      <option value="OPERATOR">🔧 Operator</option>
+      <option value="INSPECTOR">🔍 Inspector / QC</option>
+      <option value="DYEHOUSE">🎨 Dye Chemist</option>
+      <option value="SUPERVISOR">👷 Supervisor</option>
+      <option value="MAINTENANCE">⚙️ Maintenance</option>
+      <option value="MANAGER">📊 Manager</option>
+      <option value="GENERAL">🌐 General User</option>
+    </select>
+  </div>
+
+  <!-- Industry -->
+  <div class="sidebar-section">
+    <label class="sidebar-label">INDUSTRY</label>
+    <select id="industrySelect" class="role-select">
+      <option value="general" selected>💼 General / Any</option>
+      <option value="textile">🧵 Textile / Fabric</option>
+      <option value="pharma">💊 Pharma / Healthcare</option>
+      <option value="auto">🚗 Automotive</option>
+      <option value="food">🍽️ Food & Beverage</option>
+      <option value="construction">🏗️ Construction</option>
+      <option value="logistics">📦 Logistics</option>
+    </select>
+  </div>
+
+  <!-- Language (Universal World Languages) -->
+  <div class="sidebar-section">
+    <label class="sidebar-label">WORLD LANGUAGES</label>
+    <div class="lang-grid">
+      <button class="lang-btn active" data-lang="auto" title="Automatically detect and answer in whatever language you speak">🌐 Auto</button>
+      <button class="lang-btn" data-lang="en" title="English">🇬🇧 EN</button>
+      <button class="lang-btn" data-lang="hi" title="Hindi">🇮🇳 हिन्दी</button>
+      <button class="lang-btn" data-lang="hinglish" title="Hinglish">🤝 Hinglish</button>
+      <button class="lang-btn" data-lang="pa" title="Punjabi">🇮🇳 ਪੰਜਾਬੀ</button>
+      <button class="lang-btn" data-lang="es" title="Spanish">🇪🇸 ES</button>
+    </div>
+    <select id="worldLangSelect" class="role-select" style="margin-top: 8px;">
+      <option value="auto" selected>🌐 Auto-Detect / Any Language</option>
+      <option value="en">🇬🇧 English</option>
+      <option value="hi">🇮🇳 हिन्दी (Hindi)</option>
+      <option value="hinglish">🤝 Hinglish (Hindi + English)</option>
+      <option value="pa">🇮🇳 ਪੰਜਾਬੀ (Punjabi)</option>
+      <option value="es">🇪🇸 Español (Spanish)</option>
+      <option value="fr">🇫🇷 Français (French)</option>
+      <option value="de">🇩🇪 Deutsch (German)</option>
+      <option value="zh">🇨🇳 中文 (Mandarin)</option>
+      <option value="ja">🇯🇵 日本語 (Japanese)</option>
+      <option value="ko">🇰🇷 한국어 (Korean)</option>
+      <option value="ar">🇸🇦 العربية (Arabic)</option>
+      <option value="ru">🇷🇺 Русский (Russian)</option>
+      <option value="pt">🇧🇷 Português (Portuguese)</option>
+      <option value="it">🇮🇹 Italiano (Italian)</option>
+      <option value="tr">🇹🇷 Türkçe (Turkish)</option>
+      <option value="bn">🇧🇩 বাংলা (Bengali)</option>
+      <option value="ta">🇮🇳 தமிழ் (Tamil)</option>
+      <option value="te">🇮🇳 తెలుగు (Telugu)</option>
+      <option value="mr">🇮🇳 मराठी (Marathi)</option>
+      <option value="ur">🇵🇰 اردو (Urdu)</option>
+      <option value="gu">🇮🇳 ગુજરાતી (Gujarati)</option>
+      <option value="vi">🇻🇳 Tiếng Việt (Vietnamese)</option>
+      <option value="th">🇹🇭 ไทย (Thai)</option>
+      <option value="id">🇮🇩 Bahasa Indonesia</option>
+      <option value="nl">🇳🇱 Nederlands (Dutch)</option>
+      <option value="pl">🇵🇱 Polski (Polish)</option>
+      <option value="uk">🇺🇦 Українська (Ukrainian)</option>
+      <option value="sv">🇸🇪 Svenska (Swedish)</option>
+      <option value="el">🇬🇷 Ελληνικά (Greek)</option>
+      <option value="he">🇮🇱 עבריत (Hebrew)</option>
+      <option value="fa">🇮🇷 فارسی (Persian)</option>
+    </select>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="sidebar-section">
+    <label class="sidebar-label" id="quickActionsLabel">QUICK ACTIONS</label>
+    <div id="quickActionsContainer"></div>
+  </div>
+
+  <!-- Defect / Incident Shortcuts -->
+  <div class="sidebar-section">
+    <label class="sidebar-label" id="quickDefectsLabel">QUICK ISSUE REPORT</label>
+    <div id="quickDefectsContainer"></div>
+  </div>
+
+  <div class="sidebar-footer">
+    <button id="newChatBtn" class="new-chat-btn">＋ New Conversation</button>
+    <button id="sidebarHistoryBtn" class="sidebar-history-btn">📜 Chat History Option</button>
+    <p class="footer-note">⚖ APEX supports decisions only.<br/>Final calls require a qualified professional.</p>
+  </div>
+</aside>
+
+<!-- ── MAIN (Scrolling Conversation Area on RIGHT) ────────────────────── -->
+<main class="main" id="main">
+
+  <header class="chat-header">
+    <div class="header-left">
+      <button class="mobile-menu-btn" id="mobileMenuBtn" title="Toggle Options Sidebar">☰</button>
+      <div class="header-brand">
+        <div class="header-logo">APEX</div>
+        <div class="header-sub">Premium Intelligence</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="memory-badge" id="memoryBadge" title="Continuous Cross-Session Enterprise Memory: Active">
+        <span class="mem-dot"></span>MEMORY: ACTIVE
+      </div>
+      <div class="launch-badge">
+        <span class="badge-dot"></span>ENGINE ACTIVE
+      </div>
+      <div class="status-dot" id="statusDot"></div>
+      <span class="status-label" id="statusLabel">Ready</span>
+      <button class="tts-toggle" id="ttsToggle" title="Voice readout">🔊</button>
+      <button class="history-toggle-btn" id="historyToggle" title="Chat History">🕐</button>
+      <button class="share-btn" id="shareBtn" title="Share APEX with Others">🔗 Share</button>
+      <div class="user-profile-badge" id="userProfileBadge" style="display:none">
+        <div class="user-avatar-circle" id="userAvatarCircle">U</div>
+        <span class="user-name-label" id="userNameLabel">User</span>
+        <button class="user-signout-btn" id="userSignoutBtn" title="Sign Out of APEX">🚪 Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Messages (Scrolling Part on the Right) -->
+  <div class="messages-area" id="messagesArea">
+    <div class="welcome-card" id="welcomeCard">
+      <div class="welcome-logo-wrap">
+        <img src="/static/apex_logo.jpg" alt="APEX" class="welcome-logo-img"/>
+        <div class="welcome-glow"></div>
+      </div>
+      <h1 class="welcome-h1">APEX</h1>
+      <p class="welcome-tagline">You didn't stumble here by chance — you arrived because you need answers that actually matter. Ask anything. I'll give you clarity, precision, and insight that moves you forward.</p>
+      <div class="welcome-features welcome-questions" id="welcomeQuestions">
+        <button class="feature starter-question-btn" type="button" data-prompt="Where is my fabric roll order? Track Order #ORD-8492 with container status and port arrival ETA" title="Click to ask this question immediately">
+          <span class="feature-icon">📦</span>
+          <div class="starter-text-wrap">
+            <span class="starter-title">Where is my fabric roll order?</span>
+            <span class="starter-subtitle">Track Order #ORD-8492 with container status and port arrival ETA</span>
+          </div>
+        </button>
+        <button class="feature starter-question-btn" type="button" data-prompt="Do we have 180 GSM cotton and 240 GSM twill in stock? Check warehouse bay and roll count" title="Click to ask this question immediately">
+          <span class="feature-icon">🧵</span>
+          <div class="starter-text-wrap">
+            <span class="starter-title">Check 180 GSM &amp; 240 GSM stock</span>
+            <span class="starter-subtitle">Check warehouse bay, roll count, and available meters</span>
+          </div>
+        </button>
+        <button class="feature starter-question-btn" type="button" data-prompt="What are the wash care instructions, shrinkage rates, and OEKO-TEX Standard 100 certifications for our cotton fabrics?" title="Click to ask this question immediately">
+          <span class="feature-icon">📋</span>
+          <div class="starter-text-wrap">
+            <span class="starter-title">OEKO-TEX &amp; Wash Care specs</span>
+            <span class="starter-subtitle">Care instructions, shrinkage rates, and certifications</span>
+          </div>
+        </button>
+        <button class="feature starter-question-btn" type="button" data-prompt="Show current machinery output, loom RPM, running efficiency, and active batches on the shopfloor" title="Click to ask this question immediately">
+          <span class="feature-icon">🏭</span>
+          <div class="starter-text-wrap">
+            <span class="starter-title">Loom &amp; Batch Telemetry</span>
+            <span class="starter-subtitle">Show machinery output, loom RPM, efficiency, and batch status</span>
+          </div>
+        </button>
+      </div>
+      <div class="welcome-cta">💡 Click any question above to begin immediately — or type your inquiry below</div>
+    </div>
+  </div>
+
+  <button class="scroll-btn" id="scrollBtn">↓</button>
+
+  <div class="typing-indicator" id="typingIndicator" style="display:none">
+    <div class="typing-dots"><span></span><span></span><span></span></div>
+    <span>APEX is thinking…</span>
+  </div>
+
+  <!-- Input -->
+  <div class="input-area">
+    <div class="input-row">
+      <button class="mic-btn" id="micBtn" title="Speak">🎤</button>
+      <button class="mic-btn" id="quickVideoBtn" title="Generate AI Video / Cinematic Motion Clip">🎬</button>
+      <label class="attach-btn" for="fileUpload" title="Attach any file: PowerPoint (.pptx), PDF, Excel, Word, CSV, Images, Media">📎
+        <input type="file" id="fileUpload" accept=".pptx,.ppt,.pdf,.xlsx,.xls,.csv,.docx,.doc,.txt,.json,.jpg,.jpeg,.png,.webp,.mp4,.mp3,*/*" style="display:none"/>
+      </label>
+      <div class="input-wrapper">
+        <textarea id="messageInput" rows="1"
+          placeholder="Ask anything… defect, calculation, process question, or execute action"
+          autocomplete="off"></textarea>
+        <div class="image-preview-row" id="filePreviewRow" style="display:none">
+          <div class="file-preview-chip">
+            <span id="filePreviewIcon">📄</span>
+            <span id="filePreviewName" class="file-preview-name">Document.pdf</span>
+            <img id="imagePreviewThumb" alt="preview" style="display:none"/>
+            <button id="removeFileBtn" title="Remove attached file">✕</button>
+          </div>
+        </div>
+      </div>
+      <button class="send-btn" id="sendBtn">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+        </svg>
+      </button>
+    </div>
+    <p class="input-hint">
+      <kbd>Enter</kbd> send · <kbd>Shift+Enter</kbd> new line ·
+      🎤 voice · 🔊 speak answers · 🕐 history ·
+      Industry: <strong id="currentIndustryLabel">General</strong> · Role: <strong id="currentRoleLabel">Universal Consultant</strong> · Lang: <strong id="currentLangLabel">English</strong>
+    </p>
+  </div>
+</main>
+
+<!-- ── HISTORY PANEL (right) ──────────────────────────────────────────── -->
+<aside class="history-panel hidden" id="historyPanel">
+  <div class="history-header">
+    <span class="history-title">🕐 History</span>
+    <button class="history-close" id="historyClose">✕</button>
+  </div>
+  <div class="history-list" id="historyList"></div>
+  <div class="history-footer">
+    <button class="history-clear-btn" id="historyClearBtn">🗑️ Clear All</button>
+  </div>
+</aside>
+
+<!-- ── SHARE MODAL (Worldwide & Wi-Fi Access) ────────────────────────── -->
+<div id="shareOverlay" class="share-overlay" style="display:none">
+  <div class="share-card">
+    <div class="share-header">
+      <div class="share-icon-wrap">🌐</div>
+      <div style="flex:1;">
+        <h2 class="share-title">SHARE APEX WITH OTHERS</h2>
+        <p class="share-subtitle">Give anyone access to APEX on their phone, laptop, or desktop</p>
+      </div>
+      <button class="share-close-btn" id="shareCloseBtn" type="button" title="Close">✕</button>
+    </div>
+
+    <div class="share-body">
+      <!-- Public Worldwide Link -->
+      <div class="share-section">
+        <div class="share-label-row">
+          <span class="share-tag">🌍 WORLDWIDE ACCESS (SSL SECURE)</span>
+          <span class="share-hint">Works anywhere in the world on any device</span>
+        </div>
+        <div class="share-input-group">
+          <input type="text" id="sharePublicUrl" class="share-url-input" readonly placeholder="Connecting to live worldwide gateway..."/>
+          <button class="share-copy-btn" id="copyPublicBtn" type="button">📋 Copy Link</button>
+        </div>
+      </div>
+
+      <!-- Local Wi-Fi Link -->
+      <div class="share-section">
+        <div class="share-label-row">
+          <span class="share-tag">🏢 LOCAL WI-FI / OFFICE NETWORK</span>
+          <span class="share-hint">For anyone connected to your same Wi-Fi</span>
+        </div>
+        <div class="share-input-group">
+          <input type="text" id="shareLocalUrl" class="share-url-input" readonly placeholder="Detecting local IP..."/>
+          <button class="share-copy-btn" id="copyLocalBtn" type="button">📋 Copy Link</button>
+        </div>
+      </div>
+
+      <!-- Multi-User Capabilities Notice -->
+      <div class="share-info-box">
+        <div class="share-info-icon">👥</div>
+        <div class="share-info-text">
+          <strong>Multi-User Supported:</strong> Anyone can create their own account on the sign-in screen. Each user's chat history, preferences, and analysis data are kept completely private and separate.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/chart.min.js"></script>
+<script src="/static/js/marked.min.js"></script>
+<script src="/static/js/app.js?v=2.4.1"></script>
+</body>
+</html>

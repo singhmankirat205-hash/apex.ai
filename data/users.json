@@ -1,0 +1,62 @@
+[
+  {
+    "id": "usr_demo",
+    "name": "Alex Vance (Lead Engineer)",
+    "email": "demo@apex.ai",
+    "salt": "f6b0e42b4de72e70a465d4c69f0db009",
+    "password_hash": "d5f9b2e343b32c43d525780257f4fdedf1ac7d69ddc02d9d65bd456c358e08ae",
+    "role": "ENGINEER",
+    "industry": "general",
+    "createdAt": "2026-10-03T10:51:30.966174+00:00"
+  },
+  {
+    "id": "usr_5094e82bfa5f",
+    "name": "Simran Singh",
+    "email": "simran@example.com",
+    "salt": "386876bab71115bafb7cbfbb519f5705",
+    "password_hash": "583a9d47b6239eadbf9172a3a04eeae76f8ca79c83967a19e209a71ba245f1f1",
+    "role": "GENERAL",
+    "industry": "general",
+    "createdAt": "2026-10-03T10:51:40.313080+00:00"
+  },
+  {
+    "id": "usr_9df4a6fa7043",
+    "name": "Priya Sharma",
+    "email": "priya@textilecorp.com",
+    "salt": "fb1daa2764cba42bc3da8bc00e1f9def",
+    "password_hash": "9e5bc7a17b916acf0ba868c14c6617c0b2a5f8bf67096a9d041c28efa32cf606",
+    "role": "INSPECTOR",
+    "industry": "textile",
+    "createdAt": "2026-10-03T10:55:54.567243+00:00"
+  },
+  {
+    "id": "usr_68dc4722f05b",
+    "name": "HARJIT SINGH",
+    "email": "hsharjitsingh85@gmail.com",
+    "salt": "63045861428912e4b23e045d72975695",
+    "password_hash": "064beadcc632416b0b5ca13f1bc51f863544d8ef93e3830537b7b682a5444b6c",
+    "role": "GENERAL",
+    "industry": "general",
+    "createdAt": "2026-10-03T10:59:13.096160+00:00"
+  },
+  {
+    "id": "usr_dca4ee602605",
+    "name": "Manjinder Kaur",
+    "email": "manjinder21338@gmail.com",
+    "salt": "62e3bb6716f1f2e687886853d0fbb2f7",
+    "password_hash": "6febd40e899eb49ce52c5b2ec27866dd6dbe48e6db907425a21a2a02a028b3e2",
+    "role": "GENERAL",
+    "industry": "general",
+    "createdAt": "2026-10-03T11:01:42.669593+00:00"
+  },
+  {
+    "id": "usr_7a76031a2306",
+    "name": "Mankirat Singh",
+    "email": "singhmankirat205@gmail.com",
+    "salt": "8cf0a835a11638e1e29adfab8b90299e",
+    "password_hash": "a6e572d1174f0219257b1f4d322347e59c5153d4a8794f569b683f6c2077026e",
+    "role": "GENERAL",
+    "industry": "general",
+    "createdAt": "2026-10-03T11:25:51.866435+00:00"
+  }
+]
