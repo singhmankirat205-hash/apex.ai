@@ -437,7 +437,16 @@ setTimeout(() => {
     updateUIForLoggedInUser(stored);
     hideAuthModal();
   } else {
-    showAuthModal();
+    // Automatically create guest user so anyone can start chatting instantly without barriers
+    const guest = {
+      name: 'Guest User',
+      email: 'guest@apex.ai',
+      role: 'GENERAL',
+      industry: (industrySelect ? industrySelect.value : 'textile')
+    };
+    setStoredUser(guest);
+    updateUIForLoggedInUser(guest);
+    hideAuthModal();
   }
 }, 2500);
 
@@ -1583,9 +1592,14 @@ async function sendMessage(text) {
   if (!text && !pendingAttachment) return;
 
   if (!currentUser) {
-    showAuthModal();
-    setAuthAlert('Please sign in or create an account to use APEX.', 'error');
-    return;
+    currentUser = {
+      name: 'Guest User',
+      email: 'guest@apex.ai',
+      role: (roleSelect ? roleSelect.value : 'GENERAL'),
+      industry: (industrySelect ? industrySelect.value : 'textile')
+    };
+    setStoredUser(currentUser);
+    updateUIForLoggedInUser(currentUser);
   }
 
   const welcomeCard=document.getElementById('welcomeCard');
@@ -3265,18 +3279,21 @@ bindStarterQuestionButtons();
     setStatus('error');
   }
 
-  // Restore authenticated user session if present
-  const storedUser = getStoredUser();
-  if (storedUser) {
-    updateUIForLoggedInUser(storedUser);
-    hideAuthModal();
-    // Fetch permanent chat history into the History option without displaying on main chat
-    await syncHistoryWithServer(storedUser.email);
-    currentChatId = Date.now();
-    conversationHistory = [];
-    appendWelcomeCard(industrySelect ? industrySelect.value : 'textile');
-  } else {
-    updateIndustryAndRoles(industrySelect ? industrySelect.value : 'general');
-    showAuthModal();
+  // Restore user session or create guest immediately
+  let user = getStoredUser();
+  if (!user) {
+    user = {
+      name: 'Guest User',
+      email: 'guest@apex.ai',
+      role: 'GENERAL',
+      industry: (industrySelect ? industrySelect.value : 'textile')
+    };
+    setStoredUser(user);
   }
+  updateUIForLoggedInUser(user);
+  hideAuthModal();
+  await syncHistoryWithServer(user.email);
+  currentChatId = Date.now();
+  conversationHistory = [];
+  appendWelcomeCard(industrySelect ? industrySelect.value : 'textile');
 })();
