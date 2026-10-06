@@ -59,6 +59,25 @@ async def add_no_cache_headers(request: Request, call_next):
     return response
 
 
+def _render_keepalive_daemon():
+    """
+    Pings the Render live URL every 9 minutes to keep the cloud container
+    awake 24/7 so mobile and desktop users never experience cold-start delays.
+    """
+    import time
+    import requests
+    time.sleep(30)
+    target_url = os.getenv("RENDER_EXTERNAL_URL", "https://apex-ai-platform-q79y.onrender.com")
+    health_url = f"{target_url.rstrip('/')}/api/health"
+    while True:
+        try:
+            r = requests.get(health_url, timeout=12)
+            logger.info("Render keep-alive ping status: %s (container active 24/7)", r.status_code)
+        except Exception as ex:
+            logger.debug("Render keep-alive ping note: %s", ex)
+        time.sleep(540)  # Ping every 9 minutes
+
+
 @app.on_event("startup")
 async def on_startup():
     try:
@@ -76,6 +95,13 @@ async def on_startup():
         start_tunnel_daemon()
     except Exception as e:
         logger.warning("Could not auto-start tunnel daemon: %s", e)
+
+    try:
+        import threading
+        threading.Thread(target=_render_keepalive_daemon, daemon=True).start()
+        logger.info("Keep-alive 24/7 cloud background pinger activated.")
+    except Exception as e:
+        logger.warning("Could not start keep-alive daemon: %s", e)
 
 
 

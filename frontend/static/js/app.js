@@ -448,7 +448,7 @@ setTimeout(() => {
     updateUIForLoggedInUser(guest);
     hideAuthModal();
   }
-}, 2500);
+}, 600);
 
 // ══════════════════════════════════════════════════════════════════════════════
 // PARTICLES (main background)

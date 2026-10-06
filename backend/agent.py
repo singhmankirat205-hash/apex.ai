@@ -35,18 +35,18 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 MAX_TOKENS     = int(os.getenv("MAX_TOKENS", "3500"))
 
 MODELS = [
-    "gemini-3.1-flash-lite",
-    "gemini-3.8-flash",
+    "gemini-3.5-flash-lite",
     "gemini-3.5-flash",
+    "gemini-3.1-flash-lite",
 ]
 
 # Shared keep-alive HTTP session: reuses TLS connections to Google (saves ~200-500 ms per request)
 _SESSION = requests.Session()
 _SESSION.mount("https://", requests.adapters.HTTPAdapter(pool_connections=8, pool_maxsize=32))
 
-# Hedged streaming: if the active model hasn't produced its first word within this
-# many seconds, a backup model is launched in parallel and whichever answers first wins.
-HEDGE_AFTER_SECONDS = 3.0
+# Hedged streaming: if the active model hasn't produced its first word within 1.5 seconds,
+# a backup model is launched in parallel and whichever answers first wins.
+HEDGE_AFTER_SECONDS = 1.5
 STREAM_TIMEOUT = (5, 20)  # (connect, read-between-chunks) seconds
 
 INDUSTRY_CONTEXT = {
@@ -167,19 +167,25 @@ def _clean_search_keywords(query: str) -> str:
 
 
 _LIVE_INFO_PATTERN = re.compile(
-    r"\b(news|latest|today|tonight|yesterday|tomorrow|current(ly)?|recent(ly)?|right now|this (week|month|year)|"
-    r"live|update[sd]?|breaking|headline|trend(s|ing)?|price[sd]?|rate[sd]?|stock|share price|market|sensex|nifty|"
-    r"crypto|bitcoin|weather|forecast|score|match|won|winner|election|results?|launch(ed)?|released?|"
-    r"horoscope|rashifal|panchang|20[1-3][0-9]|who is|who was|who won|prime minister|president|ceo of|country|capital|"
-    r"war|treaty|gdp|currency|population|olympics|world cup|movie|actor|song|album|festival|history of|discovery|"
-    r"search|look up|research paper|what happened|tell me about|when did|where is|biography|founder of|invented|space mission|isro|nasa|spacex)\b",
+    r"\b(news|latest news|breaking news|headline|trend(s|ing)?|share price|sensex|nifty|"
+    r"crypto|bitcoin|weather|forecast|cricket score|match score|won the match|election results?|"
+    r"horoscope|rashifal|panchang|prime minister|president of|capital of|"
+    r"olympics|world cup|isro|nasa|spacex)\b",
     re.IGNORECASE,
 )
-WEB_SEARCH_BUDGET_SECONDS = 2.5
+
+_INTERNAL_DOMAIN_PATTERN = re.compile(
+    r"\b(order|ord-|roll|tracking|container|shipment|loom|stenter|dye|batch|gsm|fabric|weave|weaving|yarn|cotton|polyester|defect|astm|4-point|shrinkage|delta e|ppm|oee|shift|maintenance|inventory|stock|warehouse|bay|supplier|raw material|machine|nozzle|pressure|spec|tolerances?|inspection|operator|mill|shed)\b",
+    re.IGNORECASE,
+)
+
+WEB_SEARCH_BUDGET_SECONDS = 0.8
 
 
 def _needs_live_search(clean: str) -> bool:
-    """Only hit external search when the question genuinely needs fresh / factual web data."""
+    """Only hit external search when the question genuinely needs fresh / factual web data and is not an internal domain query."""
+    if _INTERNAL_DOMAIN_PATTERN.search(clean):
+        return False
     return bool(_LIVE_INFO_PATTERN.search(clean))
 
 
