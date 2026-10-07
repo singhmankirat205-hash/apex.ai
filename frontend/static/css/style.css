@@ -394,19 +394,6 @@ body {
   animation: pulse 1.8s ease infinite;
 }
 
-.portal-nav-btn {
-  display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px;
-  background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(139, 92, 246, 0.2));
-  border: 1px solid var(--cyan); border-radius: 20px;
-  color: #22D3EE; font-size: 11.5px; font-family: var(--font-heading);
-  font-weight: 800; text-decoration: none; transition: all 0.25s;
-  box-shadow: 0 0 12px rgba(6, 182, 212, 0.25);
-}
-.portal-nav-btn:hover {
-  background: var(--cyan); color: #030712;
-  box-shadow: 0 0 20px var(--cyan-glow); transform: translateY(-1px);
-}
-
 .memory-badge {
   display: flex; align-items: center; gap: 6px; padding: 5px 12px;
   background: rgba(0, 217, 245, 0.1); border: 1px solid rgba(0, 217, 245, 0.35);
