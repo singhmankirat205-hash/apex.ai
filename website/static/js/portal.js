@@ -1,13 +1,36 @@
 /**
- * APEX ENTERPRISE PORTAL — Client Interaction & HubSpot CRM Engine
- * Dedicated client-side JavaScript (Cleanly isolated from chatbot app.js)
+ * APEX ENTERPRISE PORTAL — Client Operations & Interaction Engine
+ * Cleanly separated from chatbot app.js
  */
 
 (function() {
   'use strict';
 
   // ══════════════════════════════════════════════════════════════════════════
-  // 1. DESK TABS (HubSpot Multi-Channel Interaction)
+  // 1. FEATURE FILTER TABS
+  // ══════════════════════════════════════════════════════════════════════════
+  const filterTabs = document.querySelectorAll('.filter-tab');
+  const featureCards = document.querySelectorAll('.feature-card-detailed');
+
+  filterTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const filter = tab.dataset.filter;
+      filterTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      featureCards.forEach(card => {
+        const cat = card.dataset.category;
+        if (filter === 'all' || filter === cat) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // 2. CLIENT DESK TABS (Inquiry, Demo, Support)
   // ══════════════════════════════════════════════════════════════════════════
   const deskTabs = document.querySelectorAll('.desk-tab');
   const deskPanes = document.querySelectorAll('.desk-pane');
@@ -25,10 +48,10 @@
   });
 
   // ══════════════════════════════════════════════════════════════════════════
-  // 2. INBOUND FORMS SUBMISSION (Guarded by Sentinel)
+  // 3. INBOUND CLIENT FORMS SUBMISSION
   // ══════════════════════════════════════════════════════════════════════════
   
-  // A. Inquiry Form
+  // A. Integration Inquiry
   const inquiryForm = document.getElementById('inquiryForm');
   const inquiryFeedback = document.getElementById('inquiryFeedback');
   if (inquiryForm) {
@@ -36,7 +59,7 @@
       e.preventDefault();
       const submitBtn = inquiryForm.querySelector('button[type="submit"]');
       submitBtn.disabled = true;
-      submitBtn.innerHTML = '<span>⚡ Transmitting to Sentinel Shield...</span>';
+      submitBtn.innerHTML = '<span>⚡ Processing Request...</span>';
 
       const checkedMods = Array.from(inquiryForm.querySelectorAll('input[name="modules"]:checked')).map(cb => cb.value);
       const payload = {
@@ -59,14 +82,17 @@
         const data = await res.json();
         if (res.ok) {
           inquiryFeedback.className = 'form-feedback success';
-          inquiryFeedback.innerHTML = `✅ <strong>Inquiry ${data.inquiry_id} Logged!</strong> ${data.message} Your data is cryptographically protected.`;
+          inquiryFeedback.innerHTML = `
+            <div style="font-size:15px;margin-bottom:6px;">✅ <strong>Inquiry ${data.inquiry_id} Successfully Logged!</strong></div>
+            <div>${data.message} A deployment specialist will reach out to <strong>${payload.email}</strong> within 4 business hours.</div>
+          `;
           inquiryForm.reset();
         } else {
           throw new Error(data.detail || 'Failed to submit inquiry.');
         }
       } catch (err) {
         inquiryFeedback.className = 'form-feedback error';
-        inquiryFeedback.innerHTML = `⚠️ <strong>Notice:</strong> ${err.message}. Please retry or contact emergency support.`;
+        inquiryFeedback.innerHTML = `⚠️ <strong>Notice:</strong> ${err.message}. Please check your connection or retry.`;
       } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<span class="btn-icon">⚡</span><span>Submit Inbound Request to APEX Specialists</span>';
@@ -74,7 +100,7 @@
     });
   }
 
-  // B. Demo Form
+  // B. Demo Booking
   const demoForm = document.getElementById('demoForm');
   const demoFeedback = document.getElementById('demoFeedback');
   if (demoForm) {
@@ -101,7 +127,10 @@
         const data = await res.json();
         if (res.ok) {
           demoFeedback.className = 'form-feedback success';
-          demoFeedback.innerHTML = `📅 <strong>Demonstration ${data.demo_id} Locked!</strong> Scheduled for ${payload.date} at ${payload.time}. Calendar invites dispatched.`;
+          demoFeedback.innerHTML = `
+            <div style="font-size:15px;margin-bottom:6px;">📅 <strong>Live Demonstration Confirmed (${data.demo_id})</strong></div>
+            <div>Reserved for <strong>${payload.date}</strong> at <strong>${payload.time}</strong>. An enterprise meeting link has been dispatched to <strong>${payload.email}</strong>.</div>
+          `;
           demoForm.reset();
         } else {
           throw new Error(data.detail || 'Demo scheduling failed.');
@@ -115,7 +144,7 @@
     });
   }
 
-  // C. Support Ticket Form
+  // C. Priority Support Ticket
   const supportForm = document.getElementById('supportForm');
   const supportFeedback = document.getElementById('supportFeedback');
   if (supportForm) {
@@ -140,7 +169,10 @@
         const data = await res.json();
         if (res.ok) {
           supportFeedback.className = 'form-feedback success';
-          supportFeedback.innerHTML = `🎫 <strong>Ticket ${data.ticket_id} Active!</strong> Assigned to Senior Systems Lead under Priority SLA.`;
+          supportFeedback.innerHTML = `
+            <div style="font-size:15px;margin-bottom:6px;">🎫 <strong>Priority Ticket ${data.ticket_id} Active!</strong></div>
+            <div>${data.message} Logged under priority status <strong>${payload.priority}</strong>.</div>
+          `;
           supportForm.reset();
         } else {
           throw new Error(data.detail || 'Ticket creation failed.');
@@ -155,7 +187,7 @@
   }
 
   // ══════════════════════════════════════════════════════════════════════════
-  // 3. INTERACTIVE ROI CALCULATOR
+  // 4. INTERACTIVE ROI CALCULATOR & PRESETS
   // ══════════════════════════════════════════════════════════════════════════
   const rangeLooms = document.getElementById('rangeLooms');
   const rangeMeters = document.getElementById('rangeMeters');
@@ -183,7 +215,7 @@
     valMeters.textContent = `${meters.toLocaleString()} m`;
     valScrap.textContent = `${scrap.toFixed(1)}%`;
 
-    // 55% reduction via APEX 4-Point
+    // 55% average defect reduction via APEX 4-Point
     const newScrap = +(scrap * 0.45).toFixed(2);
     const scrapReduction = +(scrap - newScrap).toFixed(2);
     const monthlyMeters = meters * 26;
@@ -205,10 +237,25 @@
   if (rangeLooms) rangeLooms.addEventListener('input', updateROI);
   if (rangeMeters) rangeMeters.addEventListener('input', updateROI);
   if (rangeScrap) rangeScrap.addEventListener('input', updateROI);
+
+  // Quick Mill Scale Presets
+  const presetBtns = document.querySelectorAll('.btn-preset');
+  presetBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      presetBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      if (rangeLooms) rangeLooms.value = btn.dataset.looms;
+      if (rangeMeters) rangeMeters.value = btn.dataset.meters;
+      if (rangeScrap) rangeScrap.value = btn.dataset.scrap;
+      updateROI();
+    });
+  });
+
   updateROI();
 
   // ══════════════════════════════════════════════════════════════════════════
-  // 4. INTERACTIVE LIVE API SANDBOX
+  // 5. INTERACTIVE LIVE API SANDBOX WITH PRESET SAMPLES
   // ══════════════════════════════════════════════════════════════════════════
   const sTabs = document.querySelectorAll('.s-tab');
   const sPanels = document.querySelectorAll('.s-panel');
@@ -228,6 +275,15 @@
   const btnSimOrder = document.getElementById('btnSimOrder');
   const simOrderId = document.getElementById('simOrderId');
   const simOrderOutput = document.getElementById('simOrderOutput');
+
+  // Sample order chips
+  document.querySelectorAll('.sample-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      if (simOrderId) simOrderId.value = chip.dataset.val;
+      if (btnSimOrder) btnSimOrder.click();
+    });
+  });
+
   if (btnSimOrder) {
     btnSimOrder.addEventListener('click', async () => {
       const oid = (simOrderId.value || 'ORD-8492').trim();
@@ -248,6 +304,17 @@
   const simLength = document.getElementById('simLength');
   const simWidth = document.getElementById('simWidth');
   const simFourPointOutput = document.getElementById('simFourPointOutput');
+
+  // Sample 4-point chips
+  document.querySelectorAll('.sample-chip-fp').forEach(chip => {
+    chip.addEventListener('click', () => {
+      if (simDefects) simDefects.value = chip.dataset.def;
+      if (simLength) simLength.value = chip.dataset.len;
+      if (simWidth) simWidth.value = chip.dataset.wid;
+      if (btnSimFourPoint) btnSimFourPoint.click();
+    });
+  });
+
   if (btnSimFourPoint) {
     btnSimFourPoint.addEventListener('click', async () => {
       const payload = {
@@ -275,6 +342,16 @@
   const simStdLab = document.getElementById('simStdLab');
   const simBatchLab = document.getElementById('simBatchLab');
   const simDeltaEOutput = document.getElementById('simDeltaEOutput');
+
+  // Sample Delta-E chips
+  document.querySelectorAll('.sample-chip-de').forEach(chip => {
+    chip.addEventListener('click', () => {
+      if (simStdLab) simStdLab.value = chip.dataset.std;
+      if (simBatchLab) simBatchLab.value = chip.dataset.batch;
+      if (btnSimDeltaE) btnSimDeltaE.click();
+    });
+  });
+
   if (btnSimDeltaE) {
     btnSimDeltaE.addEventListener('click', async () => {
       const stdParts = (simStdLab.value || '42.5, 18.2, -24.1').split(',').map(s => parseFloat(s.trim()));
@@ -303,61 +380,16 @@
   }
 
   // ══════════════════════════════════════════════════════════════════════════
-  // 5. AI SENTINEL HEALTH TELEMETRY MODAL
+  // 6. SILENT BACKGROUND SENTINEL ERROR REPORTING (Zero UI popup clutter)
   // ══════════════════════════════════════════════════════════════════════════
-  const sentinelStatusPill = document.getElementById('sentinelStatusPill');
-  const footerSentinelLink = document.getElementById('footerSentinelLink');
-  const sentinelModal = document.getElementById('sentinelModal');
-  const closeSentinelModal = document.getElementById('closeSentinelModal');
-
-  const sentinelSafetyIndex = document.getElementById('sentinelSafetyIndex');
-  const sentinelGlitchesHealed = document.getElementById('sentinelGlitchesHealed');
-  const sentinelTransactions = document.getElementById('sentinelTransactions');
-  const sentinelEventsLog = document.getElementById('sentinelEventsLog');
-
-  async function openSentinelTelemetry() {
-    if (!sentinelModal) return;
-    sentinelModal.classList.add('open');
-    try {
-      const res = await fetch('/api/sentinel/health');
-      if (res.ok) {
-        const data = await res.json();
-        if (sentinelSafetyIndex) sentinelSafetyIndex.textContent = `${data.client_data_safety_index}%`;
-        if (sentinelGlitchesHealed) sentinelGlitchesHealed.textContent = data.glitches_auto_healed;
-        if (sentinelTransactions) sentinelTransactions.textContent = data.atomic_transactions_secured;
-
-        if (sentinelEventsLog && Array.isArray(data.recent_events)) {
-          if (data.recent_events.length > 0) {
-            sentinelEventsLog.innerHTML = data.recent_events.map(ev =>
-              `<div class="log-line">⚡ [${ev.timestamp}] <strong>${ev.component}:</strong> ${ev.action} (${ev.detail})</div>`
-            ).join('');
-          } else {
-            sentinelEventsLog.innerHTML = `<div class="log-line">🟢 Sentinel Active. Zero data anomalies recorded across all operations.</div>`;
-          }
-        }
-      }
-    } catch (_) {}
-  }
-
-  if (sentinelStatusPill) sentinelStatusPill.addEventListener('click', openSentinelTelemetry);
-  if (footerSentinelLink) footerSentinelLink.addEventListener('click', openSentinelTelemetry);
-  if (closeSentinelModal) closeSentinelModal.addEventListener('click', () => sentinelModal.classList.remove('open'));
-  if (sentinelModal) {
-    sentinelModal.addEventListener('click', (e) => {
-      if (e.target === sentinelModal) sentinelModal.classList.remove('open');
-    });
-  }
-
-  // Self-Healing Window Error Guard
   window.addEventListener('error', function(e) {
-    console.warn('Sentinel Portal Guard intercepted anomaly:', e.message);
     try {
       fetch('/api/sentinel/report-glitch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'PortalClientAnomaly',
-          message: e.message || 'Script error',
+          message: e.message || 'Script anomaly',
           context: { source: 'portal.js', lineno: e.lineno }
         })
       }).catch(() => {});
