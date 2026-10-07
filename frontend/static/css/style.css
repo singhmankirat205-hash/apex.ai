@@ -6,10 +6,10 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 :root {
-  /* ── Futuristic Cyber Typography ──────────────────────── */
-  --font-display: 'Orbitron', -apple-system, sans-serif;
-  --font-heading: 'Space Grotesk', -apple-system, sans-serif;
-  --font-body:    'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* ── Futuristic Cyber Typography (High-Impact Bold) ───── */
+  --font-display: 'Syne', 'Orbitron', -apple-system, sans-serif;
+  --font-heading: 'Outfit', 'Space Grotesk', -apple-system, sans-serif;
+  --font-body:    'Outfit', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono:    'JetBrains Mono', monospace;
 
   /* ── Cyber Neon Accents ────────────────────────────────── */
@@ -74,6 +74,7 @@
 html, body { height: 100%; font-size: 15px; }
 body {
   font-family: var(--font-body);
+  font-weight: 600; /* Bold crisp high-contrast body */
   background: var(--canvas);
   color: var(--text);
   display: flex; height: 100vh; overflow: hidden;
@@ -374,6 +375,38 @@ body {
 .tts-toggle.active, .history-toggle-btn.active {
   border-color: var(--mint-neon); color: var(--mint-neon); box-shadow: var(--glow);
 }
+/* ── Sentinel Data Shield Pill & Portal Link ── */
+.sentinel-badge {
+  display: flex; align-items: center; gap: 7px; padding: 5px 13px;
+  background: rgba(0, 245, 160, 0.08); border: 1px solid rgba(0, 245, 160, 0.35);
+  border-radius: 20px; color: var(--mint-neon); font-size: 11px;
+  font-family: var(--font-heading); font-weight: 800;
+  transition: all 0.2s; letter-spacing: 0.5px; cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 245, 160, 0.15);
+}
+.sentinel-badge:hover {
+  background: rgba(0, 245, 160, 0.18);
+  box-shadow: 0 0 16px var(--mint-glow);
+}
+.sentinel-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--mint-neon); box-shadow: 0 0 8px var(--mint-neon);
+  animation: pulse 1.8s ease infinite;
+}
+
+.portal-nav-btn {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px;
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(139, 92, 246, 0.2));
+  border: 1px solid var(--cyan); border-radius: 20px;
+  color: #22D3EE; font-size: 11.5px; font-family: var(--font-heading);
+  font-weight: 800; text-decoration: none; transition: all 0.25s;
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.25);
+}
+.portal-nav-btn:hover {
+  background: var(--cyan); color: #030712;
+  box-shadow: 0 0 20px var(--cyan-glow); transform: translateY(-1px);
+}
+
 .memory-badge {
   display: flex; align-items: center; gap: 6px; padding: 5px 12px;
   background: rgba(0, 217, 245, 0.1); border: 1px solid rgba(0, 217, 245, 0.35);
@@ -606,9 +639,10 @@ button.feature.starter-question-btn:active {
 /* Assistant Cyber Bubble */
 .bubble {
   padding: 16px 20px; border-radius: var(--radius);
-  font-size: 14.5px; line-height: 1.8;
+  font-size: 15px; line-height: 1.8;
   word-break: normal; overflow-wrap: break-word;
   font-family: var(--font-body);
+  font-weight: 600; /* Bold crisp text */
 }
 .message.assistant .bubble {
   background: var(--card);
@@ -619,23 +653,23 @@ button.feature.starter-question-btn:active {
   color: var(--text);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55), 0 0 18px rgba(0, 245, 160, 0.05);
 }
-.message.assistant .bubble p { margin-bottom: 12px; line-height: 1.8; }
+.message.assistant .bubble p { margin-bottom: 12px; line-height: 1.8; font-weight: 600; }
 .message.assistant .bubble p:last-child { margin-bottom: 0; }
 
 .message.assistant .bubble h1,
 .message.assistant .bubble h2,
 .message.assistant .bubble h3,
 .message.assistant .bubble h4 {
-  font-family: var(--font-heading); color: var(--text);
-  margin-top: 18px; margin-bottom: 10px; letter-spacing: 0.5px; font-weight: 700;
+  font-family: var(--font-heading); color: #FFFFFF;
+  margin-top: 18px; margin-bottom: 10px; letter-spacing: 0.5px; font-weight: 800;
 }
 .message.assistant .bubble h2 {
-  font-size: 17px; color: var(--mint-neon);
+  font-size: 17.5px; color: var(--mint-neon);
   border-bottom: 1px solid var(--card-border); padding-bottom: 6px;
 }
-.message.assistant .bubble h3 { font-size: 15px; color: var(--cyan-neon); }
+.message.assistant .bubble h3 { font-size: 15.5px; color: var(--cyan-neon); }
 .message.assistant .bubble strong,
-.message.assistant .bubble b { color: #FFFFFF; font-weight: 600; }
+.message.assistant .bubble b { color: #FFFFFF; font-weight: 800; }
 .message.assistant .bubble ul,
 .message.assistant .bubble ol { margin: 10px 0 14px 22px; }
 .message.assistant .bubble li { margin-bottom: 6px; line-height: 1.7; }
@@ -2938,10 +2972,66 @@ pre:has(code.language-json\:action) {
   border-color: #fb923c !important;
   color: #fb923c !important;
 }
-.xlsx-export-btn:hover {
-  border-color: #34d399 !important;
-  color: #34d399 !important;
+/* ══════════════════════════════════════════════════════════════════════════
+   AI SENTINEL TELEMETRY MODAL & REAL-TIME SELF-HEALING TOASTS
+   ══════════════════════════════════════════════════════════════════════════ */
+.sentinel-modal-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(3, 7, 18, 0.88); backdrop-filter: blur(14px);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.sentinel-modal-card {
+  background: #0A1224; border: 1px solid rgba(0, 245, 160, 0.35);
+  border-radius: 20px; max-width: 680px; width: 100%; overflow: hidden;
+  box-shadow: 0 0 50px rgba(0, 245, 160, 0.25);
+  animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.96) translateY(10px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.sentinel-modal-card .modal-header {
+  padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.08);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.sentinel-modal-card .modal-title-wrap { display: flex; align-items: center; gap: 12px; }
+.sentinel-modal-card .modal-shield-icon { font-size: 28px; }
+.sentinel-modal-card .modal-title { font-family: var(--font-heading); font-size: 18px; font-weight: 800; color: #FFFFFF; }
+.sentinel-modal-card .modal-sub { font-size: 12px; font-weight: 600; color: var(--mint-neon); }
+.sentinel-modal-card .modal-close-btn {
+  background: transparent; border: none; color: var(--text2);
+  font-size: 20px; cursor: pointer; padding: 4px;
+}
+.sentinel-modal-card .modal-close-btn:hover { color: #FFFFFF; }
+.sentinel-modal-card .modal-body { padding: 24px; }
+.telemetry-stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 24px; }
+.t-stat-card {
+  background: rgba(255,255,255,0.03); border: 1px solid var(--card-border);
+  border-radius: 12px; padding: 14px; text-align: center;
+}
+.t-val { font-family: var(--font-display); font-size: 24px; font-weight: 900; }
+.t-val.text-mint { color: var(--mint-neon); }
+.t-val.text-cyan { color: var(--cyan-neon); }
+.t-lbl { font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; margin-top: 4px; }
+.sentinel-modal-card .subhead { font-family: var(--font-heading); font-size: 14px; font-weight: 800; color: #FFFFFF; margin: 18px 0 10px; }
+.protection-layers-list { list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text2); }
+.protection-layers-list strong { color: #FFFFFF; }
+.sentinel-events-log {
+  background: #030712; border: 1px solid var(--card-border);
+  border-radius: 8px; padding: 12px; max-height: 140px; overflow-y: auto;
+  font-family: var(--font-mono); font-size: 11.5px; color: var(--mint-neon);
 }
 
-
-
+/* Pre-Emptive Sentinel Toast */
+.sentinel-toast {
+  position: fixed; bottom: 85px; right: 28px; z-index: 9999;
+  background: rgba(10, 18, 36, 0.95); border: 1px solid rgba(0, 245, 160, 0.4);
+  padding: 12px 18px; border-radius: 12px; display: flex; align-items: center; gap: 10px;
+  font-size: 13px; font-weight: 700; color: #FFFFFF;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6), 0 0 15px rgba(0, 245, 160, 0.2);
+  animation: toastSlideUp 0.3s ease;
+}
+@keyframes toastSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

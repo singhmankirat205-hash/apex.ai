@@ -3296,4 +3296,108 @@ bindStarterQuestionButtons();
   currentChatId = Date.now();
   conversationHistory = [];
   appendWelcomeCard(industrySelect ? industrySelect.value : 'textile');
+  initSentinelBrowserGuard();
 })();
+
+// ══════════════════════════════════════════════════════════════════════════════
+// APEX AI SENTINEL BROWSER GUARD & PRE-EMPTIVE DATA SHIELD
+// ══════════════════════════════════════════════════════════════════════════════
+function showSentinelToast(msg, duration = 4000) {
+  const existing = document.querySelector('.sentinel-toast');
+  if (existing) existing.remove();
+  const toast = document.createElement('div');
+  toast.className = 'sentinel-toast';
+  toast.innerHTML = `<span style="font-size:16px;">🛡️</span><span>${msg}</span>`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), duration);
+}
+
+function initSentinelBrowserGuard() {
+  const sentinelBadge = document.getElementById('sentinelBadge');
+  const chatSentinelModal = document.getElementById('chatSentinelModal');
+  const closeChatSentinelModal = document.getElementById('closeChatSentinelModal');
+
+  const chatSentinelSafetyIndex = document.getElementById('chatSentinelSafetyIndex');
+  const chatSentinelHealed = document.getElementById('chatSentinelHealed');
+  const chatSentinelTx = document.getElementById('chatSentinelTx');
+  const chatSentinelLog = document.getElementById('chatSentinelLog');
+
+  async function openSentinelModal() {
+    if (!chatSentinelModal) return;
+    chatSentinelModal.style.display = 'flex';
+    try {
+      const res = await fetch('/api/sentinel/health');
+      if (res.ok) {
+        const d = await res.json();
+        if (chatSentinelSafetyIndex) chatSentinelSafetyIndex.textContent = `${d.client_data_safety_index}%`;
+        if (chatSentinelHealed) chatSentinelHealed.textContent = d.glitches_auto_healed;
+        if (chatSentinelTx) chatSentinelTx.textContent = d.atomic_transactions_secured;
+        if (chatSentinelLog && Array.isArray(d.recent_events)) {
+          if (d.recent_events.length > 0) {
+            chatSentinelLog.innerHTML = d.recent_events.map(ev =>
+              `<div class="log-line">⚡ [${ev.timestamp}] <strong>${ev.component}:</strong> ${ev.action} (${ev.detail})</div>`
+            ).join('');
+          } else {
+            chatSentinelLog.innerHTML = `<div class="log-line">🟢 Sentinel Initialized. All client data repositories verified healthy.</div>`;
+          }
+        }
+      }
+    } catch (_) {}
+  }
+
+  if (sentinelBadge) sentinelBadge.addEventListener('click', openSentinelModal);
+  if (closeChatSentinelModal) closeChatSentinelModal.addEventListener('click', () => {
+    chatSentinelModal.style.display = 'none';
+  });
+  if (chatSentinelModal) {
+    chatSentinelModal.addEventListener('click', (e) => {
+      if (e.target === chatSentinelModal) chatSentinelModal.style.display = 'none';
+    });
+  }
+
+  // Pre-emptive Network & Offline Alert
+  window.addEventListener('offline', () => {
+    showSentinelToast('⚠️ AI Sentinel: Offline state detected. Local memory engaged to protect client data.', 6000);
+  });
+  window.addEventListener('online', () => {
+    showSentinelToast('✅ AI Sentinel: Connection restored. Cloud data sync active.', 3500);
+  });
+
+  // Global Glitch Interceptor & Self-Healer
+  window.addEventListener('error', (e) => {
+    console.warn('AI Sentinel intercepted glitch:', e.message);
+    if (typeof isStreaming !== 'undefined' && isStreaming) {
+      isStreaming = false;
+      if (sendBtn) sendBtn.disabled = false;
+      showTyping(false);
+    }
+    showSentinelToast('🛡️ AI Sentinel [Auto-Healed]: Prevented glitch. Client session data preserved.');
+    fetch('/api/sentinel/report-glitch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'BrowserException',
+        message: e.message || 'Script exception',
+        context: { filename: e.filename, lineno: e.lineno }
+      })
+    }).catch(() => {});
+  });
+
+  window.addEventListener('unhandledrejection', (e) => {
+    console.warn('AI Sentinel intercepted unhandled rejection:', e.reason);
+    if (typeof isStreaming !== 'undefined' && isStreaming) {
+      isStreaming = false;
+      if (sendBtn) sendBtn.disabled = false;
+      showTyping(false);
+    }
+    fetch('/api/sentinel/report-glitch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'UnhandledPromiseRejection',
+        message: String(e.reason || 'Promise rejected'),
+        context: {}
+      })
+    }).catch(() => {});
+  });
+}

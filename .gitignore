@@ -5,6 +5,7 @@ __pycache__/
 data/cloudflared.log
 data/server.log
 data/app_profile/
+data/sentinel_backups/
 cloudflared.exe
 .env.local
 .env

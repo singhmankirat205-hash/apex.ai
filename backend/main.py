@@ -109,6 +109,12 @@ _base = os.path.dirname(os.path.dirname(__file__))
 app.mount("/static", StaticFiles(directory=os.path.join(_base, "frontend", "static")), name="static")
 templates = Jinja2Templates(directory=os.path.join(_base, "frontend", "templates"))
 
+# Dedicated Website / Customer Interaction Platform (Clean architectural isolation from chatbot)
+_website_static = os.path.join(_base, "website", "static")
+if os.path.isdir(_website_static):
+    app.mount("/website-static", StaticFiles(directory=_website_static), name="website-static")
+website_templates = Jinja2Templates(directory=os.path.join(_base, "website", "templates"))
+
 
 # ── Schemas ────────────────────────────────────────────────────────────────────
 class Message(BaseModel):
@@ -197,6 +203,70 @@ async def generate_video_endpoint(req: VideoGenerateRequest):
 @app.get("/", response_class=HTMLResponse)
 async def serve_ui(request: Request):
     return templates.TemplateResponse(request=request, name="index.html")
+
+
+# ── Dedicated Website & Customer Interaction Hub ──────────────────────────────
+@app.get("/portal", response_class=HTMLResponse)
+@app.get("/website", response_class=HTMLResponse)
+@app.get("/hub", response_class=HTMLResponse)
+async def serve_customer_portal(request: Request):
+    """
+    Dedicated Customer Platform & HubSpot-style Interaction Desk.
+    Features: Live Demo Booker, Enterprise Inbound CRM, Feature Breakdown,
+    Dynamic ROI Calculator, and Interactive API Sandbox.
+    """
+    return website_templates.TemplateResponse(request=request, name="portal.html")
+
+
+# ── AI Sentinel Health & Self-Healing Telemetry ───────────────────────────────
+@app.get("/api/sentinel/health")
+async def get_sentinel_health():
+    """Real-time AI Sentinel Data Shield telemetry & system safety index."""
+    from backend.ai_sentinel import get_sentinel_telemetry
+    return get_sentinel_telemetry()
+
+
+@app.post("/api/sentinel/report-glitch")
+async def report_client_glitch(req: Request):
+    """Logs client frontend glitches and engages real-time autonomous healing."""
+    from backend.ai_sentinel import record_client_glitch_report
+    try:
+        body = await req.json()
+    except Exception:
+        body = {"type": "ClientAnomaly", "message": "Failed to parse json payload"}
+    return record_client_glitch_report(body)
+
+
+# ── HubSpot-Style Client Interaction & CRM Endpoints ─────────────────────────
+@app.post("/api/portal/inquiry")
+async def portal_inquiry_endpoint(req: Request):
+    """Record customer inbound integration inquiry."""
+    from backend.portal_engine import submit_customer_inquiry
+    body = await req.json()
+    return submit_customer_inquiry(body)
+
+
+@app.post("/api/portal/demo")
+async def portal_demo_endpoint(req: Request):
+    """Schedule live enterprise mill demonstration."""
+    from backend.portal_engine import book_demo_session
+    body = await req.json()
+    return book_demo_session(body)
+
+
+@app.post("/api/portal/ticket")
+async def portal_ticket_endpoint(req: Request):
+    """Open priority client support & SLA ticket."""
+    from backend.portal_engine import submit_support_ticket
+    body = await req.json()
+    return submit_support_ticket(body)
+
+
+@app.get("/api/portal/overview")
+async def portal_overview_endpoint():
+    """Retrieve overview of client CRM activities and feature catalog."""
+    from backend.portal_engine import get_portal_overview
+    return get_portal_overview()
 
 
 @app.get("/api/health")
@@ -484,15 +554,26 @@ async def calculate_delta_e_endpoint(req: LabDipRequest):
 
 @app.post("/api/chat/stream")
 async def chat_stream(req: ChatRequest):
-    messages = [{"role": str(m.role or "user"), "content": str(m.content or "")} for m in req.messages]
+    # Sentinel Pre-Flight Anomaly Inspection & Client Data Shield
+    from backend.ai_sentinel import inspect_and_sanitize_payload
+    raw_payload = {
+        "messages": [{"role": str(m.role or "user"), "content": str(m.content or "")} for m in req.messages],
+        "user_role": req.user_role,
+        "language": req.language,
+        "industry": req.industry,
+        "user_email": req.user_email,
+        "current_chat_id": req.current_chat_id
+    }
+    shielded_payload = inspect_and_sanitize_payload(raw_payload)
+
     return StreamingResponse(
         stream_response(
-            messages=messages,
-            user_role=req.user_role,
-            language=req.language,
-            industry=req.industry,
-            user_email=req.user_email,
-            current_chat_id=req.current_chat_id,
+            messages=shielded_payload["messages"],
+            user_role=shielded_payload.get("user_role", req.user_role),
+            language=shielded_payload.get("language", req.language),
+            industry=shielded_payload.get("industry", req.industry),
+            user_email=shielded_payload.get("user_email", req.user_email),
+            current_chat_id=shielded_payload.get("current_chat_id", req.current_chat_id),
         ),
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},

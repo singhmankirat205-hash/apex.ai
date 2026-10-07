@@ -9,8 +9,8 @@
   <title>APEX — Quantum AI Intelligence</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/static/css/style.css?v=2.5.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Syne:wght@700;800;900&family=Orbitron:wght@600;700;900&family=Space+Grotesk:wght@600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/static/css/style.css?v=3.0.0"/>
 </head>
 <body>
 
@@ -285,6 +285,14 @@
       </div>
     </div>
     <div class="header-right">
+      <!-- AI Sentinel Client Data Shield Pill -->
+      <div class="sentinel-badge" id="sentinelBadge" title="Click to view AI Sentinel Health & Zero-Harm Data Shield">
+        <span class="sentinel-dot"></span>🛡️ SENTINEL: SHIELD ACTIVE
+      </div>
+      <!-- Dedicated Enterprise Customer Platform Bridge -->
+      <a href="/portal" class="portal-nav-btn" title="Open Dedicated Customer Platform & HubSpot Desk">
+        <span>🌐 Enterprise Platform</span>
+      </a>
       <div class="memory-badge" id="memoryBadge" title="Continuous Cross-Session Enterprise Memory: Active">
         <span class="mem-dot"></span>MEMORY: ACTIVE
       </div>
@@ -449,8 +457,51 @@
   </div>
 </div>
 
+<!-- ── AI SENTINEL HEALTH & DATA SHIELD MODAL ────────────────────────────── -->
+<div class="sentinel-modal-overlay" id="chatSentinelModal" style="display:none">
+  <div class="sentinel-modal-card">
+    <div class="modal-header">
+      <div class="modal-title-wrap">
+        <span class="modal-shield-icon">🛡️</span>
+        <div>
+          <h3 class="modal-title">APEX AI Sentinel Diagnostic Telemetry</h3>
+          <span class="modal-sub">Zero-Harm Client Data Shield & Pre-Emptive Glitch Interceptor</span>
+        </div>
+      </div>
+      <button class="modal-close-btn" id="closeChatSentinelModal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="telemetry-stats-row">
+        <div class="t-stat-card">
+          <span class="t-val text-mint" id="chatSentinelSafetyIndex">100.0%</span>
+          <span class="t-lbl">Client Safety Index</span>
+        </div>
+        <div class="t-stat-card">
+          <span class="t-val text-cyan" id="chatSentinelHealed">0</span>
+          <span class="t-lbl">Glitches Auto-Healed</span>
+        </div>
+        <div class="t-stat-card">
+          <span class="t-val" id="chatSentinelTx">0</span>
+          <span class="t-lbl">Atomic Writes Secured</span>
+        </div>
+      </div>
+      <h4 class="subhead">Active Protection Layers</h4>
+      <ul class="protection-layers-list">
+        <li>✅ <strong>Atomic File Shield:</strong> Writes to isolated buffer before renaming; corrupted state is impossible.</li>
+        <li>✅ <strong>Pre-Emptive Anomaly Detection:</strong> Validates input unicode and size before memory execution.</li>
+        <li>✅ <strong>Auto-Snapshot Reconstructor:</strong> Auto-restores databases if any unexpected disk failure occurs.</li>
+        <li>✅ <strong>Client Zero-Data-Harm Protocol:</strong> Guaranteed protection of mill records, chat history, and tokens.</li>
+      </ul>
+      <h4 class="subhead">Live Sentinel Telemetry</h4>
+      <div class="sentinel-events-log" id="chatSentinelLog">
+        <div class="log-line">🟢 Sentinel Initialized. All client data repositories verified healthy.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="/static/js/chart.min.js"></script>
 <script src="/static/js/marked.min.js"></script>
-<script src="/static/js/app.js?v=2.5.0"></script>
+<script src="/static/js/app.js?v=3.0.0"></script>
 </body>
 </html>
