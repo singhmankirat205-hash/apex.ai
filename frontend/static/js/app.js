@@ -3401,3 +3401,875 @@ function initSentinelBrowserGuard() {
     }).catch(() => {});
   });
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RADICAL CREATIVE TEXTILE STUDIO & HAPTIC SIMULATION ENGINE
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+(function initCreativeStudio() {
+  const studioModal = document.getElementById('creativeStudioModal');
+  const studioBtn = document.getElementById('creativeStudioBtn');
+  const closeStudioBtn = document.getElementById('closeCreativeStudioModal');
+  if (!studioModal) return;
+
+  function openStudio(tabName = 'hapticTab') {
+    studioModal.style.display = 'flex';
+    switchTab(tabName);
+    startClothSimulation();
+    if (!lastWeaveData) generateWeave('Jazz syncopated swing rhythm');
+    if (!lastChronoTime) setChronoMilestone('2 years');
+    if (!lastOrigamiStep) setOrigamiStep(1);
+  }
+
+  function closeStudio() {
+    studioModal.style.display = 'none';
+    stopClothSimulation();
+  }
+
+  if (studioBtn) studioBtn.addEventListener('click', () => openStudio('hapticTab'));
+  if (closeStudioBtn) closeStudioBtn.addEventListener('click', closeStudio);
+  studioModal.addEventListener('click', (e) => {
+    if (e.target === studioModal) closeStudio();
+  });
+
+  // Tab switching
+  const tabBtns = document.querySelectorAll('.studio-tab-btn');
+  const tabPanes = document.querySelectorAll('.studio-tab-pane');
+  function switchTab(targetTabId) {
+    tabBtns.forEach(b => {
+      b.classList.toggle('active', b.dataset.tab === targetTabId);
+    });
+    tabPanes.forEach(p => {
+      p.classList.toggle('active', p.id === targetTabId);
+    });
+    if (targetTabId === 'hapticTab') startClothSimulation();
+    else stopClothSimulation();
+  }
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+
+  // Expose global launcher for in-chat buttons
+  window.openTextileStudio = openStudio;
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 1. TACTILE HAPTIC TOUCHPAD CONTROLLER
+  // ─────────────────────────────────────────────────────────────────────────
+  const touchpad = document.getElementById('hapticTouchpad');
+  const ripple = document.getElementById('touchpadRipple');
+  const fabricSelect = document.getElementById('hapticFabricSelect');
+
+  let currentFabricSpec = {
+    vibration_pattern: [90, 20, 110, 20, 130, 25, 100],
+    surface_friction: 0.75,
+    stiffness: 0.92,
+    shear: 0.88,
+    damping: 0.78,
+    gravity: 1.25,
+    wind_sensitivity: 0.15
+  };
+
+  async function updateFabricProfile(fabricKey) {
+    try {
+      const res = await fetch('/api/textile/haptic-profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fabric: fabricKey })
+      });
+      const data = await res.json();
+      if (data && data.fabric) {
+        const f = data.fabric;
+        currentFabricSpec = {
+          vibration_pattern: f.vibration_pattern,
+          surface_friction: f.surface_friction,
+          stiffness: f.drape_parameters.stiffness,
+          shear: f.drape_parameters.shear_resistance,
+          damping: f.drape_parameters.damping,
+          gravity: f.drape_parameters.gravity_scale,
+          wind_sensitivity: f.drape_parameters.wind_sensitivity
+        };
+
+        const nameEl = document.getElementById('hapticName');
+        const gsmEl = document.getElementById('hapticGsm');
+        const freqEl = document.getElementById('hapticFreq');
+        const frictEl = document.getElementById('hapticFriction');
+        const descEl = document.getElementById('hapticDesc');
+
+        if (nameEl) nameEl.textContent = f.name;
+        if (gsmEl) gsmEl.textContent = `${f.gsm} GSM`;
+        if (freqEl) freqEl.textContent = `${f.vibration_frequency_hz} Hz (Tactile Resonance)`;
+        if (frictEl) frictEl.textContent = `${f.surface_friction} μ (${f.surface_friction > 0.5 ? 'High Drag' : 'Smooth Glide'})`;
+        if (descEl) descEl.textContent = f.tactile_descriptor;
+
+        // Apply physical properties to active cloth simulation
+        if (clothInstance) {
+          clothInstance.stiffness = currentFabricSpec.stiffness;
+          clothInstance.gravityScale = currentFabricSpec.gravity;
+          clothInstance.damping = currentFabricSpec.damping;
+        }
+      }
+    } catch (e) {
+      console.warn('Haptic fetch note:', e);
+    }
+  }
+
+  if (fabricSelect) {
+    fabricSelect.addEventListener('change', (e) => updateFabricProfile(e.target.value));
+  }
+
+  if (touchpad) {
+    let isTouching = false;
+    let lastVibrateTime = 0;
+
+    function handleTouch(e) {
+      if (!isTouching) return;
+      const rect = touchpad.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+
+      if (ripple) {
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        ripple.style.opacity = '1';
+      }
+
+      const now = Date.now();
+      if (now - lastVibrateTime > 120) {
+        lastVibrateTime = now;
+        if (navigator.vibrate) {
+          try {
+            navigator.vibrate(currentFabricSpec.vibration_pattern);
+          } catch (_) {}
+        }
+      }
+    }
+
+    touchpad.addEventListener('mousedown', (e) => { isTouching = true; handleTouch(e); });
+    touchpad.addEventListener('mousemove', handleTouch);
+    window.addEventListener('mouseup', () => {
+      isTouching = false;
+      if (ripple) ripple.style.opacity = '0';
+    });
+
+    touchpad.addEventListener('touchstart', (e) => { isTouching = true; handleTouch(e); }, { passive: true });
+    touchpad.addEventListener('touchmove', handleTouch, { passive: true });
+    window.addEventListener('touchend', () => {
+      isTouching = false;
+      if (ripple) ripple.style.opacity = '0';
+    });
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 2. REAL-TIME 60 FPS VERLET CLOTH PHYSICS SIMULATION
+  // ─────────────────────────────────────────────────────────────────────────
+  const clothCanvas = document.getElementById('clothCanvas');
+  let clothCtx = clothCanvas ? clothCanvas.getContext('2d') : null;
+  let clothInstance = null;
+  let clothAnimId = null;
+
+  class VerletCloth {
+    constructor(canvas, cols = 18, rows = 12, spacing = 22) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d');
+      this.cols = cols;
+      this.rows = rows;
+      this.spacing = spacing;
+      this.points = [];
+      this.constraints = [];
+      this.stiffness = currentFabricSpec.stiffness || 0.85;
+      this.gravityScale = currentFabricSpec.gravity || 1.0;
+      this.damping = currentFabricSpec.damping || 0.94;
+      this.windSpeed = 0;
+      this.time = 0;
+      this.draggedPoint = null;
+      this.init();
+    }
+
+    init() {
+      this.points = [];
+      this.constraints = [];
+      const startX = (this.canvas.width - (this.cols - 1) * this.spacing) / 2;
+      const startY = 24;
+
+      for (let r = 0; r < this.rows; r++) {
+        for (let c = 0; c < this.cols; c++) {
+          const x = startX + c * this.spacing;
+          const y = startY + r * this.spacing;
+          const pinned = (r === 0); // Pin top row
+          this.points.push({
+            x, y,
+            oldX: x,
+            oldY: y,
+            pinned
+          });
+        }
+      }
+
+      // Create structural constraints
+      for (let r = 0; r < this.rows; r++) {
+        for (let c = 0; c < this.cols; c++) {
+          const idx = r * this.cols + c;
+          if (c < this.cols - 1) {
+            this.constraints.push({ p1: idx, p2: idx + 1, dist: this.spacing });
+          }
+          if (r < this.rows - 1) {
+            this.constraints.push({ p1: idx, p2: idx + this.cols, dist: this.spacing });
+          }
+        }
+      }
+    }
+
+    update(dt = 0.016) {
+      this.time += dt;
+      const gravity = 550 * this.gravityScale;
+      const windForce = Math.sin(this.time * 3.5) * this.windSpeed * 32.0;
+
+      for (const p of this.points) {
+        if (p.pinned) continue;
+        const vx = (p.x - p.oldX) * this.damping;
+        const vy = (p.y - p.oldY) * this.damping;
+
+        p.oldX = p.x;
+        p.oldY = p.y;
+
+        p.x += vx + (windForce * dt * dt);
+        p.y += vy + (gravity * dt * dt);
+      }
+
+      // Satisfy distance constraints
+      const iterations = Math.max(3, Math.floor(this.stiffness * 8));
+      for (let i = 0; i < iterations; i++) {
+        for (const c of this.constraints) {
+          const p1 = this.points[c.p1];
+          const p2 = this.points[c.p2];
+          const dx = p2.x - p1.x;
+          const dy = p2.y - p1.y;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          const diff = (dist - c.dist) / dist;
+
+          const offsetX = dx * 0.5 * diff;
+          const offsetY = dy * 0.5 * diff;
+
+          if (!p1.pinned) { p1.x += offsetX; p1.y += offsetY; }
+          if (!p2.pinned) { p2.x -= offsetX; p2.y -= offsetY; }
+        }
+      }
+    }
+
+    render() {
+      const ctx = this.ctx;
+      ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+      // Draw background ambient weave shadow
+      ctx.fillStyle = 'rgba(3, 7, 18, 0.95)';
+      ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+      // Render warp & weft threads
+      ctx.lineWidth = 1.6;
+      ctx.strokeStyle = 'rgba(0, 245, 160, 0.75)';
+
+      for (const c of this.constraints) {
+        const p1 = this.points[c.p1];
+        const p2 = this.points[c.p2];
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      }
+
+      // Draw pinned node headers
+      for (let c = 0; c < this.cols; c++) {
+        const p = this.points[c];
+        ctx.fillStyle = '#06B6D4';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+
+  function startClothSimulation() {
+    if (!clothCanvas || clothAnimId) return;
+    if (!clothInstance) clothInstance = new VerletCloth(clothCanvas);
+
+    function loop() {
+      if (clothInstance) {
+        clothInstance.update();
+        clothInstance.render();
+      }
+      clothAnimId = requestAnimationFrame(loop);
+    }
+    clothAnimId = requestAnimationFrame(loop);
+  }
+
+  function stopClothSimulation() {
+    if (clothAnimId) {
+      cancelAnimationFrame(clothAnimId);
+      clothAnimId = null;
+    }
+  }
+
+  // Cloth interaction listeners (Mouse drag)
+  if (clothCanvas) {
+    let mouseDragPt = null;
+    function getNearestClothPoint(mx, my) {
+      if (!clothInstance) return null;
+      let closest = null;
+      let minD = 32;
+      for (const p of clothInstance.points) {
+        const d = Math.hypot(p.x - mx, p.y - my);
+        if (d < minD) { minD = d; closest = p; }
+      }
+      return closest;
+    }
+
+    clothCanvas.addEventListener('mousedown', (e) => {
+      const rect = clothCanvas.getBoundingClientRect();
+      const scaleX = clothCanvas.width / rect.width;
+      const scaleY = clothCanvas.height / rect.height;
+      const mx = (e.clientX - rect.left) * scaleX;
+      const my = (e.clientY - rect.top) * scaleY;
+      mouseDragPt = getNearestClothPoint(mx, my);
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!mouseDragPt || !clothCanvas) return;
+      const rect = clothCanvas.getBoundingClientRect();
+      const scaleX = clothCanvas.width / rect.width;
+      const scaleY = clothCanvas.height / rect.height;
+      mouseDragPt.x = (e.clientX - rect.left) * scaleX;
+      mouseDragPt.y = (e.clientY - rect.top) * scaleY;
+    });
+
+    window.addEventListener('mouseup', () => { mouseDragPt = null; });
+
+    // Touch support for cloth canvas
+    clothCanvas.addEventListener('touchstart', (e) => {
+      const rect = clothCanvas.getBoundingClientRect();
+      const scaleX = clothCanvas.width / rect.width;
+      const scaleY = clothCanvas.height / rect.height;
+      const mx = (e.touches[0].clientX - rect.left) * scaleX;
+      const my = (e.touches[0].clientY - rect.top) * scaleY;
+      mouseDragPt = getNearestClothPoint(mx, my);
+    }, { passive: true });
+
+    clothCanvas.addEventListener('touchmove', (e) => {
+      if (!mouseDragPt) return;
+      const rect = clothCanvas.getBoundingClientRect();
+      const scaleX = clothCanvas.width / rect.width;
+      const scaleY = clothCanvas.height / rect.height;
+      mouseDragPt.x = (e.touches[0].clientX - rect.left) * scaleX;
+      mouseDragPt.y = (e.touches[0].clientY - rect.top) * scaleY;
+    }, { passive: true });
+
+    clothCanvas.addEventListener('touchend', () => { mouseDragPt = null; });
+  }
+
+  // Sliders and controls
+  const windSlider = document.getElementById('windSlider');
+  const windVal = document.getElementById('windVal');
+  if (windSlider) {
+    windSlider.addEventListener('input', (e) => {
+      const v = parseFloat(e.target.value);
+      if (clothInstance) clothInstance.windSpeed = v;
+      if (windVal) windVal.textContent = `${(v * 0.4).toFixed(1)} m/s`;
+    });
+  }
+
+  const gravSlider = document.getElementById('gravSlider');
+  const gravVal = document.getElementById('gravVal');
+  if (gravSlider) {
+    gravSlider.addEventListener('input', (e) => {
+      const g = parseFloat(e.target.value);
+      if (clothInstance) clothInstance.gravityScale = g;
+      if (gravVal) gravVal.textContent = `${g.toFixed(1)}x`;
+    });
+  }
+
+  const shakeBtn = document.getElementById('shakeClothBtn');
+  if (shakeBtn) {
+    shakeBtn.addEventListener('click', () => {
+      if (clothInstance) {
+        clothInstance.windSpeed = 28;
+        setTimeout(() => { if (clothInstance) clothInstance.windSpeed = parseFloat(windSlider.value || 0); }, 1200);
+      }
+    });
+  }
+
+  const resetClothBtn = document.getElementById('resetClothBtn');
+  if (resetClothBtn) {
+    resetClothBtn.addEventListener('click', () => {
+      if (clothInstance) clothInstance.init();
+    });
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 3. ACOUSTIC WEAVE & FLAVOR SYNESTHESIA CONTROLLER
+  // ─────────────────────────────────────────────────────────────────────────
+  const weaveCanvas = document.getElementById('weaveMatrixCanvas');
+  const weaveCtx = weaveCanvas ? weaveCanvas.getContext('2d') : null;
+  const acousticInput = document.getElementById('acousticInput');
+  const generateWeaveBtn = document.getElementById('generateWeaveBtn');
+  const downloadWeaveBtn = document.getElementById('downloadWeaveBtn');
+  let lastWeaveData = null;
+
+  async function generateWeave(descriptor) {
+    try {
+      const res = await fetch('/api/textile/acoustic-weave', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sound_descriptor: descriptor || 'Jazz syncopated rhythm', matrix_size: 32 })
+      });
+      const data = await res.json();
+      lastWeaveData = data;
+      renderWeaveMatrix(data.loom_draft_grid);
+
+      const dimsEl = document.getElementById('weaveDims');
+      const ratioEl = document.getElementById('weaveRatio');
+      if (dimsEl) dimsEl.textContent = data.matrix_dimensions;
+      if (ratioEl) ratioEl.textContent = `${(data.warp_float_ratio * 100).toFixed(1)}% (${data.structural_integrity})`;
+    } catch (e) {
+      console.warn('Acoustic weave error:', e);
+    }
+  }
+
+  function renderWeaveMatrix(grid) {
+    if (!weaveCtx || !grid) return;
+    const w = weaveCanvas.width;
+    const h = weaveCanvas.height;
+    weaveCtx.fillStyle = '#030712';
+    weaveCtx.fillRect(0, 0, w, h);
+
+    const rows = grid.length;
+    const cols = grid[0].length;
+    const cellW = w / cols;
+    const cellH = h / rows;
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const isWarpUp = grid[r][c] === 1;
+        if (isWarpUp) {
+          weaveCtx.fillStyle = '#00F5A0'; // Warp float
+        } else {
+          weaveCtx.fillStyle = '#0B1528'; // Weft float
+        }
+        weaveCtx.fillRect(c * cellW + 0.5, r * cellH + 0.5, cellW - 1, cellH - 1);
+      }
+    }
+  }
+
+  if (generateWeaveBtn) {
+    generateWeaveBtn.addEventListener('click', () => {
+      generateWeave(acousticInput ? acousticInput.value : '');
+    });
+  }
+
+  const presetPills = document.querySelectorAll('.preset-pill');
+  presetPills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      presetPills.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      if (acousticInput) acousticInput.value = pill.dataset.preset;
+      generateWeave(pill.dataset.preset);
+    });
+  });
+
+  if (downloadWeaveBtn) {
+    downloadWeaveBtn.addEventListener('click', () => {
+      if (!lastWeaveData) return;
+      const blob = new Blob([JSON.stringify(lastWeaveData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `jacquard_loom_draft_${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  // Flavor to Textile
+  const flavorInput = document.getElementById('flavorInput');
+  const extractFlavorBtn = document.getElementById('extractFlavorBtn');
+  const flavorSwatchesBox = document.getElementById('flavorSwatchesBox');
+
+  async function extractFlavor(profile) {
+    try {
+      const res = await fetch('/api/textile/flavor-to-textile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ flavor_profile: profile || 'smoky, citrusy, sharp' })
+      });
+      const data = await res.json();
+      if (data && data.pantone_tcx_palette && flavorSwatchesBox) {
+        flavorSwatchesBox.innerHTML = '';
+        data.pantone_tcx_palette.forEach(p => {
+          const chip = document.createElement('div');
+          chip.className = 'pantone-chip';
+          chip.innerHTML = `
+            <div class="pantone-color-block" style="background:${p.hex}"></div>
+            <div class="pantone-chip-meta">
+              <span class="pantone-chip-name">${p.color_name}</span>
+              <span class="pantone-chip-code">${p.pantone}</span>
+            </div>
+          `;
+          flavorSwatchesBox.appendChild(chip);
+        });
+
+        const yarnEl = document.getElementById('flavorYarnSpec');
+        const handEl = document.getElementById('flavorTactileHand');
+        if (yarnEl) yarnEl.textContent = data.yarn_and_structure_spec;
+        if (handEl) handEl.textContent = data.extracted_tactile_profile.join(', ');
+      }
+    } catch (e) {
+      console.warn('Flavor extraction error:', e);
+    }
+  }
+
+  if (extractFlavorBtn) {
+    extractFlavorBtn.addEventListener('click', () => {
+      extractFlavor(flavorInput ? flavorInput.value : '');
+    });
+  }
+  // Initialize initial flavor swatches
+  extractFlavor('smoky, citrusy, sharp with roasted sienna');
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 4. CHRONO-AGING TIME-TRAVELER & BIO-TEXTILE CONTROLLER
+  // ─────────────────────────────────────────────────────────────────────────
+  const chronoCanvas = document.getElementById('chronoCanvas');
+  const chronoCtx = chronoCanvas ? chronoCanvas.getContext('2d') : null;
+  const timeStepBtns = document.querySelectorAll('.time-step-btn');
+  let lastChronoTime = '2 years';
+
+  async function setChronoMilestone(timeMilestone) {
+    lastChronoTime = timeMilestone;
+    timeStepBtns.forEach(b => b.classList.toggle('active', b.dataset.time === timeMilestone));
+
+    try {
+      const res = await fetch('/api/textile/chrono-aging', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fabric_type: 'raw_denim', city_climate: 'Seattle, USA', time_milestone: timeMilestone })
+      });
+      const data = await res.json();
+
+      const erosionEl = document.getElementById('chronoErosion');
+      const tensileEl = document.getElementById('chronoTensile');
+      const patinaEl = document.getElementById('chronoPatina');
+
+      if (erosionEl) erosionEl.textContent = `${data.indigo_ring_dye_erosion_pct}% Washdown`;
+      if (tensileEl) tensileEl.textContent = `${data.retained_tensile_strength_pct}%`;
+      if (patinaEl) patinaEl.textContent = data.surface_patina_description;
+
+      renderChronoCanvas(data.indigo_ring_dye_erosion_pct);
+    } catch (e) {
+      console.warn('Chrono error:', e);
+    }
+  }
+
+  function renderChronoCanvas(fadePct) {
+    if (!chronoCtx) return;
+    const w = chronoCanvas.width;
+    const h = chronoCanvas.height;
+
+    // Base raw denim deep indigo
+    chronoCtx.fillStyle = '#0F1A34';
+    chronoCtx.fillRect(0, 0, w, h);
+
+    // Whiskers and honeycombs fade intensity
+    const fadeAlpha = fadePct / 100.0;
+    chronoCtx.strokeStyle = `rgba(125, 211, 252, ${0.15 + fadeAlpha * 0.75})`;
+    chronoCtx.lineWidth = 3.5;
+
+    // Draw whiskering creases
+    for (let i = 0; i < 6; i++) {
+      chronoCtx.beginPath();
+      chronoCtx.moveTo(w * 0.2, h * (0.2 + i * 0.12));
+      chronoCtx.quadraticCurveTo(w * 0.5, h * (0.28 + i * 0.12), w * 0.8, h * (0.2 + i * 0.12));
+      chronoCtx.stroke();
+    }
+
+    // Honeycomb abrasion points behind knees
+    if (fadePct > 30) {
+      chronoCtx.strokeStyle = `rgba(224, 242, 254, ${fadeAlpha * 0.65})`;
+      chronoCtx.lineWidth = 2.0;
+      for (let y = 30; y < h - 30; y += 22) {
+        chronoCtx.beginPath();
+        chronoCtx.moveTo(w * 0.35, y);
+        chronoCtx.lineTo(w * 0.45, y + 10);
+        chronoCtx.lineTo(w * 0.55, y);
+        chronoCtx.lineTo(w * 0.65, y + 10);
+        chronoCtx.stroke();
+      }
+    }
+  }
+
+  timeStepBtns.forEach(btn => {
+    btn.addEventListener('click', () => setChronoMilestone(btn.dataset.time));
+  });
+
+  // Bio-Textile Environmental Sliders
+  const bioHumSlider = document.getElementById('bioHumSlider');
+  const bioHumVal = document.getElementById('bioHumVal');
+  const bioTempSlider = document.getElementById('bioTempSlider');
+  const bioTempVal = document.getElementById('bioTempVal');
+
+  async function updateBioTextile() {
+    const hum = parseFloat(bioHumSlider.value || 85);
+    const temp = parseFloat(bioTempSlider.value || 32);
+    if (bioHumVal) bioHumVal.textContent = `${hum}%`;
+    if (bioTempVal) bioTempVal.textContent = `${temp} °C`;
+
+    try {
+      const res = await fetch('/api/textile/bio-textile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ temp_c: temp, humidity_pct: hum, sweat_ph: 5.5 })
+      });
+      const data = await res.json();
+      if (data && data.bio_response) {
+        const b = data.bio_response;
+        const swellEl = document.getElementById('bioSwelling');
+        const transEl = document.getElementById('bioTranslucency');
+        const suppEl = document.getElementById('bioSuppleness');
+        if (swellEl) swellEl.textContent = b.microbial_hydration_expansion;
+        if (transEl) transEl.textContent = b.optical_translucency;
+        if (suppEl) suppEl.textContent = b.flexibility_and_drape_gain;
+      }
+    } catch (_) {}
+  }
+
+  if (bioHumSlider) bioHumSlider.addEventListener('input', updateBioTextile);
+  if (bioTempSlider) bioTempSlider.addEventListener('input', updateBioTextile);
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 5. ZERO-WASTE KINETIC ORIGAMI GARMENT ARCHITECT
+  // ─────────────────────────────────────────────────────────────────────────
+  const origamiCanvas = document.getElementById('origamiCanvas');
+  const origamiCtx = origamiCanvas ? origamiCanvas.getContext('2d') : null;
+  const origamiStepBtns = document.querySelectorAll('.origami-step-btn');
+  let lastOrigamiStep = 1;
+
+  const origamiStepsData = {
+    1: {
+      title: "Step 1: Grid Scoring & Grain Alignment",
+      text: "Lay the 140x280 cm silk rectangle flat. Mark 12 longitudinal mountain creases parallel to warp grain every 11.6 cm without cutting any threads."
+    },
+    2: {
+      title: "Step 2: Diagonal Accordion Pre-Creasing",
+      text: "Score alternating 45° diagonal valley folds across the grid, establishing the kinetic diamond tessellation."
+    },
+    3: {
+      title: "Step 3: Torso Volume Collapse",
+      text: "Compress the central 80 cm section accordion-style. The fabric spontaneously curves into an ergonomic cylindrical bodice without cutting."
+    },
+    4: {
+      title: "Step 4: Sleeve Geometry Emergence",
+      text: "Invert the upper left and right quadrant folds outwards. The rectangular corners automatically form anatomical raglan sleeves."
+    },
+    5: {
+      title: "Step 5: Thermal Steam Setting & Closure",
+      text: "Apply 110°C pressurized steam along the creases to set the molecular memory. Secure front lapels using two hidden magnet snaps. Zero scraps produced."
+    }
+  };
+
+  function setOrigamiStep(stepNum) {
+    lastOrigamiStep = stepNum;
+    origamiStepBtns.forEach(b => b.classList.toggle('active', parseInt(b.dataset.step) === stepNum));
+
+    const s = origamiStepsData[stepNum] || origamiStepsData[1];
+    const titleEl = document.getElementById('origamiStepTitle');
+    const textEl = document.getElementById('origamiStepText');
+    if (titleEl) titleEl.textContent = s.title;
+    if (textEl) textEl.textContent = s.text;
+
+    renderOrigamiCanvas(stepNum);
+  }
+
+  function renderOrigamiCanvas(step) {
+    if (!origamiCtx) return;
+    const w = origamiCanvas.width;
+    const h = origamiCanvas.height;
+    origamiCtx.fillStyle = '#030712';
+    origamiCtx.fillRect(0, 0, w, h);
+
+    const cx = w / 2;
+    const cy = h / 2;
+
+    // Draw uncut rectangular outline
+    origamiCtx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+    origamiCtx.lineWidth = 1.5;
+    origamiCtx.strokeRect(40, 25, w - 80, h - 50);
+
+    // Draw kinetic tessellation creases based on step
+    const numCreases = 10;
+    const progress = step / 5.0;
+
+    // Mountain folds (Cyan)
+    origamiCtx.strokeStyle = '#22D3EE';
+    origamiCtx.lineWidth = 1.8;
+    for (let i = 1; i < numCreases; i++) {
+      const x = 40 + ((w - 80) / numCreases) * i;
+      origamiCtx.beginPath();
+      origamiCtx.moveTo(x, 25);
+      const wave = Math.sin(i * 1.5) * 20 * progress;
+      origamiCtx.lineTo(x + wave, cy);
+      origamiCtx.lineTo(x, h - 25);
+      origamiCtx.stroke();
+    }
+
+    // Valley folds (Mint)
+    origamiCtx.strokeStyle = '#00F5A0';
+    origamiCtx.lineWidth = 1.4;
+    for (let i = 0; i < numCreases - 1; i++) {
+      const x1 = 40 + ((w - 80) / numCreases) * i;
+      const x2 = x1 + ((w - 80) / numCreases);
+      origamiCtx.beginPath();
+      origamiCtx.moveTo(x1, 25);
+      origamiCtx.lineTo(x2, h - 25);
+      origamiCtx.stroke();
+    }
+
+    // Draw 3D bodice collapse contour
+    if (step >= 3) {
+      origamiCtx.fillStyle = 'rgba(0, 245, 160, 0.15)';
+      origamiCtx.beginPath();
+      origamiCtx.ellipse(cx, cy, 60 * progress, 80 * progress, 0, 0, Math.PI * 2);
+      origamiCtx.fill();
+      origamiCtx.strokeStyle = '#38BDF8';
+      origamiCtx.stroke();
+    }
+  }
+
+  origamiStepBtns.forEach(btn => {
+    btn.addEventListener('click', () => setOrigamiStep(parseInt(btn.dataset.step)));
+  });
+
+  const askOrigamiChatBtn = document.getElementById('askOrigamiChatBtn');
+  if (askOrigamiChatBtn) {
+    askOrigamiChatBtn.addEventListener('click', () => {
+      closeStudio();
+      if (typeof sendMessage === 'function') {
+        sendMessage("Explain the exact geometric folding formulas and origami pattern dimensions to transform a 140x280 cm silk rectangle into a Tessellated Pleat Jacket with zero waste.");
+      }
+    });
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 6. LOOMSIDE VISION AUDITOR & COMPLIANCE STRESS-TESTER
+  // ─────────────────────────────────────────────────────────────────────────
+  const visionCanvas = document.getElementById('visionCanvas');
+  const visionCtx = visionCanvas ? visionCanvas.getContext('2d') : null;
+  const runVisionAuditBtn = document.getElementById('runVisionAuditBtn');
+  const runMacroGsmBtn = document.getElementById('runMacroGsmBtn');
+
+  async function runLoomsideVision() {
+    try {
+      const res = await fetch('/api/textile/vision-audit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ roll_length_meters: 120.0 })
+      });
+      const data = await res.json();
+
+      const astmEl = document.getElementById('astmScore');
+      const defectsEl = document.getElementById('defectsLogged');
+      const yieldEl = document.getElementById('yieldLoss');
+
+      if (astmEl) astmEl.textContent = `${data.astm_d5430_points_per_100_sq_yd} pts (${data.commercial_grade})`;
+      if (defectsEl) defectsEl.textContent = `${data.total_defects_logged} anomalies logged along 120m roll`;
+      if (yieldEl) yieldEl.textContent = `${data.estimated_yield_loss_pct}%`;
+
+      renderVisionCanvas(data.defect_log);
+    } catch (e) {
+      console.warn('Vision audit error:', e);
+    }
+  }
+
+  function renderVisionCanvas(defects) {
+    if (!visionCtx) return;
+    const w = visionCanvas.width;
+    const h = visionCanvas.height;
+
+    // Fabric weave texture background
+    visionCtx.fillStyle = '#060D1F';
+    visionCtx.fillRect(0, 0, w, h);
+
+    // Draw yarn grid lines
+    visionCtx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+    visionCtx.lineWidth = 1;
+    for (let x = 0; x < w; x += 10) {
+      visionCtx.beginPath(); visionCtx.moveTo(x, 0); visionCtx.lineTo(x, h); visionCtx.stroke();
+    }
+
+    // Highlight detected defect bounding boxes
+    if (defects && defects.length) {
+      defects.forEach((d) => {
+        const bb = d.bounding_box;
+        const bx = bb.x_norm * w;
+        const by = bb.y_norm * h;
+        const bw = bb.w_norm * w + 20;
+        const bh = bb.h_norm * h + 15;
+
+        visionCtx.strokeStyle = '#EF4444'; // Red bounding box
+        visionCtx.lineWidth = 2;
+        visionCtx.strokeRect(bx, by, bw, bh);
+
+        visionCtx.fillStyle = 'rgba(239, 68, 68, 0.2)';
+        visionCtx.fillRect(bx, by, bw, bh);
+
+        visionCtx.fillStyle = '#F8FAFC';
+        visionCtx.font = '10px JetBrains Mono, monospace';
+        visionCtx.fillText(`[${d.defect_type} @ ${d.meter_mark}]`, bx, Math.max(12, by - 4));
+      });
+    }
+  }
+
+  if (runVisionAuditBtn) runVisionAuditBtn.addEventListener('click', runLoomsideVision);
+  if (runMacroGsmBtn) {
+    runMacroGsmBtn.addEventListener('click', async () => {
+      try {
+        const res = await fetch('/api/textile/macro-gsm', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ macro_desc: 'twill 2/1' })
+        });
+        const data = await res.json();
+        alert(`Macro Optical Deconstruction Result:\nWeave: ${data.identified_weave_pattern}\nEPI: ${data.measured_ends_per_inch_epi} | PPI: ${data.measured_picks_per_inch_ppi}\nCalculated GSM: ${data.calculated_gsm} GSM\nYarn Count: ${data.estimated_yarn_count}`);
+      } catch (_) {}
+    });
+  }
+
+  // Initial vision frame
+  renderVisionCanvas([]);
+
+  // Compliance Stress-Testing
+  const complianceInput = document.getElementById('complianceInput');
+  const checkComplianceBtn = document.getElementById('checkComplianceBtn');
+  if (checkComplianceBtn) {
+    checkComplianceBtn.addEventListener('click', async () => {
+      const q = complianceInput ? complianceInput.value : '';
+      try {
+        const res = await fetch('/api/textile/compliance-check', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fabric_spec: q, chemical_dyes: [q] })
+        });
+        const data = await res.json();
+        const telemetry = document.getElementById('complianceTelemetry');
+        if (telemetry) {
+          const hasCrit = data.critical_violations && data.critical_violations.length;
+          telemetry.innerHTML = `
+            <div class="t-line"><span>EU REACH Compliance:</span> <strong class="${hasCrit ? 'text-warn' : 'text-mint'}">${hasCrit ? 'CRITICAL VIOLATION DETECTED' : 'PASSED (Zero SVHC Violations)'}</strong></div>
+            <div class="t-line"><span>Digital Product Passport:</span> <strong>${data.digital_product_passport_readiness}</strong></div>
+            <div class="t-line"><span>Action Recommendation:</span> <em>${hasCrit ? data.critical_violations[0].message : 'All ingredients certified safe for global export.'}</em></div>
+          `;
+        }
+      } catch (_) {}
+    });
+  }
+})();
+

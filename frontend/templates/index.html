@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Syne:wght@700;800;900&family=Orbitron:wght@600;700;900&family=Space+Grotesk:wght@600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/static/css/style.css?v=3.1.0"/>
+  <link rel="stylesheet" href="/static/css/style.css?v=3.2.0"/>
 </head>
 <body>
 
@@ -298,6 +298,7 @@
       <button class="tts-toggle" id="ttsToggle" title="Voice readout">🔊</button>
       <button class="history-toggle-btn" id="historyToggle" title="Chat History">🕐</button>
       <button class="share-btn" id="shareBtn" title="Share APEX with Others">🔗 Share</button>
+      <button class="creative-studio-btn" id="creativeStudioBtn" title="Launch Radical Textile Creative Studio & Haptic Lab">🧵 Studio Lab</button>
       <div class="user-profile-badge" id="userProfileBadge" style="display:none">
         <div class="user-avatar-circle" id="userAvatarCircle">U</div>
         <span class="user-name-label" id="userNameLabel">User</span>
@@ -323,25 +324,39 @@
             <span class="starter-subtitle">Track Order #ORD-8492 with container status and port arrival ETA</span>
           </div>
         </button>
-        <button class="feature starter-question-btn" type="button" data-prompt="Do we have 180 GSM cotton and 240 GSM twill in stock? Check warehouse bay and roll count" title="Click to ask this question immediately">
-          <span class="feature-icon">🧵</span>
+        <button class="feature starter-question-btn" type="button" data-prompt="Experience haptic fabric emulation (Silk Chiffon vs 425 GSM Denim) and simulate real-time drape physics" title="Click to ask this question immediately">
+          <span class="feature-icon">📳</span>
           <div class="starter-text-wrap">
-            <span class="starter-title">Check 180 GSM &amp; 240 GSM stock</span>
-            <span class="starter-subtitle">Check warehouse bay, roll count, and available meters</span>
+            <span class="starter-title">Haptic &amp; Drape Physics</span>
+            <span class="starter-subtitle">Tactile touch emulation &amp; real-time cloth drape simulation</span>
           </div>
         </button>
-        <button class="feature starter-question-btn" type="button" data-prompt="What are the wash care instructions, shrinkage rates, and OEKO-TEX Standard 100 certifications for our cotton fabrics?" title="Click to ask this question immediately">
-          <span class="feature-icon">📋</span>
+        <button class="feature starter-question-btn" type="button" data-prompt="Translate acoustic sound waves and jazz harmonics into a mathematical Jacquard weave draft matrix" title="Click to ask this question immediately">
+          <span class="feature-icon">🎵</span>
           <div class="starter-text-wrap">
-            <span class="starter-title">OEKO-TEX &amp; Wash Care specs</span>
-            <span class="starter-subtitle">Care instructions, shrinkage rates, and certifications</span>
+            <span class="starter-title">Acoustic Weave Synthesizer</span>
+            <span class="starter-subtitle">Translate music tempo &amp; pitch into electronic loom Jacquard patterns</span>
           </div>
         </button>
-        <button class="feature starter-question-btn" type="button" data-prompt="Show current machinery output, loom RPM, running efficiency, and active batches on the shopfloor" title="Click to ask this question immediately">
-          <span class="feature-icon">🏭</span>
+        <button class="feature starter-question-btn" type="button" data-prompt="Simulate 2 years of atmospheric UV fade, humidity patina, and honeycomb wear on raw indigo denim" title="Click to ask this question immediately">
+          <span class="feature-icon">⏳</span>
           <div class="starter-text-wrap">
-            <span class="starter-title">Loom &amp; Batch Telemetry</span>
-            <span class="starter-subtitle">Show machinery output, loom RPM, efficiency, and batch status</span>
+            <span class="starter-title">Chrono-Dye Aging Time-Travel</span>
+            <span class="starter-subtitle">Atmospheric degradation, whiskers, and bio-textile living response</span>
+          </div>
+        </button>
+        <button class="feature starter-question-btn" type="button" data-prompt="Generate step-by-step kinetic folding guidance to create a jacket from a single uncut rectangle with 0% scrap" title="Click to ask this question immediately">
+          <span class="feature-icon">📐</span>
+          <div class="starter-text-wrap">
+            <span class="starter-title">Zero-Waste Kinetic Origami</span>
+            <span class="starter-subtitle">Transform 1 uncut rectangle into 3D garment with 0% cut scrap</span>
+          </div>
+        </button>
+        <button class="feature starter-question-btn" type="button" data-prompt="Run real-time loomside computer vision defect audit on running fabric with ASTM 4-point penalty scoring" title="Click to ask this question immediately">
+          <span class="feature-icon">🔍</span>
+          <div class="starter-text-wrap">
+            <span class="starter-title">Loomside Vision &amp; Quality</span>
+            <span class="starter-subtitle">Warp skip &amp; weft float detection with ASTM 4-point yield scoring</span>
           </div>
         </button>
       </div>
@@ -494,8 +509,302 @@
   </div>
 </div>
 
+<!-- ── RADICAL CREATIVE TEXTILE STUDIO & HAPTIC LAB MODAL ───────────── -->
+<div id="creativeStudioModal" class="modal-overlay" style="display:none">
+  <div class="modal-card studio-modal-card">
+    <div class="modal-header">
+      <div class="modal-brand">
+        <span class="modal-icon">🧵</span>
+        <div>
+          <h3 class="modal-title">APEX Radical Creative Studio &amp; Haptic Lab</h3>
+          <span class="modal-sub">Tactile Haptics · Drape Physics · Acoustic Weave · Chrono-Aging · Zero-Waste Origami</span>
+        </div>
+      </div>
+      <button class="modal-close-btn" id="closeCreativeStudioModal">✕</button>
+    </div>
+
+    <!-- Studio Navigation Tabs -->
+    <div class="studio-tab-bar">
+      <button class="studio-tab-btn active" data-tab="hapticTab">📳 Haptic &amp; Drape Physics</button>
+      <button class="studio-tab-btn" data-tab="acousticTab">🎵 Acoustic Weave &amp; Synesthesia</button>
+      <button class="studio-tab-btn" data-tab="chronoTab">⏳ Chrono-Dye Aging &amp; Bio-Textile</button>
+      <button class="studio-tab-btn" data-tab="origamiTab">📐 Zero-Waste Origami Architect</button>
+      <button class="studio-tab-btn" data-tab="visionTab">🔍 Vision Audit &amp; Compliance</button>
+    </div>
+
+    <div class="modal-body studio-modal-body">
+      <!-- ── TAB 1: HAPTIC & DRAPE PHYSICS ── -->
+      <div class="studio-tab-pane active" id="hapticTab">
+        <div class="studio-grid-2">
+          <!-- Left: Haptic Touchpad & Specs -->
+          <div class="studio-card">
+            <h4 class="studio-subhead">1. Tactile Fabric Haptic Emulation</h4>
+            <p class="studio-desc">Select a fabric and slide your finger or mouse across the tactile pad. Generates real-time vibration pulse frequencies via mobile Web Vibration API and tactile drag resistance.</p>
+            
+            <div class="studio-form-row">
+              <label class="studio-label" for="hapticFabricSelect">CHOOSE FABRIC SPEC:</label>
+              <select id="hapticFabricSelect" class="studio-select">
+                <option value="silk_chiffon">Mulberry Silk Chiffon (32 GSM)</option>
+                <option value="cotton_voile">Superfine Cotton Voile (68 GSM)</option>
+                <option value="linen_slub">Normandy Washed Slub Linen (195 GSM)</option>
+                <option value="cashmere_fleece">Inner Mongolian Brushed Cashmere (310 GSM)</option>
+                <option value="heavy_denim" selected>14.5 oz Raw Kurabo Selvedge Denim (425 GSM)</option>
+                <option value="viscose_jersey">High-Twist Bamboo Viscose Jersey (220 GSM)</option>
+              </select>
+            </div>
+
+            <!-- Interactive Touchpad -->
+            <div class="haptic-touchpad" id="hapticTouchpad">
+              <div class="touchpad-grid-mesh"></div>
+              <div class="touchpad-ripple" id="touchpadRipple"></div>
+              <div class="touchpad-instruction">
+                <span class="touch-icon">👆</span>
+                <strong>TOUCHPAD DRAG SENSOR</strong>
+                <span>Slide finger or cursor here to feel tactile vibration &amp; friction</span>
+              </div>
+            </div>
+
+            <!-- Live Telemetry Readout -->
+            <div class="telemetry-box" id="hapticTelemetry">
+              <div class="t-line"><span>Fabric Name:</span> <strong id="hapticName">14.5 oz Raw Kurabo Selvedge Denim</strong></div>
+              <div class="t-line"><span>Nominal Weight:</span> <strong id="hapticGsm">425 GSM</strong></div>
+              <div class="t-line"><span>Tactile Vibration Resonance:</span> <strong id="hapticFreq" class="text-mint">65 Hz (Deep Mechanical Rumble)</strong></div>
+              <div class="t-line"><span>Surface Friction (μ):</span> <strong id="hapticFriction" class="text-cyan">0.75 μ (High Drag)</strong></div>
+              <div class="t-line"><span>Tactile Descriptor:</span> <em id="hapticDesc">Rigid ridged diagonal twill ribs with dense, unwashed raw starch resistance</em></div>
+            </div>
+          </div>
+
+          <!-- Right: Real-Time Verlet Cloth Physics Simulation -->
+          <div class="studio-card">
+            <h4 class="studio-subhead">2. Real-Time Drape &amp; Movement Physics</h4>
+            <p class="studio-desc">Interactive Verlet-integration cloth mesh running live at 60 FPS. Click and drag the cloth, adjust gravity, or blow wind to watch drape, folding, and flow.</p>
+            
+            <div class="canvas-wrap">
+              <canvas id="clothCanvas" width="460" height="280"></canvas>
+            </div>
+
+            <div class="cloth-controls-row">
+              <div class="cloth-slider-group">
+                <label>Wind Velocity: <span id="windVal">0.0 m/s</span></label>
+                <input type="range" id="windSlider" min="0" max="40" value="0" class="studio-slider"/>
+              </div>
+              <div class="cloth-slider-group">
+                <label>Gravity: <span id="gravVal">1.0x</span></label>
+                <input type="range" id="gravSlider" min="0.2" max="2.0" step="0.1" value="1.0" class="studio-slider"/>
+              </div>
+              <button class="studio-mini-btn" id="shakeClothBtn">💨 Wind Burst</button>
+              <button class="studio-mini-btn" id="resetClothBtn">↺ Reset Cloth</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB 2: ACOUSTIC WEAVE & SYNESTHESIA ── -->
+      <div class="studio-tab-pane" id="acousticTab">
+        <div class="studio-grid-2">
+          <!-- Acoustic Jacquard Weave -->
+          <div class="studio-card">
+            <h4 class="studio-subhead">1. Acoustic Weave Synthesizer (Sound to Jacquard)</h4>
+            <p class="studio-desc">Translates sound waves, tempo (BPM), and harmonic pitch into a real-time mathematical Jacquard loom draft matrix (warp &amp; weft floats).</p>
+            
+            <div class="studio-form-row">
+              <input type="text" id="acousticInput" class="studio-input" value="Jazz solo syncopated rhythm with swing harmonics" placeholder="Enter song, genre, or tempo..."/>
+              <button class="studio-action-btn" id="generateWeaveBtn">⚡ Synthesize Weave</button>
+            </div>
+            
+            <div class="preset-pill-row">
+              <button class="preset-pill active" data-preset="Jazz syncopated swing rhythm">🎷 Jazz Syncopation</button>
+              <button class="preset-pill" data-preset="128 BPM Minimal Electronic Techno Pulse">⚡ 128 BPM Techno</button>
+              <button class="preset-pill" data-preset="Ambient Drone with slow acoustic swell">🌊 Ambient Drone</button>
+              <button class="preset-pill" data-preset="Classical Bach polyphonic arpeggios">🎻 Bach Polyphony</button>
+            </div>
+
+            <!-- Weave Matrix Canvas -->
+            <div class="canvas-wrap">
+              <canvas id="weaveMatrixCanvas" width="440" height="240"></canvas>
+            </div>
+
+            <div class="telemetry-box" id="acousticTelemetry">
+              <div class="t-line"><span>Shed Grid:</span> <strong id="weaveDims">32x32 Jacquard Shed</strong></div>
+              <div class="t-line"><span>Warp Float Ratio:</span> <strong id="weaveRatio" class="text-mint">52.8% (Balanced Loom Shed)</strong></div>
+              <div class="t-line"><span>Structural Feasibility:</span> <strong class="text-cyan">Weavable on Electronic Jacquard</strong></div>
+            </div>
+
+            <button class="studio-download-btn" id="downloadWeaveBtn">📥 Download Electronic Loom Draft (.JSON)</button>
+          </div>
+
+          <!-- Flavor to Textile Extractor -->
+          <div class="studio-card">
+            <h4 class="studio-subhead">2. Flavor &amp; Culinary Palette Extraction</h4>
+            <p class="studio-desc">Semantic mapping of culinary taste notes into tactile yarn profile, slub structure, and 5-color Pantone TCX palettes.</p>
+            
+            <div class="studio-form-row">
+              <input type="text" id="flavorInput" class="studio-input" value="Smoky, citrusy, sharp with roasted sienna" placeholder="Enter flavor profile..."/>
+              <button class="studio-action-btn" id="extractFlavorBtn">🎨 Map Palette</button>
+            </div>
+
+            <div class="flavor-swatches-box" id="flavorSwatchesBox"></div>
+
+            <div class="telemetry-box" id="flavorTelemetry">
+              <div class="t-line"><span>Yarn &amp; Weave Spec:</span> <strong id="flavorYarnSpec">Ne 12s Ring-Spun Carded Slub with charred vegetable dye finish</strong></div>
+              <div class="t-line"><span>Tactile Hand:</span> <em id="flavorTactileHand">Coarse, open slub texture simulating charcoal grain with crisp high-twist rebound</em></div>
+              <div class="t-line"><span>Recommended Weight:</span> <strong class="text-mint">175 GSM</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB 3: CHRONO-DYE & BIO-TEXTILE ── -->
+      <div class="studio-tab-pane" id="chronoTab">
+        <div class="studio-grid-2">
+          <!-- Chrono-Aging Time-Traveler -->
+          <div class="studio-card">
+            <h4 class="studio-subhead">1. Patina &amp; Chrono-Dye Ageing Time-Traveler</h4>
+            <p class="studio-desc">Simulate how raw indigo denim or natural canvas ages over years based on geographic UV flux, humidity, and abrasion zones.</p>
+            
+            <div class="studio-time-stepper">
+              <button class="time-step-btn" data-time="0 months">Brand New (0 Mo)</button>
+              <button class="time-step-btn" data-time="6 months">6 Months</button>
+              <button class="time-step-btn active" data-time="2 years">2 Years</button>
+              <button class="time-step-btn" data-time="5 years">5 Years</button>
+            </div>
+
+            <div class="canvas-wrap">
+              <canvas id="chronoCanvas" width="460" height="220"></canvas>
+            </div>
+
+            <div class="telemetry-box" id="chronoTelemetry">
+              <div class="t-line"><span>Indigo Ring-Dye Erosion:</span> <strong id="chronoErosion" class="text-mint">52% Washdown</strong></div>
+              <div class="t-line"><span>Retained Tensile Strength:</span> <strong id="chronoTensile" class="text-cyan">89.5%</strong></div>
+              <div class="t-line"><span>Surface Patina:</span> <em id="chronoPatina">Pronounced razor-sharp honeycombs behind knees, electric blue whiskers, edge roping at hem.</em></div>
+            </div>
+          </div>
+
+          <!-- Living Bio-Textile Simulator -->
+          <div class="studio-card">
+            <h4 class="studio-subhead">2. Living Bio-Textile Environmental Predictor</h4>
+            <p class="studio-desc">Model bacterial cellulose and algae sequins dynamically reacting to wearer body heat, sweat pH, and ambient humidity.</p>
+            
+            <div class="cloth-controls-row">
+              <div class="cloth-slider-group">
+                <label>Ambient Humidity: <span id="bioHumVal">85%</span></label>
+                <input type="range" id="bioHumSlider" min="20" max="100" value="85" class="studio-slider"/>
+              </div>
+              <div class="cloth-slider-group">
+                <label>Temperature: <span id="bioTempVal">32 °C</span></label>
+                <input type="range" id="bioTempSlider" min="15" max="45" value="32" class="studio-slider"/>
+              </div>
+            </div>
+
+            <div class="telemetry-box" id="bioTelemetry" style="margin-top:16px">
+              <div class="t-line"><span>Material Class:</span> <strong>Living Bacterial Cellulose &amp; Algae Pellicle</strong></div>
+              <div class="t-line"><span>Hydration Thickness Swelling:</span> <strong id="bioSwelling" class="text-mint">+7.2% volumetric expansion</strong></div>
+              <div class="t-line"><span>Optical Translucency:</span> <strong id="bioTranslucency" class="text-cyan">81.0% (Opaque chalk shifts to frosted veil)</strong></div>
+              <div class="t-line"><span>Suppleness &amp; Drape Gain:</span> <strong id="bioSuppleness">+15.8% under body heat</strong></div>
+              <div class="t-line"><span>Bio-Film Integrity:</span> <em>Active bio-polymer cohesion preventing tear propagation</em></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB 4: ZERO-WASTE ORIGAMI ARCHITECT ── -->
+      <div class="studio-tab-pane" id="origamiTab">
+        <div class="studio-card" style="width:100%">
+          <div class="origami-header-row">
+            <div>
+              <h4 class="studio-subhead">Kinetic Zero-Waste Origami Garment Architect</h4>
+              <p class="studio-desc">Algorithmic folding plan turning a single uncut rectangle of fabric into a 3D wearable silhouette with 0.0% cutting scraps.</p>
+            </div>
+            <div class="origami-badge-group">
+              <span class="zero-waste-pill">🌱 0.0% FABRIC CUT LOSS</span>
+              <span class="origami-geom-pill">📐 Miura-Ori &amp; Yoshimura Tessellation</span>
+            </div>
+          </div>
+
+          <div class="origami-stepper-row">
+            <button class="origami-step-btn active" data-step="1">Step 1: Grid Scoring</button>
+            <button class="origami-step-btn" data-step="2">Step 2: Diagonal Creasing</button>
+            <button class="origami-step-btn" data-step="3">Step 3: Torso Collapse</button>
+            <button class="origami-step-btn" data-step="4">Step 4: Sleeve Emergence</button>
+            <button class="origami-step-btn" data-step="5">Step 5: Steam Memory</button>
+          </div>
+
+          <div class="studio-grid-2" style="margin-top:16px">
+            <div class="canvas-wrap">
+              <canvas id="origamiCanvas" width="460" height="240"></canvas>
+            </div>
+            <div class="origami-instruction-card">
+              <h5 class="origami-step-title" id="origamiStepTitle">Step 1: Grid Scoring &amp; Grain Alignment</h5>
+              <p class="origami-step-text" id="origamiStepText">Lay the 140x280 cm silk rectangle flat. Mark 12 longitudinal mountain creases parallel to warp grain every 11.6 cm without cutting any threads.</p>
+              
+              <div class="origami-checklist">
+                <div>✔️ <strong>Starting Material:</strong> 1 Single Uncut Rectangle (140 x 280 cm)</div>
+                <div>✔️ <strong>Crease Ratio:</strong> Mountain-to-Valley 1:1 with 45° angle intersections</div>
+                <div>✔️ <strong>Garment Silhouette:</strong> Tessellated Pleat Kinetic Jacket</div>
+                <div>✔️ <strong>Packability:</strong> Packs completely flat into a 20x20 cm travel square</div>
+              </div>
+
+              <button class="studio-action-btn" id="askOrigamiChatBtn" style="margin-top:16px">💬 Ask APEX for Detailed Pattern Dimensions</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB 5: VISION AUDIT & COMPLIANCE ── -->
+      <div class="studio-tab-pane" id="visionTab">
+        <div class="studio-grid-2">
+          <!-- Loomside Vision Auditor -->
+          <div class="studio-card">
+            <h4 class="studio-subhead">1. Loomside Computer Vision &amp; Macro GSM Auditor</h4>
+            <p class="studio-desc">Inspects fabric feed for warp skips, weft floats, oil spots, and computes ASTM 4-Point quality points.</p>
+            
+            <div class="studio-form-row">
+              <button class="studio-action-btn" id="runVisionAuditBtn">📷 Run Real-Time Loomside Audit</button>
+              <button class="studio-mini-btn" id="runMacroGsmBtn">🔬 Estimate Macro GSM &amp; EPI/PPI</button>
+            </div>
+
+            <div class="canvas-wrap">
+              <canvas id="visionCanvas" width="460" height="200"></canvas>
+            </div>
+
+            <div class="telemetry-box" id="visionAuditTelemetry">
+              <div class="t-line"><span>Loom Status:</span> <strong class="text-mint">Loom #04 Live Scan (120m Roll)</strong></div>
+              <div class="t-line"><span>ASTM D5430 Points/100 yd²:</span> <strong id="astmScore" class="text-mint">18.4 pts (Grade A Pass)</strong></div>
+              <div class="t-line"><span>Defects Logged:</span> <strong id="defectsLogged">2 anomalies (Warp Skip at 28.4m, Weft Float at 54.1m)</strong></div>
+              <div class="t-line"><span>Estimated Yield Loss:</span> <strong id="yieldLoss">1.8%</strong></div>
+            </div>
+          </div>
+
+          <!-- Compliance Stress-Tester & Deadstock Vault -->
+          <div class="studio-card">
+            <h4 class="studio-subhead">2. Regulatory Compliance Oracle &amp; Deadstock Matcher</h4>
+            <p class="studio-desc">Cross-references chemistry with EU REACH, OEKO-TEX Standard 100, and matches circular deadstock rolls.</p>
+            
+            <div class="studio-form-row">
+              <input type="text" id="complianceInput" class="studio-input" value="Cotton Poplin with PFAS C6 DWR finish" placeholder="Enter blend or chemical finish..."/>
+              <button class="studio-action-btn" id="checkComplianceBtn">⚖ Stress-Test</button>
+            </div>
+
+            <div class="telemetry-box" id="complianceTelemetry">
+              <div class="t-line"><span>EU REACH Status:</span> <strong class="text-warn">CRITICAL WARNING (PFAS Ban Imminent)</strong></div>
+              <div class="t-line"><span>OEKO-TEX 100 Class I:</span> <strong class="text-mint">PASSED (Heavy Metals &lt; 0.05 mg/kg)</strong></div>
+              <div class="t-line"><span>Action Recommendation:</span> <em>Substitute C6 fluorocarbon with C0 Bio-Based Wax before EU enforcement.</em></div>
+            </div>
+
+            <h5 class="studio-subhead" style="margin-top:16px">Circular Deadstock Vault Match:</h5>
+            <div class="deadstock-mini-card" id="deadstockCard">
+              <strong class="text-cyan">Lot #DS-8821: 100% Organic GOTS Cotton Sateen</strong>
+              <div style="font-size:12px; color:#94A3B8; margin-top:4px">480 Yards Available · Sage Mist (14-0115 TCX) · $3.85/yd (42% Discount vs virgin) · GOTS Certified Zero-Waste</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="/static/js/chart.min.js"></script>
 <script src="/static/js/marked.min.js"></script>
-<script src="/static/js/app.js?v=3.0.0"></script>
+<script src="/static/js/app.js?v=3.2.0"></script>
 </body>
 </html>

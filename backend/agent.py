@@ -746,6 +746,21 @@ You know EVERYTHING around the world — past, present, scientific, geographic, 
       * Supplier Shipments: Track incoming raw cotton bales (Shankar-6), yarn deliveries, and chemical POs with truck license plates, ETAs, and receiving dock inspection gates.
       * Quality Algorithms: Perform ASTM D5430 4-Point System calculations (Points/100 sq yds) and Delta E CMC (2:1) spectrophotometer shade match acceptability (< 0.80 pass threshold).
 
+16. RADICAL TEXTILE CREATIVE & ADVANCED ENGINEERING SUITE:
+    - You are equipped with APEX's proprietary Real-Time Creative Textile Studio:
+      * Tactile-to-Digital Haptic Emulation: Translates fabric specs (GSM, fiber blend, weave) into exact tactile vibration frequencies (Hz), surface friction (μ), and mobile touch vibration sequences. Explain tactile hand-feel and offer interactive haptic drag testing.
+      * Drape & Movement Physics: Physics simulation parameters (bending stiffness, shear resistance, gravity scale, wind sensitivity) showing how Silk Chiffon, Linen, Heavy Denim, and Jersey fold and flow in real-time.
+      * Loomside Computer Vision & Macro GSM: ASTM D5430 4-point defect detection (warp skips, weft floats, oil spots), defect meter logging, yield loss %, and macro optical estimation of thread count (EPI x PPI) and Peirce geometry GSM.
+      * Circular Economy Deadstock Matchmaker: Matches excess factory rolls (yardage, composition, Pantone) to sustainable brands looking for low-MOQ sourcing.
+      * Regulatory Compliance Oracle: Real-time stress-testing against EU REACH (PFAS bans, azo limits), OEKO-TEX Standard 100 Class I, GOTS 6.0, ZDHC, and EU Digital Product Passport (DPP). Proposes green chemistry substitutes.
+      * Dynamic Tariff & Freight Optimizer: Evaluates ocean freight congestion, tariffs (HS 5208/5209), lead times (India vs. Turkey vs. Vietnam), and automated garment shrinkage/yield calculation with draft PO generation.
+      * Synesthetic Acoustic Weave Generator: Translates music/audio sound waves (tempo BPM, pitch harmonics) into mathematical Jacquard loom draft matrices (warp/weft floats).
+      * Flavor & Culinary Palette Extraction: Maps abstract culinary tastes (e.g. 'smoky, citrusy, sharp') into tactile yarn profiles (slubs, crêpe twist, GSM) and 5-color Pantone TCX palettes.
+      * Lost-Art Synthesis Engine & Cultural Hybrids: Reconstructs decayed historical weaves with botanical dye identification (Madder, Woad, Weld, Cochineal) and calculates mathematical warp-resist distortions for cultural fusions (e.g. Tartan x Shibori).
+      * Chrono-Dye Atmospheric Aging & Bio-Textiles: Simulates 6-month, 2-year, and 5-year UV fading and patina (raw denim whiskers, linen wear) and models living bio-cellulose response to body heat and moisture.
+      * Zero-Waste Kinetic Origami Garment Architect: Guides step-by-step kinetic folding (Miura-Ori / Yoshimura) transforming a single uncut rectangle of fabric into a 3D wearable garment with 0% cut scrap waste.
+    - Whenever relevant, provide technical facts, formulas, mathematical parameters, and provide clean Markdown tables for comparisons.
+
 {lang_directive}
 {mem_block}{tone_block}
 Current date & time: {datetime.now(timezone.utc).strftime('%d %B %Y, %H:%M UTC')}"""
@@ -1076,6 +1091,52 @@ def _stream_worker(messages, user_role, language, industry, user_email, current_
                     )
             except Exception as e:
                 logger.debug("Textile ERP query error: %s", e)
+
+        # 6b. Query Advanced Textile Creative & Engineering Suite
+        creative_ctx = ""
+        q_lower = clean_query.lower()
+        if any(w in q_lower for w in [
+            "haptic", "vibrat", "tactile", "drape", "physics", "loomside", "vision audit",
+            "macro", "thread count", "deadstock", "compliance", "reach", "oeko", "gots",
+            "freight", "tariff", "shrinkage", "acoustic weave", "jacquard", "flavor",
+            "archive rescue", "cultural hybrid", "shibori", "tartan", "chrono", "aging",
+            "patina", "denim fade", "bio-textile", "origami", "zero-waste", "zero waste", "feel"
+        ]):
+            try:
+                import backend.advanced_textile_engine as ate
+                blocks = []
+                if "haptic" in q_lower or "tactile" in q_lower or "vibrat" in q_lower or "feel" in q_lower:
+                    prof = ate.get_haptic_profile(clean_query)["fabric"]
+                    blocks.append(f"• Haptic Synthesis: {prof['name']} (GSM {prof['gsm']}, Vibration freq: {prof['vibration_frequency_hz']}Hz, Friction: {prof['surface_friction']}, Pattern: {prof['vibration_pattern']}, Tactile Hand: {prof['tactile_descriptor']})")
+                if "drape" in q_lower or "physics" in q_lower:
+                    prof = ate.get_haptic_profile(clean_query)["fabric"]
+                    dp = prof["drape_parameters"]
+                    blocks.append(f"• Drape Physics Model: Stiffness {dp['stiffness']}, Shear Resistance {dp['shear_resistance']}, Damping {dp['damping']}, Wind Sensitivity {dp['wind_sensitivity']}")
+                if "acoustic" in q_lower or "music" in q_lower or "sound" in q_lower or "jacquard" in q_lower:
+                    ac = ate.generate_acoustic_weave_matrix(clean_query)
+                    blocks.append(f"• Acoustic Weave Matrix: Tempo {ac['detected_tempo_bpm']} BPM, Harmonics {ac['harmonic_complexity']}, Warp Float Ratio {ac['warp_float_ratio']} ({ac['structural_integrity']})")
+                if "flavor" in q_lower or "taste" in q_lower or "culinary" in q_lower or "recipe" in q_lower:
+                    fl = ate.extract_flavor_to_textile(clean_query)
+                    pal_str = ", ".join([f"{p['color_name']} ({p['pantone']} {p['hex']})" for p in fl['pantone_tcx_palette']])
+                    blocks.append(f"• Flavor-to-Textile Extraction: Tactile Hand ({', '.join(fl['extracted_tactile_profile'])}), Yarn Spec: {fl['yarn_and_structure_spec']}, Pantone TCX: {pal_str}")
+                if "chrono" in q_lower or "aging" in q_lower or "patina" in q_lower or "fade" in q_lower:
+                    ch = ate.simulate_chrono_aging(city_climate="Seattle/London", time_milestone="2 years")
+                    blocks.append(f"• Chrono-Aging Degradation: Erosion {ch['indigo_ring_dye_erosion_pct']}%, Tensile Retention {ch['retained_tensile_strength_pct']}%, Surface Patina: {ch['surface_patina_description']}")
+                if "origami" in q_lower or "zero-waste" in q_lower or "zero waste" in q_lower or "fold" in q_lower:
+                    og = ate.generate_zero_waste_origami_plan()
+                    steps_str = " -> ".join([f"Step {s['step']}: {s['title']}" for s in og['folding_progression_steps']])
+                    blocks.append(f"• Kinetic Zero-Waste Origami Plan: Scrap Waste 0.0%, System {og['tessellation_system']}, Flow: {steps_str}")
+                if "deadstock" in q_lower or "waste log" in q_lower:
+                    ds = ate.match_deadstock({"query": clean_query})
+                    blocks.append(f"• Deadstock Match: Found {len(ds)} lots in vault (Top lot: {ds[0]['lot_id']} {ds[0]['composition']} {ds[0]['available_yards']} yds at ${ds[0]['price_per_yard_usd']}/yd)")
+                if "compliance" in q_lower or "reach" in q_lower or "oeko" in q_lower or "pfas" in q_lower:
+                    comp = ate.stress_test_compliance(clean_query, ["Reactive Blue 21", "PFAS C6 Fluorocarbon repellent", "Alum mordant"])
+                    blocks.append(f"• Compliance Stress-Test: Status {comp['status']}, DPP Readiness: {comp['digital_product_passport_readiness']}")
+                if blocks:
+                    creative_ctx = "APEX RADICAL TEXTILE ENGINE REAL-TIME TELEMETRY:\n" + "\n".join(blocks) + "\n"
+                    erp_ctx = (erp_ctx + "\n" + creative_ctx) if erp_ctx else creative_ctx
+            except Exception as ex:
+                logger.debug("Creative textile query error: %s", ex)
 
         # 7. Intercept casual greetings & conversational openings ("hi", "hello", "hey", "hello there", etc.)
         is_greeting = bool(re.match(

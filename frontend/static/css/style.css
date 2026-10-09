@@ -3141,3 +3141,254 @@ pre:has(code.language-json\:action) {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RADICAL CREATIVE TEXTILE STUDIO & HAPTIC LAB STYLING
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.creative-studio-btn {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px;
+  background: linear-gradient(135deg, rgba(0, 245, 160, 0.15), rgba(6, 182, 212, 0.2));
+  border: 1px solid var(--mint-neon); border-radius: 20px;
+  color: var(--mint-neon); font-size: 11.5px; font-family: var(--font-heading);
+  font-weight: 800; cursor: pointer; transition: all 0.25s;
+  box-shadow: 0 0 14px rgba(0, 245, 160, 0.2);
+}
+.creative-studio-btn:hover {
+  background: var(--mint-neon); color: #030712;
+  box-shadow: 0 0 22px var(--mint-glow); transform: translateY(-1px);
+}
+
+.studio-modal-card {
+  max-width: 1060px !important; width: 95vw;
+  max-height: 92vh; display: flex; flex-direction: column;
+  background: rgba(8, 14, 28, 0.94) !important;
+  border: 1px solid rgba(0, 245, 160, 0.35) !important;
+  box-shadow: 0 16px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(0, 245, 160, 0.15) !important;
+  overflow: hidden;
+}
+
+.studio-tab-bar {
+  display: flex; gap: 8px; padding: 10px 24px;
+  background: rgba(4, 8, 18, 0.8); border-bottom: 1px solid var(--card-border);
+  overflow-x: auto; white-space: nowrap; scrollbar-width: none;
+}
+.studio-tab-btn {
+  background: rgba(255, 255, 255, 0.04); border: 1px solid var(--card-border);
+  color: var(--text2); padding: 7px 16px; border-radius: 20px;
+  font-family: var(--font-heading); font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+}
+.studio-tab-btn:hover { color: #FFFFFF; border-color: rgba(0, 245, 160, 0.3); }
+.studio-tab-btn.active {
+  background: linear-gradient(135deg, rgba(0, 245, 160, 0.2), rgba(6, 182, 212, 0.15));
+  border-color: var(--mint-neon); color: var(--mint-neon);
+  box-shadow: 0 0 14px rgba(0, 245, 160, 0.25);
+}
+
+.studio-modal-body {
+  padding: 22px 24px; overflow-y: auto; flex: 1;
+}
+
+.studio-tab-pane { display: none; }
+.studio-tab-pane.active { display: block; animation: cyberFadeUp 0.3s ease both; }
+
+.studio-grid-2 {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+}
+@media (max-width: 860px) {
+  .studio-grid-2 { grid-template-columns: 1fr; }
+}
+
+.studio-card {
+  background: rgba(12, 20, 38, 0.7); border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm); padding: 18px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.studio-subhead {
+  font-family: var(--font-heading); font-size: 14.5px; font-weight: 850;
+  color: #FFFFFF; display: flex; align-items: center; justify-content: space-between;
+}
+.studio-desc {
+  font-size: 12px; line-height: 1.6; color: #94A3B8; font-weight: 500;
+}
+
+.studio-form-row {
+  display: flex; gap: 10px; align-items: center;
+}
+.studio-label {
+  font-size: 10.5px; font-weight: 800; color: var(--mint-neon); letter-spacing: 0.6px;
+}
+.studio-select, .studio-input {
+  flex: 1; background: rgba(5, 10, 22, 0.9); border: 1px solid var(--card-border2);
+  color: #FFFFFF; padding: 8px 12px; border-radius: var(--radius-xs);
+  font-size: 12.5px; font-weight: 600; outline: none; transition: border-color 0.2s;
+}
+.studio-select:focus, .studio-input:focus { border-color: var(--mint-neon); box-shadow: 0 0 10px var(--mint-glow); }
+
+/* Interactive Haptic Touchpad */
+.haptic-touchpad {
+  position: relative; width: 100%; height: 160px;
+  background: radial-gradient(circle, rgba(0, 245, 160, 0.08) 0%, rgba(4, 8, 18, 0.95) 75%);
+  border: 2px dashed rgba(0, 245, 160, 0.4); border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  cursor: grab; overflow: hidden; user-select: none; transition: all 0.2s;
+}
+.haptic-touchpad:active {
+  cursor: grabbing; border-color: var(--mint-neon);
+  box-shadow: inset 0 0 25px rgba(0, 245, 160, 0.25), 0 0 15px rgba(0, 245, 160, 0.3);
+}
+.touchpad-grid-mesh {
+  position: absolute; inset: 0;
+  background-size: 16px 16px;
+  background-image: linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+}
+.touchpad-instruction {
+  position: relative; z-index: 2; text-align: center; pointer-events: none;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.touchpad-instruction .touch-icon { font-size: 26px; animation: bounce 1.8s infinite; }
+.touchpad-instruction strong { font-family: var(--font-heading); font-size: 12.5px; color: var(--mint-neon); letter-spacing: 1px; }
+.touchpad-instruction span { font-size: 11px; color: #94A3B8; font-weight: 600; }
+.touchpad-ripple {
+  position: absolute; width: 40px; height: 40px; border-radius: 50%;
+  border: 2px solid var(--mint-neon); pointer-events: none; opacity: 0;
+  transform: translate(-50%, -50%); transition: opacity 0.2s;
+}
+
+/* Canvas Viewports */
+.canvas-wrap {
+  width: 100%; background: #030712; border: 1px solid var(--card-border);
+  border-radius: var(--radius-xs); overflow: hidden; display: flex;
+  align-items: center; justify-content: center; box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+}
+.canvas-wrap canvas {
+  width: 100% !important; height: auto !important; display: block;
+}
+
+/* Controls & Sliders */
+.cloth-controls-row {
+  display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 4px;
+}
+.cloth-slider-group {
+  flex: 1; min-width: 120px; display: flex; flex-direction: column; gap: 4px;
+}
+.cloth-slider-group label {
+  font-size: 11px; font-weight: 700; color: #CBD5E1;
+}
+.studio-slider {
+  accent-color: var(--mint-neon); cursor: pointer; height: 5px;
+}
+.studio-mini-btn {
+  background: rgba(15, 26, 52, 0.9); border: 1px solid var(--card-border2);
+  color: var(--mint-neon); font-family: var(--font-heading); font-size: 11px;
+  font-weight: 700; padding: 6px 12px; border-radius: 4px; cursor: pointer;
+  transition: all 0.2s;
+}
+.studio-mini-btn:hover { background: var(--mint-neon); color: #030712; box-shadow: 0 0 10px var(--mint-glow); }
+
+.studio-action-btn {
+  background: linear-gradient(135deg, var(--mint3), var(--mint-neon));
+  border: none; color: #030712; font-family: var(--font-heading); font-size: 12px;
+  font-weight: 850; padding: 8px 16px; border-radius: 6px; cursor: pointer;
+  transition: all 0.2s; white-space: nowrap;
+}
+.studio-action-btn:hover { box-shadow: 0 0 16px var(--mint-glow); transform: translateY(-1px); }
+
+.preset-pill-row {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.preset-pill {
+  background: rgba(255, 255, 255, 0.04); border: 1px solid var(--card-border);
+  color: #94A3B8; font-size: 11px; font-weight: 700; padding: 4px 10px;
+  border-radius: 14px; cursor: pointer; transition: all 0.2s;
+}
+.preset-pill:hover, .preset-pill.active {
+  border-color: var(--cyan-neon); color: var(--cyan-neon);
+  background: rgba(6, 182, 212, 0.12);
+}
+
+.studio-download-btn {
+  background: transparent; border: 1px solid var(--cyan); color: var(--cyan-neon);
+  font-family: var(--font-heading); font-size: 11.5px; font-weight: 750;
+  padding: 8px 14px; border-radius: 6px; cursor: pointer; transition: all 0.2s;
+  text-align: center;
+}
+.studio-download-btn:hover { background: rgba(6, 182, 212, 0.2); box-shadow: 0 0 14px var(--cyan-glow); }
+
+/* Flavor Pantone Swatches */
+.flavor-swatches-box {
+  display: flex; flex-wrap: wrap; gap: 10px; margin: 4px 0;
+}
+.pantone-chip {
+  flex: 1; min-width: 90px; background: rgba(5, 10, 22, 0.9);
+  border: 1px solid var(--card-border); border-radius: 6px; overflow: hidden;
+  text-align: center;
+}
+.pantone-color-block { height: 44px; width: 100%; }
+.pantone-chip-meta { padding: 6px; font-size: 10px; font-weight: 700; }
+.pantone-chip-name { color: #FFFFFF; font-size: 10.5px; display: block; }
+.pantone-chip-code { color: #94A3B8; font-family: var(--font-mono); font-size: 9px; }
+
+/* Chrono Time Stepper */
+.studio-time-stepper {
+  display: flex; gap: 8px; width: 100%;
+}
+.time-step-btn {
+  flex: 1; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--card-border);
+  color: #94A3B8; padding: 7px 10px; border-radius: 6px; font-size: 11.5px;
+  font-weight: 750; cursor: pointer; transition: all 0.2s;
+}
+.time-step-btn.active {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(139, 92, 246, 0.2));
+  border-color: #38BDF8; color: #38BDF8; box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+}
+
+/* Origami Architecture UI */
+.origami-header-row {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  flex-wrap: wrap; gap: 12px;
+}
+.origami-badge-group { display: flex; gap: 8px; }
+.zero-waste-pill {
+  background: rgba(0, 245, 160, 0.15); border: 1px solid var(--mint-neon);
+  color: var(--mint-neon); font-size: 11px; font-weight: 850; padding: 4px 10px;
+  border-radius: 12px;
+}
+.origami-geom-pill {
+  background: rgba(139, 92, 246, 0.15); border: 1px solid var(--purple-neon);
+  color: var(--purple-neon); font-size: 11px; font-weight: 850; padding: 4px 10px;
+  border-radius: 12px;
+}
+.origami-stepper-row {
+  display: flex; gap: 6px; overflow-x: auto; margin-top: 10px; scrollbar-width: none;
+}
+.origami-step-btn {
+  background: rgba(255, 255, 255, 0.04); border: 1px solid var(--card-border);
+  color: var(--text2); font-size: 11.5px; font-weight: 750; padding: 6px 12px;
+  border-radius: 6px; cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.origami-step-btn.active {
+  background: rgba(0, 245, 160, 0.15); border-color: var(--mint-neon); color: var(--mint-neon);
+}
+.origami-instruction-card {
+  display: flex; flex-direction: column; justify-content: center; gap: 10px;
+}
+.origami-step-title {
+  font-family: var(--font-heading); font-size: 15px; font-weight: 850; color: #38BDF8;
+}
+.origami-step-text {
+  font-size: 13px; line-height: 1.6; color: #F1F5F9; font-weight: 600;
+}
+.origami-checklist {
+  font-size: 12px; line-height: 1.7; color: #CBD5E1;
+  display: flex; flex-direction: column; gap: 4px;
+}
+
+/* Deadstock Mini Card */
+.deadstock-mini-card {
+  background: rgba(5, 10, 22, 0.85); border: 1px solid var(--card-border2);
+  border-radius: 8px; padding: 12px;
+}
+

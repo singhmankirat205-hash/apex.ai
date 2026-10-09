@@ -156,6 +156,60 @@ class OperationExecuteRequest(BaseModel):
     summary: str = Field("")
     author: str = Field("User via Web Interface")
 
+# ── Advanced Creative & Engineering Textile Schemas ──────────────────────────
+class HapticRequest(BaseModel):
+    fabric: str = Field("heavy_denim")
+
+class VisionAuditRequest(BaseModel):
+    roll_length_meters: float = Field(120.0)
+    macro_desc: str = Field("")
+
+class ComplianceCheckRequest(BaseModel):
+    fabric_spec: str = Field("100% Cotton Poplin")
+    chemical_dyes: list[str] = Field(default_factory=list)
+
+class DeadstockMatchRequest(BaseModel):
+    min_yards: int = Field(100)
+    query: str = Field("")
+
+class FreightOptimizeRequest(BaseModel):
+    yardage: int = Field(5000)
+    destination: str = Field("US")
+    fiber: str = Field("cotton")
+
+class YieldConsumptionRequest(BaseModel):
+    garment_units: int = Field(1000)
+    net_sqm: float = Field(1.6)
+    fiber_blend: str = Field("100% cotton")
+
+class AcousticWeaveRequest(BaseModel):
+    sound_descriptor: str = Field("Jazz syncopated rhythm")
+    matrix_size: int = Field(32)
+
+class FlavorTextileRequest(BaseModel):
+    flavor_profile: str = Field("smoky, citrusy, sharp")
+
+class ArchiveRescueRequest(BaseModel):
+    fragment_desc: str = Field("17th century floral brocade fragment")
+
+class CulturalHybridRequest(BaseModel):
+    heritage_a: str = Field("Scottish Tartan")
+    heritage_b: str = Field("Japanese Shibori")
+
+class ChronoAgingRequest(BaseModel):
+    fabric_type: str = Field("raw_denim")
+    city_climate: str = Field("Seattle, USA")
+    time_milestone: str = Field("2 years")
+
+class BioTextileRequest(BaseModel):
+    temp_c: float = Field(32.0)
+    humidity_pct: float = Field(85.0)
+    sweat_ph: float = Field(5.5)
+
+class OrigamiGarmentRequest(BaseModel):
+    garment_type: str = Field("Tessellated Pleat Jacket")
+    dimensions: str = Field("140 x 280 cm")
+
 
 # ── Routes ────────────────────────────────────────────────────────────────────
 @app.post("/api/generate-image")
@@ -504,6 +558,105 @@ async def calculate_delta_e_endpoint(req: LabDipRequest):
     """Spectrophotometer Delta E CMC 2:1 shade match acceptability."""
     from backend.textile_erp import calculate_lab_dip_delta_e
     return calculate_lab_dip_delta_e(req.l_std, req.a_std, req.b_std, req.l_batch, req.a_batch, req.b_batch)
+
+
+# ── Creative & Real-Time Next-Gen Textile Endpoints ───────────────────────────
+@app.post("/api/textile/haptic-profile")
+async def textile_haptic_profile_endpoint(req: HapticRequest):
+    """Real-time haptic vibration pulses and drape simulation parameters."""
+    from backend.advanced_textile_engine import get_haptic_profile
+    return get_haptic_profile(req.fabric)
+
+
+@app.post("/api/textile/vision-audit")
+async def textile_vision_audit_endpoint(req: VisionAuditRequest):
+    """Real-time loomside computer vision defect auditor with ASTM D5430 grading."""
+    from backend.advanced_textile_engine import audit_loomside_feed
+    return audit_loomside_feed(roll_length_meters=req.roll_length_meters)
+
+
+@app.post("/api/textile/macro-gsm")
+async def textile_macro_gsm_endpoint(req: VisionAuditRequest):
+    """Macro photo optical thread-count and GSM estimator."""
+    from backend.advanced_textile_engine import estimate_macro_gsm_threadcount
+    return estimate_macro_gsm_threadcount(req.macro_desc)
+
+
+@app.post("/api/textile/compliance-check")
+async def textile_compliance_check_endpoint(req: ComplianceCheckRequest):
+    """Stress-test chemical dyes and blends against EU REACH, OEKO-TEX, GOTS."""
+    from backend.advanced_textile_engine import stress_test_compliance
+    return stress_test_compliance(req.fabric_spec, req.chemical_dyes)
+
+
+@app.post("/api/textile/deadstock-match")
+async def textile_deadstock_match_endpoint(req: DeadstockMatchRequest):
+    """Automated circular economy deadstock matchmaker."""
+    from backend.advanced_textile_engine import match_deadstock
+    return match_deadstock({"min_yards": req.min_yards, "query": req.query})
+
+
+@app.post("/api/textile/freight-tariff")
+async def textile_freight_tariff_endpoint(req: FreightOptimizeRequest):
+    """Dynamic trade tariffs, shipping lane congestion and lead-time optimization."""
+    from backend.advanced_textile_engine import optimize_freight_and_tariffs
+    return optimize_freight_and_tariffs(req.yardage, req.destination, req.fiber)
+
+
+@app.post("/api/textile/yield-consumption")
+async def textile_yield_consumption_endpoint(req: YieldConsumptionRequest):
+    """Yield, shrinkage allowances (warp/weft) and automated PO generation."""
+    from backend.advanced_textile_engine import calculate_yield_and_consumption
+    return calculate_yield_and_consumption(req.garment_units, req.net_sqm, req.fiber_blend)
+
+
+@app.post("/api/textile/acoustic-weave")
+async def textile_acoustic_weave_endpoint(req: AcousticWeaveRequest):
+    """Translate sound waves / acoustic frequencies into Jacquard weave matrices."""
+    from backend.advanced_textile_engine import generate_acoustic_weave_matrix
+    return generate_acoustic_weave_matrix(req.sound_descriptor, req.matrix_size)
+
+
+@app.post("/api/textile/flavor-to-textile")
+async def textile_flavor_to_textile_endpoint(req: FlavorTextileRequest):
+    """Translate culinary flavor profiles into tactile yarn specs and Pantone TCX palettes."""
+    from backend.advanced_textile_engine import extract_flavor_to_textile
+    return extract_flavor_to_textile(req.flavor_profile)
+
+
+@app.post("/api/textile/archive-rescue")
+async def textile_archive_rescue_endpoint(req: ArchiveRescueRequest):
+    """Historical museum textile deconstruction and botanical dye identification."""
+    from backend.advanced_textile_engine import rescue_archive_textile
+    return rescue_archive_textile(req.fragment_desc)
+
+
+@app.post("/api/textile/cultural-hybrid")
+async def textile_cultural_hybrid_endpoint(req: CulturalHybridRequest):
+    """Mathematical fusion of disparate cultural textile traditions with provenance."""
+    from backend.advanced_textile_engine import synthesize_cultural_hybrid
+    return synthesize_cultural_hybrid(req.heritage_a, req.heritage_b)
+
+
+@app.post("/api/textile/chrono-aging")
+async def textile_chrono_aging_endpoint(req: ChronoAgingRequest):
+    """Chrono-dye UV degradation, humidity patina, and friction wear time-traveler."""
+    from backend.advanced_textile_engine import simulate_chrono_aging
+    return simulate_chrono_aging(req.fabric_type, req.city_climate, req.time_milestone)
+
+
+@app.post("/api/textile/bio-textile")
+async def textile_bio_textile_endpoint(req: BioTextileRequest):
+    """Living bio-textile (bacterial cellulose / algae) environmental simulator."""
+    from backend.advanced_textile_engine import simulate_living_bio_textile
+    return simulate_living_bio_textile(req.temp_c, req.humidity_pct, req.sweat_ph)
+
+
+@app.post("/api/textile/zero-waste-origami")
+async def textile_zero_waste_origami_endpoint(req: OrigamiGarmentRequest):
+    """Kinetic zero-waste origami garment folding architect from uncut fabric."""
+    from backend.advanced_textile_engine import generate_zero_waste_origami_plan
+    return generate_zero_waste_origami_plan(req.garment_type, req.dimensions)
 
 
 @app.post("/api/chat/stream")
