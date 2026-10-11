@@ -3578,6 +3578,17 @@ function initSentinelBrowserGuard() {
     stopClothSimulation();
   }
 
+  const toggleGuideBtn = document.getElementById('toggleStudioGuideBtn');
+  const guideDrawer = document.getElementById('studioGuideDrawer');
+  if (toggleGuideBtn && guideDrawer) {
+    toggleGuideBtn.addEventListener('click', () => {
+      const isClosed = guideDrawer.style.display === 'none';
+      guideDrawer.style.display = isClosed ? 'block' : 'none';
+      toggleGuideBtn.textContent = isClosed ? '✕ Hide Quick Tips' : '📖 Show Quick Tips';
+      playClick();
+    });
+  }
+
   if (studioBtn) studioBtn.addEventListener('click', () => openStudio('hapticTab'));
   if (closeStudioBtn) closeStudioBtn.addEventListener('click', closeStudio);
   studioModal.addEventListener('click', (e) => {

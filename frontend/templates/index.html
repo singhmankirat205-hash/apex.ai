@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Syne:wght@700;800;900&family=Orbitron:wght@600;700;900&family=Space+Grotesk:wght@600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/static/css/style.css?v=4.3.0"/>
+  <link rel="stylesheet" href="/static/css/style.css?v=4.4.0"/>
 </head>
 <body>
 
@@ -525,6 +525,51 @@
       <button class="modal-close-btn" id="closeCreativeStudioModal">✕</button>
     </div>
 
+    <!-- Interactive Studio Quick Guide & Step-by-Step Overview -->
+    <div class="studio-guide-banner">
+      <div class="studio-guide-left">
+        <span class="guide-sparkle">💡</span>
+        <div class="guide-text-wrap">
+          <strong class="guide-title">HOW TO USE THE STUDIO LAB:</strong>
+          <span class="guide-desc">Interactive real-time textile engineering suite. Pick any tab below to test live haptic vibration, 60 FPS drape physics, acoustic weaving, chrono aging, or zero-waste folding.</span>
+        </div>
+      </div>
+      <button class="studio-guide-toggle-btn" id="toggleStudioGuideBtn">📖 Show Quick Tips</button>
+    </div>
+
+    <div class="studio-guide-drawer" id="studioGuideDrawer" style="display:none">
+      <div class="guide-card-grid">
+        <div class="guide-tip-card">
+          <div class="tip-num">1</div>
+          <div class="tip-body">
+            <strong>Haptics &amp; Drape:</strong>
+            <span>Pick a fabric (e.g. Denim vs Silk) and drag across the Touchpad to feel vibration on mobile. Drag cloth mesh on canvas or slide Wind &amp; Gravity.</span>
+          </div>
+        </div>
+        <div class="guide-tip-card">
+          <div class="tip-num">2</div>
+          <div class="tip-body">
+            <strong>Acoustic &amp; Flavor:</strong>
+            <span>Type a music genre (e.g. Jazz / 128 BPM Techno) to generate Jacquard loom grids, or input food flavors to map 5-color Pantone TCX palettes.</span>
+          </div>
+        </div>
+        <div class="guide-tip-card">
+          <div class="tip-num">3</div>
+          <div class="tip-body">
+            <strong>Chrono-Dye &amp; Bio:</strong>
+            <span>Click timeline milestones (0 Mo to 5 Yrs) to watch indigo fading &amp; whiskering simulate live. Adjust humidity/temperature to watch bio-cellulose swell.</span>
+          </div>
+        </div>
+        <div class="guide-tip-card">
+          <div class="tip-num">4</div>
+          <div class="tip-body">
+            <strong>Zero-Waste Origami:</strong>
+            <span>Step through 5 kinetic folding stages (Grid Scoring → Sleeve Emergence). Click <em>Ask APEX</em> to transfer pattern formulas to chat.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Studio Navigation Tabs -->
     <div class="studio-tab-bar">
       <button class="studio-tab-btn active" data-tab="hapticTab">📳 Haptic &amp; Drape Physics</button>
@@ -537,6 +582,11 @@
     <div class="modal-body studio-modal-body">
       <!-- ── TAB 1: HAPTIC & DRAPE PHYSICS ── -->
       <div class="studio-tab-pane active" id="hapticTab">
+        <!-- Tab Step Guidance -->
+        <div class="studio-tab-instruction-strip">
+          <span class="strip-badge">🎯 Quick Action:</span>
+          <span>1. Choose a fabric below · 2. Drag your finger/mouse on the Touchpad · 3. Click &amp; toss the live cloth mesh on the right canvas.</span>
+        </div>
         <div class="studio-grid-2">
           <!-- Left: Haptic Touchpad & Specs -->
           <div class="studio-card">
@@ -603,6 +653,11 @@
 
       <!-- ── TAB 2: ACOUSTIC WEAVE & SYNESTHESIA ── -->
       <div class="studio-tab-pane" id="acousticTab">
+        <!-- Tab Step Guidance -->
+        <div class="studio-tab-instruction-strip">
+          <span class="strip-badge">🎯 Quick Action:</span>
+          <span>1. Pick a music genre preset or type audio tempo to generate a Jacquard loom draft matrix · 2. Type culinary notes on the right to extract 5 Pantone TCX yarn colors.</span>
+        </div>
         <div class="studio-grid-2">
           <!-- Acoustic Jacquard Weave -->
           <div class="studio-card">
@@ -658,6 +713,11 @@
 
       <!-- ── TAB 3: CHRONO-DYE & BIO-TEXTILE ── -->
       <div class="studio-tab-pane" id="chronoTab">
+        <!-- Tab Step Guidance -->
+        <div class="studio-tab-instruction-strip">
+          <span class="strip-badge">🎯 Quick Action:</span>
+          <span>1. Click time buttons (Brand New → 5 Years) to see denim whisker erosion render · 2. Move Humidity/Temp sliders below to watch living bio-cellulose swell.</span>
+        </div>
         <div class="studio-grid-2">
           <!-- Chrono-Aging Time-Traveler -->
           <div class="studio-card">
@@ -711,6 +771,11 @@
 
       <!-- ── TAB 4: ZERO-WASTE ORIGAMI ARCHITECT ── -->
       <div class="studio-tab-pane" id="origamiTab">
+        <!-- Tab Step Guidance -->
+        <div class="studio-tab-instruction-strip">
+          <span class="strip-badge">🎯 Quick Action:</span>
+          <span>1. Click steps 1 through 5 to follow origami tessellation folds on the live blueprint · 2. Tap "Ask APEX for Detailed Pattern Dimensions" to send parameters directly to the chat!</span>
+        </div>
         <div class="studio-card" style="width:100%">
           <div class="origami-header-row">
             <div>
@@ -754,6 +819,11 @@
 
       <!-- ── TAB 5: VISION AUDIT & COMPLIANCE ── -->
       <div class="studio-tab-pane" id="visionTab">
+        <!-- Tab Step Guidance -->
+        <div class="studio-tab-instruction-strip">
+          <span class="strip-badge">🎯 Quick Action:</span>
+          <span>1. Click "Run Real-Time Loomside Audit" to simulate camera feed and defect bounding boxes · 2. Enter chemicals on the right to test EU REACH restrictions.</span>
+        </div>
         <div class="studio-grid-2">
           <!-- Loomside Vision Auditor -->
           <div class="studio-card">
@@ -807,6 +877,6 @@
 
 <script src="/static/js/chart.min.js"></script>
 <script src="/static/js/marked.min.js"></script>
-<script src="/static/js/app.js?v=4.3.0"></script>
+<script src="/static/js/app.js?v=4.4.0"></script>
 </body>
 </html>
