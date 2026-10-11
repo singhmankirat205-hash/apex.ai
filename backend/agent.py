@@ -36,6 +36,7 @@ MAX_TOKENS     = int(os.getenv("MAX_TOKENS", "3500"))
 
 MODELS = [
     "gemini-3.5-flash-lite",
+    "gemini-3.6-flash",
     "gemini-3.5-flash",
     "gemini-3.1-flash-lite",
 ]
@@ -44,18 +45,17 @@ MODELS = [
 _SESSION = requests.Session()
 _SESSION.mount("https://", requests.adapters.HTTPAdapter(pool_connections=8, pool_maxsize=32))
 
-# Hedged streaming: if the active model hasn't produced its first word within 1.5 seconds,
+# Hedged streaming: if the active model hasn't produced its first word within 1.0 second,
 # a backup model is launched in parallel and whichever answers first wins.
-HEDGE_AFTER_SECONDS = 1.5
-STREAM_TIMEOUT = (5, 20)  # (connect, read-between-chunks) seconds
+HEDGE_AFTER_SECONDS = 1.0
+STREAM_TIMEOUT = (4, 15)  # (connect, read-between-chunks) seconds
 
-# Models that accept thinkingBudget=0. Measured: gemini-3.5-flash first word 5.6s -> 1.8s.
-# (flash-lite variants reject this flag with HTTP 400, so it is applied selectively.)
-_NO_THINK_MODELS = {"gemini-3.5-flash"}
+# Models that accept thinkingBudget=0 for zero reasoning latency.
+_NO_THINK_MODELS = {"gemini-3.5-flash", "gemini-3.6-flash"}
 
 
 def _gen_config(model: str) -> dict:
-    cfg = {"maxOutputTokens": MAX_TOKENS, "temperature": 0.35}
+    cfg = {"maxOutputTokens": MAX_TOKENS, "temperature": 0.3}
     if model in _NO_THINK_MODELS:
         cfg["thinkingConfig"] = {"thinkingBudget": 0}
     return cfg
@@ -178,10 +178,9 @@ def _clean_search_keywords(query: str) -> str:
 
 
 _LIVE_INFO_PATTERN = re.compile(
-    r"\b(news|latest news|breaking news|headline|trend(s|ing)?|share price|sensex|nifty|"
-    r"crypto|bitcoin|weather|forecast|cricket score|match score|won the match|election results?|"
-    r"horoscope|rashifal|panchang|prime minister|president of|capital of|"
-    r"olympics|world cup|isro|nasa|spacex)\b",
+    r"\b(breaking news|headline|share price of|stock price of|sensex today|nifty today|"
+    r"crypto price|bitcoin price|live weather in|weather forecast for|live cricket score|cricket match score|who won the match today|election results? 202[0-9]|"
+    r"today'?s horoscope|aaj ka rashifal|today'?s panchang)\b",
     re.IGNORECASE,
 )
 
@@ -190,12 +189,12 @@ _INTERNAL_DOMAIN_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
-WEB_SEARCH_BUDGET_SECONDS = 0.8
+WEB_SEARCH_BUDGET_SECONDS = 0.4
 
 
 def _needs_live_search(clean: str) -> bool:
-    """Only hit external search when the question genuinely needs fresh / factual web data and is not an internal domain query."""
-    if _INTERNAL_DOMAIN_PATTERN.search(clean):
+    """Only hit external search when the question strictly requires live external data (stock prices, weather, live match score)."""
+    if len(clean) < 5 or _INTERNAL_DOMAIN_PATTERN.search(clean):
         return False
     return bool(_LIVE_INFO_PATTERN.search(clean))
 
@@ -709,14 +708,18 @@ You know EVERYTHING around the world — past, present, scientific, geographic, 
    - Conceptual questions: Crisp, authoritative, easy-to-grasp explanation with intuitive real-world examples.
    - Investigative & comparative analyses: Full intellectual depth with markdown comparison tables, quantitative metrics, and historical timelines.
 
-10. VISUAL DATA REPRESENTATION, RICH TABLES & ZERO CODE DISPLAY:
-    - PRESENTATION FORMAT DIRECTIVE (STRICT):
-      * NEVER wrap general answers, timelines, manifests, specs, or status reports in code blocks (e.g. NEVER write ``` or ```code ... ``` for plain text, milestones, or schedules).
-      * Always format comparisons, metrics, timelines, milestones, and technical parameters using RICH MARKDOWN TABLES or structured bulleted lists.
-      * Tables and markdown formatting are 100x cleaner, more readable, and executive-ready than raw code blocks.
-      * NEVER output raw Python plotting code (e.g. NEVER write `import matplotlib`, `plt.show()`).
-      * When asked for a numerical chart or comparison graph, output an interactive chart using a ```chart ... ``` JSON block (type: "bar", "line", "doughnut", "pie", "radar").
-      * Users must see polished tables, charts, and clean typography — NOT coding snippets.
+10. SUPER-SPEED DIRECT RESPONSE, DETAILED INFORMATIVE TABLES & RICH VISUAL CHARTS:
+    - IMMEDIATE DIRECT ANSWERING (ZERO PREAMBLE DELAY):
+      * Deliver the answer IMMEDIATELY. Never begin with meta-commentary, filler phrases, or thinking disclaimers like "Analyzing...", "Synthesizing...", or "I am looking into this...".
+      * Jump straight into the concrete answer, quantitative breakdown, or executive decision.
+    - HIGH-DETAIL, INFORMATIVE MARKDOWN TABLES:
+      * When providing data, comparisons, specifications, shift logs, test parameters, or metrics, construct HIGHLY DETAILED, EXHAUSTIVE MARKDOWN TABLES with informative column headers (e.g. Parameter, Measured Value, Benchmark / Spec, Tolerance, Status, Root Cause, Action).
+      * Include real figures, units, benchmarks, and actionable insights inside each row.
+    - RICH INTERACTIVE CHARTS:
+      * When asked for visualizations, trends, distributions, or metrics comparison, output a rich, informative ```chart ... ``` JSON block with descriptive title, clear axis labels, and comprehensive datasets (type: "bar", "line", "doughnut", "pie", "radar").
+    - ZERO RAW CODE IN GENERAL ANSWERS:
+      * NEVER wrap answers, milestone timelines, manifests, specs, or schedules in raw text/code boxes (` ``` ` or ` ```text `).
+      * Always use structured markdown tables, bullet cards, and ```chart blocks so the user sees clean, polished executive intelligence.
 
 11. AUTONOMOUS DOCUMENT CREATION (PDF, PPTX, EXCEL):
     - You possess native capabilities to generate downloadable PDF reports, PowerPoint presentations, and Excel spreadsheets.

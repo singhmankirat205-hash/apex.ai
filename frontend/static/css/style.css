@@ -792,28 +792,31 @@ button.feature.starter-question-btn:active {
   text-shadow: 0 0 12px var(--mint-neon);
 }
 
-/* ── HUD Cyber Data Tables (Mixed Color Palette) ─────────────────────────── */
+/* ── HUD Cyber Data Tables (High-Detail & Mixed Color Palette) ───────────── */
 .bubble table {
   width: 100%; border-collapse: separate; border-spacing: 0; margin: 18px 0;
   font-size: 13px; border: 1px solid var(--card-border2); border-radius: var(--radius-sm);
-  overflow: hidden; background: rgba(6, 12, 24, 0.85);
+  overflow: hidden; background: rgba(6, 12, 24, 0.92);
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
 }
 .bubble th {
-  background: linear-gradient(135deg, rgba(0, 245, 160, 0.22), rgba(6, 182, 212, 0.16));
-  color: #00F5A0; font-family: var(--font-heading); font-weight: 800;
-  text-align: left; padding: 12px 16px; border-bottom: 1px solid rgba(0, 245, 160, 0.25);
+  background: linear-gradient(135deg, rgba(0, 245, 160, 0.22), rgba(6, 182, 212, 0.18));
+  color: #00F5A0; font-family: var(--font-heading); font-weight: 850;
+  text-align: left; padding: 12px 16px; border-bottom: 1px solid rgba(0, 245, 160, 0.3);
   letter-spacing: 0.8px; text-transform: uppercase; font-size: 11px;
 }
 .bubble td {
-  padding: 11px 16px; border-bottom: 1px solid var(--card-border);
-  color: #F1F5F9; vertical-align: top; line-height: 1.6;
+  padding: 10px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: #F1F5F9; vertical-align: top; line-height: 1.55;
 }
 .bubble td strong, .bubble td b {
   color: #38BDF8; font-weight: 800;
 }
+.bubble tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.02);
+}
 .bubble tr:last-child td { border-bottom: none; }
-.bubble tr:hover td { background: rgba(0, 245, 160, 0.06); }
+.bubble tr:hover td { background: rgba(0, 245, 160, 0.08); }
 
 /* ── HUD Table Data Export Toolbar ───────────────────────────────────────── */
 .table-export-bar {

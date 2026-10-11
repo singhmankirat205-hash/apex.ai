@@ -1307,25 +1307,25 @@ function convertPythonPlotToChartConfig(pyCode) {
 
 function prepareStreamMarkdown(text) {
   if (!text) return '';
-  // 1. Hide in-progress or closed chart code blocks during streaming
+  // 1. Cleanly hide chart JSON blocks during streaming (no synthesizing text)
   let display = text.replace(/```(?:chart|json:chart)[\s\S]*?(?:```|$)/gi, () => {
-    return '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Synthesizing Quantum Chart Visualization…</div>\n\n';
+    return '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Rendering Chart Visualization…</div>\n\n';
   });
-  // 2. Hide in-progress or closed action code blocks during streaming
+  // 2. Hide in-progress action blocks during streaming
   display = display.replace(/```(?:action|json:action)[\s\S]*?(?:```|$)/gi, () => {
     return '\n\n<div class="apex-action-generating-hud"><span class="apex-pulse-dot"></span> ⚡ Executing Operations Protocol…</div>\n\n';
   });
   // 3. Hide Python plotting scripts during streaming
   display = display.replace(/```python[\s\S]*?(?:import matplotlib|plt\.)[\s\S]*?(?:```|$)/gi, () => {
-    return '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Synthesizing Quantum Chart Visualization…</div>\n\n';
+    return '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Rendering Chart Visualization…</div>\n\n';
   });
   // 4. Hide JSON blocks that define charts during streaming
   display = display.replace(/```json[\s\S]*?"(?:type|data)"[\s\S]*?(?:```|$)/gi, () => {
-    return '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Synthesizing Quantum Chart Visualization…</div>\n\n';
+    return '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Rendering Chart Visualization…</div>\n\n';
   });
-  // 5. Hide in-progress or closed file_export code blocks during streaming
+  // 5. Hide in-progress file export blocks during streaming
   display = display.replace(/```(?:file_export|export|document)[\s\S]*?(?:```|$)/gi, () => {
-    return '\n\n<div class="apex-doc-generating-hud"><span class="apex-pulse-dot"></span> 📄 Preparing Technical Document Package…</div>\n\n';
+    return '\n\n<div class="apex-doc-generating-hud"><span class="apex-pulse-dot"></span> 📄 Preparing Technical Document…</div>\n\n';
   });
   return display;
 }
@@ -1682,8 +1682,7 @@ async function sendMessage(text) {
   const storedContent = fullPayloadText + (imgB64 ? '\n\n[IMAGE_BASE64]:' + imgB64 : '');
   conversationHistory.push({ role: 'user', content: storedContent });
   appendMessage('user', userDisplay, imgB64, attachedSummary);
-  scrollToBottom();
-  setStatus('thinking'); showTyping(true); isStreaming=true; sendBtn.disabled=true;
+  setStatus('thinking'); isStreaming=true; sendBtn.disabled=true;
 
   // Build sanitized messages payload
   const sanitizedMessages = conversationHistory.slice(-20).map(m => ({
@@ -2345,7 +2344,7 @@ scrollBtn.addEventListener('click', () => scrollToBottom(true));
 function showTyping(show) { typingIndicator.style.display=show?'flex':'none'; }
 function setStatus(s) {
   statusDot.className='status-dot';
-  if (s==='thinking'||s==='listening') { statusDot.classList.add('busy'); statusLabel.textContent=s==='listening'?'Listening…':'Thinking…'; }
+  if (s==='thinking'||s==='listening') { statusDot.classList.add('busy'); statusLabel.textContent=s==='listening'?'Listening…':'Answering…'; }
   else if (s==='error') { statusDot.classList.add('error'); statusLabel.textContent='Error'; }
   else { statusLabel.textContent='Ready'; }
 }
