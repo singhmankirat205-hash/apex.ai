@@ -1600,20 +1600,20 @@ function convertPythonPlotToChartConfig(pyCode) {
 function prepareStreamMarkdown(text) {
   if (!text) return '';
   // 1. Cleanly hide chart code blocks in progress (NEVER show raw code or JSON syntax to user)
-  let display = text.replace(/```(?:chart|chart:[a-z0-9_\-]+|json:chart|graph|plot|visualization)[\s\S]*?(?:```|$)/gi, () => {
+  let display = text.replace(/```(?:chart|chart:[a-z0-9_\-]+|json:chart|graph|plot|visualization|pie|doughnut|bar|line)[\s\S]*?(?:```|$)/gi, () => {
     return '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Rendering Chart Visualization…</div>\n\n';
   });
-  // 2. Hide in-progress action blocks during streaming
-  display = display.replace(/```(?:action|json:action)[\s\S]*?(?:```|$)/gi, () => {
-    return '\n\n<div class="apex-action-generating-hud"><span class="apex-pulse-dot"></span> ⚡ Executing Operations Protocol…</div>\n\n';
-  });
-  // 3. Hide Python plotting scripts during streaming
-  display = display.replace(/```(?:python|py)[\s\S]*?(?:import matplotlib|plt\.|seaborn|sns\.)[\s\S]*?(?:```|$)/gi, () => {
+  // 2. Hide Python plotting scripts (matplotlib, seaborn, plt) during streaming
+  display = display.replace(/```(?:python|py)?[\s\S]*?(?:matplotlib|plt\.|seaborn|sns\.|fig\s*=|ax\s*=)[\s\S]*?(?:```|$)/gi, () => {
     return '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Rendering Chart Visualization…</div>\n\n';
   });
-  // 4. Hide JSON blocks that define charts during streaming
+  // 3. Hide JSON blocks that define charts during streaming
   display = display.replace(/```(?:json|javascript|js)?[\s\S]*?"(?:type|data)"[\s\S]*?(?:```|$)/gi, () => {
     return '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Rendering Chart Visualization…</div>\n\n';
+  });
+  // 4. Hide in-progress action blocks during streaming
+  display = display.replace(/```(?:action|json:action)[\s\S]*?(?:```|$)/gi, () => {
+    return '\n\n<div class="apex-action-generating-hud"><span class="apex-pulse-dot"></span> ⚡ Executing Operations Protocol…</div>\n\n';
   });
   // 5. Hide in-progress file export blocks during streaming
   display = display.replace(/```(?:file_export|export|document)[\s\S]*?(?:```|$)/gi, () => {
@@ -1626,8 +1626,8 @@ function prepareFinalMarkdown(text) {
   if (!text) return '';
   let prepared = text;
 
-  // 1. Convert ```chart, ```chart:*, ```graph, ```plot, ```visualization blocks into clean <div class="apex-chart-slot" ...></div>
-  prepared = prepared.replace(/```(?:chart|chart:[a-z0-9_\-]+|json:chart|graph|plot|visualization)\s*([\s\S]*?)```/gi, (match, jsonStr) => {
+  // 1. Convert ```chart, ```chart:*, ```graph, ```plot, ```visualization, ```pie blocks into clean <div class="apex-chart-slot" ...></div>
+  prepared = prepared.replace(/```(?:chart|chart:[a-z0-9_\-]+|json:chart|graph|plot|visualization|pie|doughnut|bar|line)\s*([\s\S]*?)```/gi, (match, jsonStr) => {
     const cfg = parseChartJSON(jsonStr);
     if (cfg && cfg.data && cfg.data.labels) {
       const encoded = encodeURIComponent(JSON.stringify(cfg));
@@ -1636,18 +1636,18 @@ function prepareFinalMarkdown(text) {
     return ''; // hide if malformed
   });
 
-  // 2. Intercept python code blocks with matplotlib / plt
-  prepared = prepared.replace(/```python\s*([\s\S]*?(?:matplotlib|plt\.)[\s\S]*?)```/gi, (match, pyCode) => {
+  // 2. Intercept any python code blocks with matplotlib, plt, seaborn, or figure plots
+  prepared = prepared.replace(/```(?:python|py)?\s*([\s\S]*?(?:matplotlib|plt\.|seaborn|sns\.|fig\s*=|ax\s*=)[\s\S]*?)```/gi, (match, pyCode) => {
     const cfg = convertPythonPlotToChartConfig(pyCode);
     if (cfg && cfg.data && cfg.data.labels) {
       const encoded = encodeURIComponent(JSON.stringify(cfg));
       return `\n\n<div class="apex-chart-slot" data-chart="${encoded}"></div>\n\n`;
     }
-    return ''; // completely hide python plotting code so user never sees coding
+    return ''; // completely eliminate python plotting code so user NEVER sees coding before charts
   });
 
   // 3. Intercept ```json or ```javascript with chart structure
-  prepared = prepared.replace(/```(?:json|javascript|js)\s*(\{[\s\S]*?"(?:type|data)"[\s\S]*?\})```/gi, (match, jsonStr) => {
+  prepared = prepared.replace(/```(?:json|javascript|js)?\s*(\{[\s\S]*?"(?:type|data)"[\s\S]*?\})```/gi, (match, jsonStr) => {
     const cfg = parseChartJSON(jsonStr);
     if (cfg && cfg.data && cfg.data.labels) {
       const encoded = encodeURIComponent(JSON.stringify(cfg));
@@ -2338,15 +2338,19 @@ function enhanceMessageContent(bubble, rawText) {
                  code.classList.contains('language-json:chart') || 
                  code.className.includes('chart') ||
                  code.className.includes('plot') ||
-                 code.className.includes('graph'))) {
+                 code.className.includes('graph') ||
+                 code.className.includes('pie') ||
+                 code.className.includes('doughnut') ||
+                 code.className.includes('bar') ||
+                 code.className.includes('line'))) {
       pre.style.display = 'none';
       return;
     }
-    if (codeText.includes('"type"') && codeText.includes('"data"') && codeText.includes('"labels"')) {
+    if ((codeText.includes('"type"') || codeText.includes('"labels"')) && codeText.includes('"data"')) {
       pre.style.display = 'none';
       return;
     }
-    if (codeText.includes('import matplotlib') || codeText.includes('plt.') || codeText.includes('seaborn') || codeText.includes('sns.')) {
+    if (codeText.includes('matplotlib') || codeText.includes('plt.') || codeText.includes('seaborn') || codeText.includes('sns.') || codeText.includes('fig, ax') || codeText.includes('plt.pie')) {
       pre.style.display = 'none';
       return;
     }

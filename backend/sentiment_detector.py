@@ -47,8 +47,17 @@ def detect_tone(user_text: str) -> Dict[str, any]:
     has_shouting = (caps_count >= 3 and len(words) >= 4)
     has_exclamations = ("!!!" in user_text or "?!" in user_text)
 
+    # Filter out false positives like "breakdown of", "technical breakdown", "cost breakdown", "defect breakdown"
+    filtered_crisis = []
+    for k in triggers_crisis:
+        if k == "breakdown":
+            # If used in an analytical sense ("breakdown of", "technical breakdown", "full breakdown", "cost breakdown", etc.)
+            if re.search(r'(?:technical|full|detailed|cost|data|analytical|defect|step-by-step|itemized)\s+breakdown|breakdown\s+of', text_lower):
+                continue
+        filtered_crisis.append(k)
+
     is_frustrated = (len(triggers_frustration) >= 1) or has_shouting or has_exclamations
-    is_crisis = (len(triggers_crisis) >= 1)
+    is_crisis = (len(filtered_crisis) >= 1)
 
     if not is_frustrated and not is_crisis:
         return {

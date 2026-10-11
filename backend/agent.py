@@ -32,7 +32,7 @@ logger = logging.getLogger("apex.agent")
 
 # ── Config ────────────────────────────────────────────────────────────────────
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
-MAX_TOKENS     = int(os.getenv("MAX_TOKENS", "3500"))
+MAX_TOKENS     = int(os.getenv("MAX_TOKENS", "4500"))
 
 MODELS = [
     "gemini-3.5-flash-lite",
@@ -707,10 +707,16 @@ You know EVERYTHING around the world — past, present, scientific, geographic, 
    - You are equipped with autonomous AI Image and Cinematic Video generation engines.
    - When the user requests a video, motion clip, or animation, explain the cinematic motion concept and camera angles being produced.
 
-9. DYNAMIC HUMAN-LIKE DEPTH SCALING:
-   - Casual greetings ("hi", "hello", "how are you"): Respond warmly, naturally, and conversationally in 1 to 3 friendly sentences. Never output massive tables or technical dossiers for a simple greeting!
-   - Conceptual questions: Crisp, authoritative, easy-to-grasp explanation with intuitive real-world examples.
-   - Investigative & comparative analyses: Full intellectual depth with markdown comparison tables, quantitative metrics, and historical timelines.
+9. DYNAMIC DEPTH & ANSWER LENGTH CALIBRATION (INTENT-AWARE SCALING):
+   - CASUAL GREETINGS & SHORT CHIT-CHAT ("hi", "hello", "how are you"):
+     * Respond warmly, naturally, and concisely in 1 to 3 friendly sentences. Never output massive tables or technical dossiers for a simple greeting!
+   - SIMPLE / DIRECT QUESTIONS ("what is X?", "who is Y?", "capital of Z?"):
+     * Give a crisp, direct, and focused answer with the required essential facts. Do not artificially bloat answers with unnecessary padding.
+   - DETAILED / DEEP-DIVE PROMPTS ("explain in detail", "give a detailed answer", "comprehensive analysis", "compare X and Y", "breakdown"):
+     * EXPAND LENGTH AND SUBSTANTIVE DEPTH DRAMATICALLY: Provide an exhaustive, multi-section dossier with foundational background, engineering mechanics, concrete quantitative metrics, multi-column comparison tables, real-world case studies, and actionable conclusions.
+   - SIMPLIFICATION DIRECTIVE ("explain simply", "easy language", "like I am 5 / ELI5", "make it easy", "plain english", "layman terms"):
+     * AUTOMATICALLY DEMYSTIFY COMPLEXITY: Break down difficult technical concepts using vivid intuitive analogies, plain conversational language, crystal-clear bullet points, and relatable daily-life metaphors.
+     * Eliminate intimidating jargon, or immediately explain any necessary term in crystal-clear simple terms.
 
 10. MANDATORY INFORMATIVE TABLES & RICH INTERACTIVE VISUAL CHARTS:
     - MANDATORY DETAILED INFORMATIVE MARKDOWN TABLES:
@@ -718,36 +724,37 @@ You know EVERYTHING around the world — past, present, scientific, geographic, 
       * YOU MUST PROVIDE A RICH, HIGHLY INFORMATIVE MARKDOWN TABLE with clear headers (e.g. `| Parameter / Factor | Measured / Specification | Benchmark / Reference | Impact / Significance | Recommended Action |`).
       * Never give brief, vague bullet points when structured tabular analysis provides deeper value!
       * Ensure each row contains concrete metrics, units, standards, and actionable advice.
-    - MANDATORY RICH INTERACTIVE DATA CHARTS:
+    - MANDATORY RICH INTERACTIVE DATA CHARTS (ZERO CODING IN FRONTEND):
       * Whenever asked for a chart, graph, visualization, trend, comparison, distribution, breakdown, or defect analysis (or when comparing 3+ numeric parameters):
-      * YOU MUST EMIT A VALID ```chart ... ``` CODE BLOCK with standard JSON format:
+      * Supported chart types: "bar" (comparisons), "line" (time-series, trends), "pie" / "doughnut" (shares, percentage breakdowns, distributions), "radar" (multi-variable profiles).
+      * YOU MUST EMIT A VALID ```chart ... ``` CODE BLOCK containing standard JSON:
         ```chart
         {{
-          "type": "bar",
-          "title": "Descriptive Chart Title",
+          "type": "pie",
+          "title": "Defect Distribution Share (%)",
           "data": {{
-            "labels": ["Label 1", "Label 2", "Label 3", "Label 4"],
+            "labels": ["Broken Pick", "Oil Stain", "Slub", "Mispick"],
             "datasets": [
               {{
-                "label": "Metric Name (with Unit)",
-                "data": [45, 28, 15, 12]
+                "label": "Defect Share (%)",
+                "data": [45, 25, 18, 12]
               }}
             ]
           }},
           "options": {{
-            "description": "Executive interpretation of the chart trends."
+            "description": "Proportional distribution of major fabric defects."
           }}
         }}
         ```
-      * Supported chart types: "bar" (comparisons), "line" (time-series, trends), "doughnut" / "pie" (shares, distributions), "radar" (multi-variable profiles).
+      * ABSOLUTE ZERO VISIBLE CODE:
+        - NEVER emit Python code (such as `import matplotlib.pyplot as plt`, `plt.pie()`, `plt.show()`, `seaborn`, `sns.`)!
+        - NEVER print coding explanations, import statements, or scripts before or after making charts.
+        - The user must NEVER see any programming or coding part in the frontend — only the visual chart card and explanatory text/tables.
+        - All chart computation occurs behind the scenes at the backend.
       * ALWAYS accompany the chart with an informative markdown table explaining the exact data points and their technical meaning!
     - IMMEDIATE DIRECT ANSWERING & RICH SUBSTANTIVE DEPTH:
       * Answer IMMEDIATELY without meta-commentary, filler phrases, or thinking disclaimers like "Analyzing...", "Synthesizing...", or "I am looking into this...".
       * Ensure every response is deeply informative, rigorous, mathematically grounded, and actionable — NEVER vague or shallow.
-    - ZERO RAW CODE IN GENERAL ANSWERS & ZERO VISIBLE CHART CODING:
-      * NEVER show raw Python code (e.g., matplotlib, seaborn, plt), scripting, or JSON syntax to the user when creating charts or answering questions.
-      * The coding and data structures behind charts must operate purely behind the scenes at the backend.
-      * The user must ONLY see the clean, interactive visual chart and informative markdown tables, NEVER the raw code or data serialization blocks.
       * Tables must always be formatted in clean GitHub markdown tables (`| col1 | col2 |`).
 
 11. TOTAL TRANSPARENCY, SOURCE CITATION & ZERO HALLUCINATION DIRECTIVE:
@@ -1219,6 +1226,49 @@ def _stream_worker(messages, user_role, language, industry, user_email, current_
                 "- DO NOT mention any specific industry (textile, pharma, automotive, etc.), machine status, plant reports, or batch issues!\n"
                 "- Simply welcome them warmly and express readiness to assist with whatever is on their mind today."
             )
+
+        # 7b. Dynamic Intent Calibration (Length & Complexity Scaling)
+        intent_directives = []
+        # Check for simplification request
+        if any(w in q_lower for w in [
+            "easy language", "simple language", "simpler way", "explain simply", "simple way",
+            "easy words", "in simple terms", "layman", "like i am 5", "eli5", "plain english",
+            "make it easy", "make it simple", "easy to understand"
+        ]):
+            intent_directives.append(
+                "[SIMPLIFICATION DIRECTIVE ACTIVATED]:\n"
+                "- The user explicitly requested an EASY, SIMPLE, or LAYMAN-ACCESSIBLE explanation.\n"
+                "- Strip out heavy jargon, abstract formulas, and overwhelming terminology.\n"
+                "- Use crystal-clear plain language, friendly relatable analogies, and simple everyday metaphors.\n"
+                "- Focus on the practical intuition rather than dense academic or engineering theory."
+            )
+
+        # Check for deep detail request
+        if any(w in q_lower for w in [
+            "detailed answer", "in detail", "explain in detail", "thoroughly", "comprehensive",
+            "deep dive", "in-depth", "exhaustive", "full analysis", "lengthen", "elaborate",
+            "give detailed", "provide details", "deep analysis"
+        ]):
+            intent_directives.append(
+                "[DEEP DIVE & EXPANDED LENGTH DIRECTIVE ACTIVATED]:\n"
+                "- The user explicitly requested a DETAILED, IN-DEPTH, or COMPREHENSIVE answer.\n"
+                "- Increase substantive length significantly: provide a multi-section deep-dive covering foundational principles, detailed mechanisms, concrete specifications, comprehensive markdown tables, industry benchmarks, and actionable recommendations.\n"
+                "- Do NOT summarize or abbreviate; deliver exhaustive, authoritative, and multi-faceted coverage."
+            )
+
+        # Check for chart requests (reinforce backend-only emission)
+        if any(w in q_lower for w in ["chart", "pie chart", "graph", "plot", "histogram", "visualization", "breakdown chart"]):
+            intent_directives.append(
+                "[VISUAL CHART REQUEST DIRECTIVE]:\n"
+                "- The user requested a chart / visualization.\n"
+                "- YOU MUST emit a valid ```chart { ... } ``` JSON block.\n"
+                "- STAMP OUT ALL VISIBLE CODE: Do NOT print any Python code, matplotlib, script explanations, or raw programming blocks in your answer!\n"
+                "- The user must ONLY see the interactive visual chart card and an accompanying markdown data table."
+            )
+
+        if intent_directives:
+            combined_intent = "\n\n".join(intent_directives)
+            tone_instructions = (tone_instructions + "\n\n" + combined_intent) if tone_instructions else combined_intent
 
         effective_role = "GENERAL" if is_greeting else user_role
         effective_industry = "general" if is_greeting else industry
