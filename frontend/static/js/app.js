@@ -1375,6 +1375,30 @@ function prepareFinalMarkdown(text) {
     }
   });
 
+  // 5. Convert text code blocks (timelines, logs, milestone blocks) into clean visual cards rather than raw code
+  prepared = prepared.replace(/```(?:text|code|milestones?|timeline)?\s*\n([\s\S]*?)```/gi, (match, content) => {
+    const trimmed = content.trim();
+    if (!trimmed) return '';
+    // If it's a timeline (contains date/time stamps or arrows)
+    if (/\[\d{4}-\d{2}-\d{2}|(?:\d{1,2}:\d{2})|-->|->|—|Dispatch|Arrival|Transit|Hub/i.test(trimmed)) {
+      const lines = trimmed.split('\n').map(l => l.trim()).filter(l => l && l !== '|' && l !== '│' && l !== '↓');
+      const itemsHtml = lines.map(l => {
+        const dateMatch = l.match(/\[(.*?)\]\s*(?:[—–-]\s*)?(.*)/);
+        if (dateMatch) {
+          return `<div class="timeline-card-item"><span class="timeline-badge">${escapeHtml(dateMatch[1])}</span><span class="timeline-desc">${escapeHtml(dateMatch[2])}</span></div>`;
+        }
+        return `<div class="timeline-card-item"><span class="timeline-dot"></span><span class="timeline-desc">${escapeHtml(l)}</span></div>`;
+      }).join('');
+      return `\n\n<div class="apex-visual-timeline-card"><div class="timeline-card-header"><span class="timeline-icon">⏱️</span> <span>OPERATIONAL MILESTONE TIMELINE</span></div><div class="timeline-card-body">${itemsHtml}</div></div>\n\n`;
+    }
+    // Generic table-like data inside code blocks
+    if (trimmed.includes('|') && trimmed.includes('\n')) {
+      return '\n\n' + trimmed + '\n\n';
+    }
+    // Return clean visual blockquote instead of raw code box
+    return `\n\n<div class="apex-visual-data-card">${escapeHtml(trimmed).replace(/\n/g, '<br/>')}</div>\n\n`;
+  });
+
   return prepared;
 }
 
@@ -1858,19 +1882,12 @@ function appendStreamingMessage() {
   const col=document.createElement('div'); col.className='message-col';
   const bubble=document.createElement('div'); bubble.className='bubble streaming-bubble';
 
-  // Luminous neural processing shimmer shown while model generates the opening token
+  // Silent background neural pulse (no user-facing text)
   const shimmer=document.createElement('div');
   shimmer.className='neural-thinking-shimmer';
   shimmer.innerHTML=`
     <div class="shimmer-lead">
       <span class="shimmer-core-dot"></span>
-      <span class="shimmer-label">APEX NEURAL CORE SYNCHRONIZING</span>
-    </div>
-    <div class="shimmer-bars">
-      <span class="shimmer-bar"></span>
-      <span class="shimmer-bar"></span>
-      <span class="shimmer-bar"></span>
-      <span class="shimmer-bar"></span>
     </div>
   `;
   bubble.appendChild(shimmer);
