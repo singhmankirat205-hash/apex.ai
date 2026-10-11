@@ -1599,7 +1599,7 @@ function convertPythonPlotToChartConfig(pyCode) {
 
 function prepareStreamMarkdown(text) {
   if (!text) return '';
-  // 1. Cleanly hide chart JSON blocks during streaming (no synthesizing text)
+  // 1. Cleanly hide chart code blocks in progress (NEVER show raw code or JSON syntax to user)
   let display = text.replace(/```(?:chart|chart:[a-z0-9_\-]+|json:chart|graph|plot|visualization)[\s\S]*?(?:```|$)/gi, () => {
     return '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Rendering Chart Visualization…</div>\n\n';
   });
@@ -1608,11 +1608,11 @@ function prepareStreamMarkdown(text) {
     return '\n\n<div class="apex-action-generating-hud"><span class="apex-pulse-dot"></span> ⚡ Executing Operations Protocol…</div>\n\n';
   });
   // 3. Hide Python plotting scripts during streaming
-  display = display.replace(/```python[\s\S]*?(?:import matplotlib|plt\.)[\s\S]*?(?:```|$)/gi, () => {
+  display = display.replace(/```(?:python|py)[\s\S]*?(?:import matplotlib|plt\.|seaborn|sns\.)[\s\S]*?(?:```|$)/gi, () => {
     return '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Rendering Chart Visualization…</div>\n\n';
   });
   // 4. Hide JSON blocks that define charts during streaming
-  display = display.replace(/```(?:json|javascript|js)[\s\S]*?"(?:type|data)"[\s\S]*?(?:```|$)/gi, () => {
+  display = display.replace(/```(?:json|javascript|js)?[\s\S]*?"(?:type|data)"[\s\S]*?(?:```|$)/gi, () => {
     return '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Rendering Chart Visualization…</div>\n\n';
   });
   // 5. Hide in-progress file export blocks during streaming
@@ -2333,12 +2333,20 @@ function enhanceMessageContent(bubble, rawText) {
     const code = pre.querySelector('code');
     const codeText = code ? code.innerText : pre.innerText;
 
-    // Completely hide chart and python plot code blocks
-    if (code && (code.classList.contains('language-chart') || code.classList.contains('language-json:chart') || code.className.includes('chart'))) {
+    // Completely hide chart and python plot code blocks so user NEVER sees raw coding
+    if (code && (code.classList.contains('language-chart') || 
+                 code.classList.contains('language-json:chart') || 
+                 code.className.includes('chart') ||
+                 code.className.includes('plot') ||
+                 code.className.includes('graph'))) {
       pre.style.display = 'none';
       return;
     }
-    if (codeText.includes('import matplotlib') || codeText.includes('plt.show()')) {
+    if (codeText.includes('"type"') && codeText.includes('"data"') && codeText.includes('"labels"')) {
+      pre.style.display = 'none';
+      return;
+    }
+    if (codeText.includes('import matplotlib') || codeText.includes('plt.') || codeText.includes('seaborn') || codeText.includes('sns.')) {
       pre.style.display = 'none';
       return;
     }
