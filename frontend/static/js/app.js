@@ -1480,17 +1480,63 @@ const CYBER_PALETTES = [
 
 function parseChartJSON(raw) {
   if (!raw) return null;
-  let clean = raw.replace(/^```(chart|json:chart|json)?/i, '').replace(/```$/i, '').trim();
+  let clean = raw.replace(/^```(?:chart|json:chart|json)?/i, '').replace(/```$/i, '').trim();
+
+  // Try direct parse
   try {
-    return JSON.parse(clean);
-  } catch (_) {
+    const parsed = JSON.parse(clean);
+    if (parsed && typeof parsed === 'object') return parsed;
+  } catch (_) {}
+
+  // If wrapped in commentary, extract outermost JSON object { ... }
+  const jsonMatch = clean.match(/\{[\s\S]*\}/);
+  if (jsonMatch) {
+    const candidate = jsonMatch[0];
     try {
-      let fixed = clean.replace(/,\s*([}\]])/g, '$1');
-      return JSON.parse(fixed);
+      return JSON.parse(candidate);
     } catch (_) {
-      return null;
+      try {
+        // Strip trailing commas before } or ]
+        let fixed = candidate.replace(/,\s*([}\]])/g, '$1');
+        return JSON.parse(fixed);
+      } catch (_) {}
     }
   }
+
+  // Fallback: extract type, title, labels and data arrays heuristically
+  try {
+    const typeMatch = clean.match(/"type"\s*:\s*"([a-zA-Z0-9_\-]+)"/i);
+    const titleMatch = clean.match(/"title"\s*:\s*"([^"]+)"/i);
+    const labelsMatch = clean.match(/"labels"\s*:\s*\[([\s\S]*?)\]/i);
+    const dataMatch = clean.match(/"data"\s*:\s*\[([\s\S]*?)\]/i);
+
+    if (labelsMatch && dataMatch) {
+      const parseStrList = (s) => s.split(',').map(x => x.trim().replace(/^["']|["']$/g, '')).filter(Boolean);
+      const parseNumList = (s) => s.split(',').map(x => parseFloat(x.trim())).filter(n => !isNaN(n));
+      const labels = parseStrList(labelsMatch[1]);
+      const data = parseNumList(dataMatch[1]);
+      if (labels.length && data.length) {
+        return {
+          type: typeMatch ? typeMatch[1].toLowerCase() : 'bar',
+          title: titleMatch ? titleMatch[1] : 'APEX Data Visualization',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: titleMatch ? titleMatch[1] : 'Value',
+              data: data
+            }]
+          },
+          options: {
+            description: 'Rendered by APEX Quantum Visuals Engine.'
+          }
+        };
+      }
+    }
+  } catch (err) {
+    console.warn('Heuristic chart fallback failed:', err);
+  }
+
+  return null;
 }
 
 function convertPythonPlotToChartConfig(pyCode) {
@@ -1554,7 +1600,7 @@ function convertPythonPlotToChartConfig(pyCode) {
 function prepareStreamMarkdown(text) {
   if (!text) return '';
   // 1. Cleanly hide chart JSON blocks during streaming (no synthesizing text)
-  let display = text.replace(/```(?:chart|json:chart)[\s\S]*?(?:```|$)/gi, () => {
+  let display = text.replace(/```(?:chart|chart:[a-z0-9_\-]+|json:chart|graph|plot|visualization)[\s\S]*?(?:```|$)/gi, () => {
     return '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Rendering Chart Visualization…</div>\n\n';
   });
   // 2. Hide in-progress action blocks during streaming
@@ -1566,7 +1612,7 @@ function prepareStreamMarkdown(text) {
     return '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Rendering Chart Visualization…</div>\n\n';
   });
   // 4. Hide JSON blocks that define charts during streaming
-  display = display.replace(/```json[\s\S]*?"(?:type|data)"[\s\S]*?(?:```|$)/gi, () => {
+  display = display.replace(/```(?:json|javascript|js)[\s\S]*?"(?:type|data)"[\s\S]*?(?:```|$)/gi, () => {
     return '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Rendering Chart Visualization…</div>\n\n';
   });
   // 5. Hide in-progress file export blocks during streaming
@@ -1580,8 +1626,8 @@ function prepareFinalMarkdown(text) {
   if (!text) return '';
   let prepared = text;
 
-  // 1. Convert ```chart or ```json:chart blocks into clean <div class="apex-chart-slot" ...></div>
-  prepared = prepared.replace(/```(?:chart|json:chart)\s*([\s\S]*?)```/gi, (match, jsonStr) => {
+  // 1. Convert ```chart, ```chart:*, ```graph, ```plot, ```visualization blocks into clean <div class="apex-chart-slot" ...></div>
+  prepared = prepared.replace(/```(?:chart|chart:[a-z0-9_\-]+|json:chart|graph|plot|visualization)\s*([\s\S]*?)```/gi, (match, jsonStr) => {
     const cfg = parseChartJSON(jsonStr);
     if (cfg && cfg.data && cfg.data.labels) {
       const encoded = encodeURIComponent(JSON.stringify(cfg));
@@ -1600,8 +1646,8 @@ function prepareFinalMarkdown(text) {
     return ''; // completely hide python plotting code so user never sees coding
   });
 
-  // 3. Intercept ```json with chart structure
-  prepared = prepared.replace(/```json\s*(\{[\s\S]*?"(?:type|data)"[\s\S]*?\})```/gi, (match, jsonStr) => {
+  // 3. Intercept ```json or ```javascript with chart structure
+  prepared = prepared.replace(/```(?:json|javascript|js)\s*(\{[\s\S]*?"(?:type|data)"[\s\S]*?\})```/gi, (match, jsonStr) => {
     const cfg = parseChartJSON(jsonStr);
     if (cfg && cfg.data && cfg.data.labels) {
       const encoded = encodeURIComponent(JSON.stringify(cfg));
@@ -2337,6 +2383,64 @@ function enhanceMessageContent(bubble, rawText) {
     pre.parentNode.insertBefore(container, pre);
     container.appendChild(header);
     container.appendChild(pre);
+  });
+}
+
+function addTableExportButtons(col, bubble) {
+  if (!bubble) return;
+  const tables = bubble.querySelectorAll('table');
+  tables.forEach((tbl, idx) => {
+    if (tbl.dataset.exportRendered || tbl.nextElementSibling?.classList.contains('table-export-bar')) return;
+    tbl.dataset.exportRendered = 'true';
+
+    const bar = document.createElement('div');
+    bar.className = 'table-export-bar';
+    bar.innerHTML = `
+      <span style="font-family:var(--font-mono);font-size:10px;color:var(--text3);text-transform:uppercase;">📊 Table ${idx + 1} Tools:</span>
+      <button class="table-export-btn" type="button" data-act="copy-csv">📋 Copy CSV</button>
+      <button class="table-export-btn" type="button" data-act="dl-csv">⬇️ Download CSV</button>
+    `;
+
+    function tableToCSV() {
+      const rows = [];
+      tbl.querySelectorAll('tr').forEach(tr => {
+        const row = [];
+        tr.querySelectorAll('th, td').forEach(cell => {
+          let text = cell.innerText.replace(/"/g, '""').trim();
+          row.push(`"${text}"`);
+        });
+        if (row.length) rows.push(row.join(','));
+      });
+      return rows.join('\r\n');
+    }
+
+    const copyBtn = bar.querySelector('[data-act="copy-csv"]');
+    copyBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const csv = tableToCSV();
+      await copyToClipboard(csv);
+      copyBtn.innerHTML = '✅ Copied!';
+      playClick();
+      setTimeout(() => { copyBtn.innerHTML = '📋 Copy CSV'; }, 2000);
+    });
+
+    const dlBtn = bar.querySelector('[data-act="dl-csv"]');
+    dlBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const csv = tableToCSV();
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `table_export_${Date.now()}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      playDone();
+    });
+
+    tbl.parentNode.insertBefore(bar, tbl.nextSibling);
   });
 }
 
