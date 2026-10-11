@@ -516,10 +516,10 @@
   <div class="modal-card studio-modal-card">
     <div class="modal-header">
       <div class="modal-brand">
-        <span class="modal-icon">🧵</span>
+        <span class="modal-icon" id="studioModalIcon">🧵</span>
         <div>
-          <h3 class="modal-title">APEX Radical Creative Studio &amp; Haptic Lab</h3>
-          <span class="modal-sub">Tactile Haptics · Drape Physics · Acoustic Weave · Chrono-Aging · Zero-Waste Origami</span>
+          <h3 class="modal-title" id="studioModalTitle">APEX Industry Innovation Studio &amp; Engineering Lab</h3>
+          <span class="modal-sub" id="studioModalSub">Tactile Haptics · Drape Physics · Acoustic Weave · Chrono-Aging · Zero-Waste Origami</span>
         </div>
       </div>
       <button class="modal-close-btn" id="closeCreativeStudioModal">✕</button>
@@ -530,8 +530,8 @@
       <div class="studio-guide-left">
         <span class="guide-sparkle">💡</span>
         <div class="guide-text-wrap">
-          <strong class="guide-title">HOW TO USE THE STUDIO LAB:</strong>
-          <span class="guide-desc">Interactive real-time textile engineering suite. Pick any tab below to test live haptic vibration, 60 FPS drape physics, acoustic weaving, chrono aging, or zero-waste folding.</span>
+          <strong class="guide-title" id="studioGuideTitle">HOW TO USE THE STUDIO LAB:</strong>
+          <span class="guide-desc" id="studioGuideDesc">Interactive real-time industry simulation suite. Explore live simulations, interactive models, and engineering stress-tests.</span>
         </div>
       </div>
       <button class="studio-guide-toggle-btn" id="toggleStudioGuideBtn">📖 Show Quick Tips</button>
@@ -571,12 +571,12 @@
     </div>
 
     <!-- Studio Navigation Tabs -->
-    <div class="studio-tab-bar">
-      <button class="studio-tab-btn active" data-tab="hapticTab">📳 Haptic &amp; Drape Physics</button>
-      <button class="studio-tab-btn" data-tab="acousticTab">🎵 Acoustic Weave &amp; Synesthesia</button>
-      <button class="studio-tab-btn" data-tab="chronoTab">⏳ Chrono-Dye Aging &amp; Bio-Textile</button>
-      <button class="studio-tab-btn" data-tab="origamiTab">📐 Zero-Waste Origami Architect</button>
-      <button class="studio-tab-btn" data-tab="visionTab">🔍 Vision Audit &amp; Compliance</button>
+    <div class="studio-tab-bar" id="studioTabBar">
+      <button class="studio-tab-btn active" data-tab="hapticTab" id="studioTabBtn1">📳 Haptic &amp; Drape Physics</button>
+      <button class="studio-tab-btn" data-tab="acousticTab" id="studioTabBtn2">🎵 Acoustic Weave &amp; Synesthesia</button>
+      <button class="studio-tab-btn" data-tab="chronoTab" id="studioTabBtn3">⏳ Chrono-Dye Aging &amp; Bio-Textile</button>
+      <button class="studio-tab-btn" data-tab="origamiTab" id="studioTabBtn4">📐 Zero-Waste Origami Architect</button>
+      <button class="studio-tab-btn" data-tab="visionTab" id="studioTabBtn5">🔍 Vision Audit &amp; Compliance</button>
     </div>
 
     <div class="modal-body studio-modal-body">
@@ -877,6 +877,6 @@
 
 <script src="/static/js/chart.min.js"></script>
 <script src="/static/js/marked.min.js"></script>
-<script src="/static/js/app.js?v=4.4.0"></script>
+<script src="/static/js/app.js?v=4.5.0"></script>
 </body>
 </html>

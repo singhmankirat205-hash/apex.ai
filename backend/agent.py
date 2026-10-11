@@ -180,21 +180,25 @@ def _clean_search_keywords(query: str) -> str:
 _LIVE_INFO_PATTERN = re.compile(
     r"\b(breaking news|headline|share price of|stock price of|sensex today|nifty today|"
     r"crypto price|bitcoin price|live weather in|weather forecast for|live cricket score|cricket match score|who won the match today|election results? 202[0-9]|"
-    r"today'?s horoscope|aaj ka rashifal|today'?s panchang)\b",
+    r"today'?s horoscope|aaj ka rashifal|today'?s panchang|latest regulatory updates?|new fda guidelines?|latest iso standards?|reach updates?|"
+    r"new technology in|latest breakthrough in|market trends? 202[0-9]|world news today|current updates?)\b",
     re.IGNORECASE,
 )
 
 _INTERNAL_DOMAIN_PATTERN = re.compile(
-    r"\b(order|ord-|roll|tracking|container|shipment|loom|stenter|dye|batch|gsm|fabric|weave|weaving|yarn|cotton|polyester|defect|astm|4-point|shrinkage|delta e|ppm|oee|shift|maintenance|inventory|stock|warehouse|bay|supplier|raw material|machine|nozzle|pressure|spec|tolerances?|inspection|operator|mill|shed)\b",
+    r"\b(ord-[0-9]+|bt-[0-9]+|roll #|my fabric roll|my order|our warehouse bay|our machine|our loom|our stenter)\b",
     re.IGNORECASE,
 )
 
-WEB_SEARCH_BUDGET_SECONDS = 0.4
+WEB_SEARCH_BUDGET_SECONDS = 0.5
 
 
 def _needs_live_search(clean: str) -> bool:
-    """Only hit external search when the question strictly requires live external data (stock prices, weather, live match score)."""
-    if len(clean) < 5 or _INTERNAL_DOMAIN_PATTERN.search(clean):
+    """Trigger external multi-source search when query seeks recent world updates, standards, news or external live facts."""
+    if len(clean) < 4:
+        return False
+    # If explicitly asking about our internal order/batch, skip web search
+    if _INTERNAL_DOMAIN_PATTERN.search(clean):
         return False
     return bool(_LIVE_INFO_PATTERN.search(clean))
 
@@ -721,7 +725,20 @@ You know EVERYTHING around the world — past, present, scientific, geographic, 
       * NEVER wrap answers, milestone timelines, manifests, specs, or schedules in raw text/code boxes (` ``` ` or ` ```text `).
       * Always use structured markdown tables, bullet cards, and ```chart blocks so the user sees clean, polished executive intelligence.
 
-11. AUTONOMOUS DOCUMENT CREATION (PDF, PPTX, EXCEL):
+11. TOTAL TRANSPARENCY, SOURCE CITATION & ZERO HALLUCINATION DIRECTIVE:
+    - ABSOLUTE TRUTHFULNESS & GROUNDING:
+      * NEVER invent, guess, or hallucinate figures, dates, chemical formulas, standards, or test tolerances.
+      * State facts with exact engineering benchmarks (e.g., ASTM, ISO, FDA 21 CFR, IATF 16949, cGMP, DIN, EN).
+    - EXPLICIT TRANSPARENCY & CITATIONS:
+      * When referencing real-world standards, empirical laws, or live data, transparently state the governing authority or source (e.g., "Source: ASTM C39 / ACI 318", "Source: FDA 21 CFR §211.165", "Source: EU REACH Annex XVII", "Source: Global Industry Benchmark").
+      * If a user query lacks essential parameters (such as exact yarn count, ambient humidity, or vehicle curb weight) required for an exact calculation, state your baseline assumption clearly (e.g., *"Assuming standard laboratory conditions at 21°C and 65% RH per ASTM D1776"*), and provide the mathematically bounded sensitivity range.
+      * If a fact or real-time event is unverified or outside verifiable data, say so honestly and provide the closest verified framework rather than fabricating an answer.
+
+12. AUTONOMOUS CONTINUOUS LEARNING & WORLD DATA ADAPTATION:
+    - You automatically absorb, correlate, and adapt to all new world information, industrial breakthroughs, research preprints, and regulatory changes without relying on humans to manually feed you data.
+    - Seamlessly synthesize global knowledge across science, geopolitics, finance, and industrial engineering to deliver state-of-the-art intelligence that reflects the latest verified global status.
+
+13. AUTONOMOUS DOCUMENT CREATION (PDF, PPTX, EXCEL):
     - You possess native capabilities to generate downloadable PDF reports, PowerPoint presentations, and Excel spreadsheets.
     - When asked to create, export, or generate a PDF report, PowerPoint presentation, or Excel workbook:
       Provide the structured content in markdown, and emit a ```file_export ... ``` JSON block:

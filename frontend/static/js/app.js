@@ -1087,6 +1087,249 @@ function updateIndustryAndRoles(indKey) {
   if (activeWelcome) {
     appendWelcomeCard(indKey);
   }
+
+  // 7. Dynamically adapt Studio Lab for this specific Industry
+  updateStudioLabForIndustry(indKey);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// MULTI-INDUSTRY STUDIO LAB PROFILES & DYNAMIC RECONFIGURATION
+// ══════════════════════════════════════════════════════════════════════════════
+const STUDIO_INDUSTRY_PROFILES = {
+  textile: {
+    title: 'Textile Innovation Studio & Advanced Engineering Lab',
+    sub: 'Tactile Haptics · Drape Physics · Acoustic Weave · Chrono-Aging · Zero-Waste Origami',
+    guideTitle: 'HOW TO USE TEXTILE INNOVATION LAB:',
+    guideDesc: 'Interactive textile physics, haptic emulation, algorithmic Jacquard drafting, and ASTM vision inspection.',
+    tips: [
+      { num: '1', title: 'Haptics & Drape', text: 'Pick fabric specs (Denim, Silk, Linen) and slide across Touchpad to test mobile vibration drag. Interact with the 60 FPS cloth mesh.' },
+      { num: '2', title: 'Acoustic Weave', text: 'Input music tempos or styles to calculate mathematical Jacquard loom draft matrices, or extract 5 Pantone TCX yarn colors from food flavors.' },
+      { num: '3', title: 'Chrono-Aging & Bio', text: 'Step through 0 Mo to 5 Yrs to see indigo fading and whiskering. Slide humidity to watch bio-cellulose pellicle expand.' },
+      { num: '4', title: 'Origami & Vision', text: 'Follow 5 kinetic zero-waste origami garment folding steps. Run Loomside optical vision audit for 4-point ASTM grading.' },
+    ],
+    tabs: [
+      { id: 'hapticTab', icon: '📳', label: 'Haptic & Drape Physics' },
+      { id: 'acousticTab', icon: '🎵', label: 'Acoustic Weave & Synesthesia' },
+      { id: 'chronoTab', icon: '⏳', label: 'Chrono-Dye Aging & Bio-Textile' },
+      { id: 'origamiTab', icon: '📐', label: 'Zero-Waste Origami Architect' },
+      { id: 'visionTab', icon: '🔍', label: 'Vision Audit & Compliance' },
+    ],
+    stripGuides: {
+      hapticTab: '1. Choose a fabric below · 2. Drag your finger/mouse on the Touchpad · 3. Click & toss the live cloth mesh on the right canvas.',
+      acousticTab: '1. Pick a music genre preset or type audio tempo to generate a Jacquard draft matrix · 2. Type culinary notes to extract 5 Pantone TCX colors.',
+      chronoTab: '1. Click time buttons (Brand New → 5 Years) to see denim whisker erosion render · 2. Move Humidity/Temp sliders to watch living bio-cellulose swell.',
+      origamiTab: '1. Click steps 1 through 5 to follow origami tessellation folds · 2. Tap "Ask APEX" to transfer pattern formulas to chat.',
+      visionTab: '1. Click "Run Real-Time Loomside Audit" to simulate camera feed and defect bounding boxes · 2. Enter chemicals to test EU REACH restrictions.',
+    }
+  },
+  pharma: {
+    title: 'Biopharma R&D Lab & cGMP Validation Cleanroom Studio',
+    sub: 'Dissolution Profiler · HPLC Chromatography Simulator · Cleanroom Pressure Differential · Stability Shelf-Life',
+    guideTitle: 'HOW TO USE PHARMA & HEALTHCARE LAB:',
+    guideDesc: 'Simulate tablet dissolution curves, cleanroom differential pressure cascades, accelerated shelf-life, and OOS compliance.',
+    tips: [
+      { num: '1', title: 'Dissolution Profiler', text: 'Simulate USP <711> Stage 1 (S1) and Stage 2 (S2) release profiles. Analyze hydrodynamic shear and tablet binder hardness.' },
+      { num: '2', title: 'Chromatography Assay', text: 'Simulate HPLC peak resolution (Rs > 2.0), retention time drift, and impurity identification at RRT 1.25.' },
+      { num: '3', title: 'Cleanroom HVAC Cascade', text: 'Monitor positive pressure differentials (Grade A/B/C/D > 10-15 Pa) to verify sterility barrier integrity.' },
+      { num: '4', title: 'Accelerated Stability', text: 'Model Arrhenius degradation under 40°C / 75% RH to project real-time shelf life and active ingredient potency.' },
+    ],
+    tabs: [
+      { id: 'hapticTab', icon: '💊', label: 'USP Dissolution Profiler' },
+      { id: 'acousticTab', icon: '🧪', label: 'HPLC Chromatography & Assay' },
+      { id: 'chronoTab', icon: '🌡️', label: 'ICH Accelerated Stability' },
+      { id: 'origamiTab', icon: '🛡️', label: 'Cleanroom Differential HVAC' },
+      { id: 'visionTab', icon: '🔬', label: 'OOS Phase 1 & USP <788>' },
+    ],
+    stripGuides: {
+      hapticTab: '1. Select active pharmaceutical formulation · 2. Evaluate dissolution apparatus paddle/basket RPM · 3. Observe real-time release curve.',
+      acousticTab: '1. Input mobile phase gradient and flow rate · 2. Check theoretical plates (N) and peak symmetry · 3. Verify assay percentage.',
+      chronoTab: '1. Select 40°C/75% RH accelerated milestone (0M, 3M, 6M) · 2. Observe degradant peak formation · 3. Review shelf-life projection.',
+      origamiTab: '1. Inspect Grade A laminar flow velocity (0.45 m/s) · 2. Test Grade B-to-C airlock pressure cascade (+15 Pa) · 3. Ensure zero particulate backflow.',
+      visionTab: '1. Run automated vial particle inspection (USP <788>) · 2. Review sub-visible counts (≥10 μm & ≥25 μm) · 3. Trigger OOS laboratory root-cause protocol.',
+    }
+  },
+  auto: {
+    title: 'Automotive & EV Metrology Simulation Studio',
+    sub: 'GD&T Metrology · Robotic Weld Inspection · Torque-Angle Rundown · EV Battery Tab Ultrasonic Quality',
+    guideTitle: 'HOW TO USE AUTOMOTIVE & EV STUDIO:',
+    guideDesc: 'Test dimensional tolerances, robotic MIG weld integrity, fastener clamping curves, and EV battery cell tab welds.',
+    tips: [
+      { num: '1', title: 'GD&T True Position', text: 'Verify datum feature hole position tolerances against CMM laser scan baselines per ASME Y14.5.' },
+      { num: '2', title: 'Torque-Angle Curve', text: 'Analyze dynamic nutrunner rundown curves: seating torque, yield clamp point, and angle deviation.' },
+      { num: '3', title: 'EV Pouch Cell Weld', text: 'Inspect ultrasonic metal weld micro-ohm electrical resistance and horn anvil horn tuning parameters.' },
+      { num: '4', title: 'Defect PPM & Cpk', text: 'Calculate automotive process capability indices (Cp, Cpk ≥ 1.67) and defect PPM containment.' },
+    ],
+    tabs: [
+      { id: 'hapticTab', icon: '🚗', label: 'GD&T Tolerance & CMM Metrology' },
+      { id: 'acousticTab', icon: '🔩', label: 'Torque-Angle Fastener Curve' },
+      { id: 'chronoTab', icon: '⚡', label: 'EV Battery Tab Weld Inspector' },
+      { id: 'origamiTab', icon: '🤖', label: 'Robotic MIG Weld Penetration' },
+      { id: 'visionTab', icon: '🔍', label: 'AIAG-VDA FMEA & PPM Audit' },
+    ],
+    stripGuides: {
+      hapticTab: '1. Choose stamping datum features · 2. Inspect coordinate tolerance envelope · 3. Verify true position diameter against drawing spec.',
+      acousticTab: '1. Select joint stiffness and grade 10.9 fastener · 2. Monitor rundown torque angle threshold · 3. Flag stripped threads or cross-threading.',
+      chronoTab: '1. Select ultrasonic weld energy (Joules) and horn amplitude · 2. Check tab peel strength (N) · 3. Ensure tab contact resistance < 50 μΩ.',
+      origamiTab: '1. Select robotic weld travel speed and shielding gas (90/10 Ar/CO2) · 2. Verify throat thickness · 3. Inspect weld spatter and porosity.',
+      visionTab: '1. Run automated surface laser vision scan · 2. Detect orange peel and stamping burrs · 3. Update Cpk capability and PPM scorecard.',
+    }
+  },
+  food: {
+    title: 'Food Safety, Pasteurization & Microbial Kinetics Lab',
+    sub: 'HTST Pasteurizer CCP · Microbial CFU Kinetics · Modified Atmosphere Packaging · Allergen Matrix',
+    guideTitle: 'HOW TO USE FOOD & BEVERAGE SAFETY LAB:',
+    guideDesc: 'Verify pasteurization holding tubes, pathogen kill kinetics, MAP oxygen residual, and Clean-In-Place sanitation.',
+    tips: [
+      { num: '1', title: 'HTST Pasteurizer CCP', text: 'Monitor 72°C thermal holding for 15 seconds. Ensure flow diversion valve triggers instantly if temperature drops.' },
+      { num: '2', title: 'Microbial Growth Kinetics', text: 'Plot bacterial CFU/g log-growth curves under cold-chain storage to predict safe shelf-life limits.' },
+      { num: '3', title: 'MAP Packaging Integrity', text: 'Test modified atmosphere packaging headspace residual oxygen (O2 < 0.5%) and dye leak immersion.' },
+      { num: '4', title: 'CIP Sanitation & ATP', text: 'Validate Clean-In-Place wash cycles (Caustic 1.5% @ 75°C, Acid rinse, Sanitizer) with ATP swab pass thresholds.' },
+    ],
+    tabs: [
+      { id: 'hapticTab', icon: '🥣', label: 'HTST Pasteurizer CCP Monitor' },
+      { id: 'acousticTab', icon: '🧫', label: 'Microbial CFU/g Growth Curves' },
+      { id: 'chronoTab', icon: '📦', label: 'MAP Packaging & Oxygen Seal' },
+      { id: 'origamiTab', icon: '🧼', label: 'Clean-In-Place (CIP) Wash Cycle' },
+      { id: 'visionTab', icon: '🛡️', label: 'HACCP & Allergen Cross-Contact' },
+    ],
+    stripGuides: {
+      hapticTab: '1. Monitor pasteurization core temperature · 2. Confirm flow diversion valve response · 3. Verify pasteurizer lethal heat units (PU).',
+      acousticTab: '1. Set storage temperature (+4°C vs +10°C abuse) · 2. Track microbial lag and exponential phases · 3. Predict expiration limit.',
+      chronoTab: '1. Measure package headspace gas composition (70% N2 / 30% CO2) · 2. Run dye immersion vacuum seal test · 3. Detect micro-leaks.',
+      origamiTab: '1. Follow pre-rinse, caustic wash, acid wash, sanitizer sequence · 2. Check ATP swab bioluminescence (< 10 RLU clean) · 3. Log cycle.',
+      visionTab: '1. Scan packaging line for allergen label compliance · 2. Confirm dairy/nut segregation · 3. Export audit-ready HACCP log.',
+    }
+  },
+  construction: {
+    title: 'Civil & Structural Materials Testing Simulation Lab',
+    sub: 'ASTM C39 Concrete Strength · Slump & Water-Cement Ratio · Rebar Corrosion · OSHA Site Safety',
+    guideTitle: 'HOW TO USE CONSTRUCTION & CIVIL LAB:',
+    guideDesc: 'Calculate 7/28-day concrete compressive strengths, slump workability, rebar corrosion depth, and OSHA scaffolding compliance.',
+    tips: [
+      { num: '1', title: 'ASTM C39 Compressive Strength', text: 'Calculate concrete cylinder break force (MPa/PSI) at 7-day (65-70%) and 28-day (100% design strength) cure milestones.' },
+      { num: '2', title: 'Slump & W/C Ratio', text: 'Evaluate ASTM C143 slump workability (100 ± 25 mm). Adjust superplasticizer dosage without compromising strength.' },
+      { num: '3', title: 'Rebar Corrosion & Cover', text: 'Inspect reinforced concrete cover depth per ACI 318 and calculate half-cell corrosion potential.' },
+      { num: '4', title: 'OSHA High-Risk Safety', text: 'Audit fall protection (6 ft trigger), deep trench shoring (5 ft trigger), and crane outrigger bearing capacity.' },
+    ],
+    tabs: [
+      { id: 'hapticTab', icon: '🧱', label: 'ASTM C39 Compressive Strength' },
+      { id: 'acousticTab', icon: '📐', label: 'ASTM C143 Slump & Workability' },
+      { id: 'chronoTab', icon: '🏗️', label: 'Rebar Corrosion & Cover Depth' },
+      { id: 'origamiTab', icon: '🦺', label: 'OSHA Scaffold & Trench Safety' },
+      { id: 'visionTab', icon: '🔍', label: 'Mix Design & Grout Void Audit' },
+    ],
+    stripGuides: {
+      hapticTab: '1. Select concrete design grade (e.g., C30/37 or 4000 PSI) · 2. Simulate cylinder break force · 3. Compare 7-day vs 28-day cure curves.',
+      acousticTab: '1. Record cone slump measurement (mm) · 2. Adjust water-cement ratio or polycarboxylate dosage · 3. Verify pourability.',
+      chronoTab: '1. Select exposure environment (marine splash vs inland) · 2. Model chloride penetration depth · 3. Calculate service life to rust spalling.',
+      origamiTab: '1. Audit scaffolding guardrails (42-inch top rail) · 2. Check excavation benching / trench box ratings · 3. Ensure stop-work triggers.',
+      visionTab: '1. Inspect column removal for honeycombing · 2. Calculate void volume for epoxy pressure grouting · 3. Certify structural sign-off.',
+    }
+  },
+  logistics: {
+    title: 'Supply Chain, Fleet & Cold-Chain Analytics Studio',
+    sub: 'OTIF Vendor Scorecard · Cold-Chain MKT Excursion · FTL vs LTL Freight Optimization · Warehouse OEE Throughput',
+    guideTitle: 'HOW TO USE LOGISTICS & SUPPLY CHAIN STUDIO:',
+    guideDesc: 'Analyze On-Time In-Full KPIs, Mean Kinetic Temperature in reefer containers, freight dimensional weight, and warehouse OEE.',
+    tips: [
+      { num: '1', title: 'Cold-Chain MKT Analysis', text: 'Calculate Mean Kinetic Temperature (MKT) for biologics during a 2°C to 8°C temperature breach excursion.' },
+      { num: '2', title: 'OTIF Vendor Scorecard', text: 'Track On-Time In-Full fulfillment rates and calculate carrier SLA chargebacks and dock detention costs.' },
+      { num: '3', title: 'FTL vs LTL Freight Model', text: 'Compare volumetric dimensional weight charges against full truckload routing to eliminate deadhead empty miles.' },
+      { num: '4', title: 'Warehouse Pick-Pack OEE', text: 'Model automated pick rates, forklift travel routes, dock-to-stock cycle times, and inventory turnover.' },
+    ],
+    tabs: [
+      { id: 'hapticTab', icon: '❄️', label: 'Cold-Chain MKT Temp Excursion' },
+      { id: 'acousticTab', icon: '📋', label: 'OTIF Vendor Scorecard & SLA' },
+      { id: 'chronoTab', icon: '🚚', label: 'FTL vs LTL Freight Optimization' },
+      { id: 'origamiTab', icon: '📦', label: 'Warehouse Pick-Pack & OEE' },
+      { id: 'visionTab', icon: '🔍', label: 'RFID / Barcode Read Rate Audit' },
+    ],
+    stripGuides: {
+      hapticTab: '1. Input reefer sensor temperature profile · 2. Calculate activation energy (ΔH) and MKT (°C) · 3. Verify product stability impact.',
+      acousticTab: '1. Review carrier delivery logs · 2. Calculate OTIF percentage · 3. Assess penalty thresholds for late / partial shipments.',
+      chronoTab: '1. Input cargo pallet count and cubic dimensions · 2. Compare dimensional weight tariff vs flat FTL rate · 3. Optimize route.',
+      origamiTab: '1. Model warehouse travel paths · 2. Identify pick-face bottlenecks · 3. Balance dock staging queues to avoid detention fees.',
+      visionTab: '1. Simulate high-speed sorting conveyor scanner · 2. Measure barcode / RFID read rate · 3. Triage unreadable package diverts.',
+    }
+  },
+  general: {
+    title: 'Universal Industrial Engineering & Root-Cause Studio',
+    sub: '5-Why & Ishikawa Root Cause · ISO 9001 Audit Engine · Yield & Unit Economics · Operational Risk Matrix',
+    guideTitle: 'HOW TO USE UNIVERSAL ENGINEERING STUDIO:',
+    guideDesc: 'Deploy universal quality engineering: DMAIC problem solving, ISO 9001 compliance, financial ROI, and risk management.',
+    tips: [
+      { num: '1', title: '5-Why & Fishbone Analysis', text: 'Perform deep-dive root cause investigation across Man, Machine, Material, Method, and Measurement categories.' },
+      { num: '2', title: 'ISO 9001:2015 Audit Engine', text: 'Generate internal quality audit matrices verifying Clause 8 operations, non-conformities, and CAPA actions.' },
+      { num: '3', title: 'Yield & Scrap Unit Economics', text: 'Calculate manufacturing mass balance, scrap cost impact, unit margins, and capital investment payback.' },
+      { num: '4', title: 'Operational Risk Matrix', text: 'Evaluate process failure probabilities and impact severities to establish mission-critical mitigations.' },
+    ],
+    tabs: [
+      { id: 'hapticTab', icon: '🔍', label: '5-Why & Ishikawa Root Cause' },
+      { id: 'acousticTab', icon: '📋', label: 'ISO 9001:2015 Audit Engine' },
+      { id: 'chronoTab', icon: '📈', label: 'Yield & Scrap Unit Economics' },
+      { id: 'origamiTab', icon: '⚡', label: 'Operational Risk Matrix' },
+      { id: 'visionTab', icon: '📊', label: 'Executive Quality KPI Suite' },
+    ],
+    stripGuides: {
+      hapticTab: '1. Enter observed quality defect or failure mode · 2. Drill down through 5 consecutive Whys · 3. Establish root cause CAPA.',
+      acousticTab: '1. Select ISO standard clause (8.5 Production, 9.1 Monitoring) · 2. Review evidence requirements · 3. Log findings.',
+      chronoTab: '1. Enter baseline production volume and scrap rate · 2. Calculate lost margin and scrap cost · 3. Model recovery savings.',
+      origamiTab: '1. Rate occurrence likelihood and failure severity · 2. Plot on 5x5 risk heat map · 3. Assign automated mitigation controls.',
+      visionTab: '1. Monitor multi-line defect trends · 2. Compare actual vs benchmark yield · 3. Export executive performance brief.',
+    }
+  }
+};
+
+function updateStudioLabForIndustry(indKey) {
+  const profile = STUDIO_INDUSTRY_PROFILES[indKey] || STUDIO_INDUSTRY_PROFILES['general'];
+
+  // 1. Update Studio Modal Header & Subhead
+  const modalTitle = document.getElementById('studioModalTitle');
+  const modalSub = document.getElementById('studioModalSub');
+  const guideTitle = document.getElementById('studioGuideTitle');
+  const guideDesc = document.getElementById('studioGuideDesc');
+
+  if (modalTitle) modalTitle.textContent = profile.title;
+  if (modalSub) modalSub.textContent = profile.sub;
+  if (guideTitle) guideTitle.textContent = profile.guideTitle;
+  if (guideDesc) guideDesc.textContent = profile.guideDesc;
+
+  // 2. Update Studio Tab Buttons (labels & icons)
+  profile.tabs.forEach((tab, idx) => {
+    const btn = document.getElementById(`studioTabBtn${idx + 1}`);
+    if (btn) {
+      btn.innerHTML = `${tab.icon} ${tab.label}`;
+      btn.setAttribute('title', tab.label);
+    }
+  });
+
+  // 3. Update Studio Drawer Quick Tips
+  const guideDrawer = document.getElementById('studioGuideDrawer');
+  if (guideDrawer && profile.tips) {
+    const cardGrid = guideDrawer.querySelector('.guide-card-grid');
+    if (cardGrid) {
+      cardGrid.innerHTML = profile.tips.map(t => `
+        <div class="guide-tip-card">
+          <div class="tip-num">${t.num}</div>
+          <div class="tip-body">
+            <strong>${t.title}:</strong>
+            <span>${t.text}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+
+  // 4. Update Tab Instruction Strips
+  if (profile.stripGuides) {
+    Object.entries(profile.stripGuides).forEach(([tabId, text]) => {
+      const pane = document.getElementById(tabId);
+      if (pane) {
+        const stripSpan = pane.querySelector('.studio-tab-instruction-strip span:last-child');
+        if (stripSpan) stripSpan.textContent = text;
+      }
+    });
+  }
 }
 
 // Industry selector change event
