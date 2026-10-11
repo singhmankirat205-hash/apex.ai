@@ -341,6 +341,9 @@ async function handleRegister(name, email, password, industry, role) {
         registerSubmitBtn.innerHTML = `<span class="auth-btn-glow"></span><span>✨ Create &amp; Launch APEX</span>`;
       }
       await syncHistoryWithServer(data.user.email);
+      currentChatId = Date.now();
+      conversationHistory = [];
+      appendWelcomeCard();
     }, 600);
 
   } catch (err) {
@@ -1949,12 +1952,25 @@ function appendWelcomeCard(indKey) {
     </button>
   `).join('');
 
+  const storedUser = currentUser || getStoredUser();
+  const userName = (storedUser && storedUser.name && storedUser.name !== 'Guest User')
+    ? storedUser.name
+    : ((storedUser && storedUser.email && !storedUser.email.startsWith('guest')) ? storedUser.email.split('@')[0] : '');
+
+  const welcomeBannerHtml = userName ? `
+    <div class="welcome-user-banner">
+      <span class="welcome-back-label">⚡ Welcome Back,</span>
+      <span class="welcome-user-name">${escapeHtml(userName)}</span>
+    </div>
+  ` : '';
+
   card.innerHTML = `
     <div class="welcome-logo-wrap">
       <img src="/static/apex_logo.jpg" alt="APEX" class="welcome-logo-img"/>
       <div class="welcome-glow"></div>
     </div>
     <h1 class="welcome-h1">APEX</h1>
+    ${welcomeBannerHtml}
     <p class="welcome-tagline">You didn't stumble here by chance — you arrived because you need answers that actually matter. Ask anything. I'll give you clarity, precision, and insight that moves you forward.</p>
     <div class="welcome-features welcome-questions" id="welcomeQuestions">
       ${questionsHtml}
