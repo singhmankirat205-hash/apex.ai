@@ -436,6 +436,7 @@ setTimeout(() => {
   if (stored) {
     updateUIForLoggedInUser(stored);
     hideAuthModal();
+    syncHistoryWithServer(stored.email).catch(() => {});
   } else {
     // Automatically create guest user so anyone can start chatting instantly without barriers
     const guest = {
@@ -447,6 +448,7 @@ setTimeout(() => {
     setStoredUser(guest);
     updateUIForLoggedInUser(guest);
     hideAuthModal();
+    syncHistoryWithServer(guest.email).catch(() => {});
   }
 }, 600);
 
@@ -575,8 +577,34 @@ function initParticles() {
       }
     }
 
+    // Neural energy data pulses traveling along connections
+    if (Math.random() < 0.22 && pulses.length < 24 && particles.length > 1) {
+      const a = Math.floor(Math.random() * particles.length);
+      const b = (a + 1 + Math.floor(Math.random() * 4)) % particles.length;
+      pulses.push({ from: particles[a], to: particles[b], t: 0, speed: 0.02 + Math.random() * 0.025, color: particles[a].color.glow });
+    }
+    for (let k = pulses.length - 1; k >= 0; k--) {
+      const pulse = pulses[k];
+      pulse.t += pulse.speed;
+      if (pulse.t >= 1) {
+        pulses.splice(k, 1);
+        continue;
+      }
+      const px = pulse.from.x + (pulse.to.x - pulse.from.x) * pulse.t;
+      const py = pulse.from.y + (pulse.to.y - pulse.from.y) * pulse.t;
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(px, py, 2.2, 0, Math.PI * 2);
+      ctx.fillStyle = pulse.color;
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = pulse.color;
+      ctx.fill();
+      ctx.restore();
+    }
+
     requestAnimationFrame(draw);
   }
+  const pulses = [];
   draw();
 }
 
@@ -1638,7 +1666,7 @@ async function sendMessage(text) {
     role: m.role || 'user',
     content: typeof m.content === 'string' ? m.content : String(m.content || '')
   }));
-  const {bubbleEl, col} = appendStreamingMessage();
+  const {bubbleEl, col, shimmerEl} = appendStreamingMessage();
 
   try {
     const res = await fetch('/api/chat/stream', {
@@ -1710,6 +1738,9 @@ async function sendMessage(text) {
         try {
           const p = JSON.parse(data);
           if (p.text) {
+            if (shimmerEl && shimmerEl.parentNode) {
+              shimmerEl.remove();
+            }
             fullReply += p.text;
             scheduleStreamRender();
           }
@@ -1825,12 +1856,30 @@ function appendStreamingMessage() {
   const wrap=document.createElement('div'); wrap.className='message assistant';
   const avatar=document.createElement('div'); avatar.className='avatar'; avatar.textContent='A';
   const col=document.createElement('div'); col.className='message-col';
-  const bubble=document.createElement('div'); bubble.className='bubble';
+  const bubble=document.createElement('div'); bubble.className='bubble streaming-bubble';
+
+  // Luminous neural processing shimmer shown while model generates the opening token
+  const shimmer=document.createElement('div');
+  shimmer.className='neural-thinking-shimmer';
+  shimmer.innerHTML=`
+    <div class="shimmer-lead">
+      <span class="shimmer-core-dot"></span>
+      <span class="shimmer-label">APEX NEURAL CORE SYNCHRONIZING</span>
+    </div>
+    <div class="shimmer-bars">
+      <span class="shimmer-bar"></span>
+      <span class="shimmer-bar"></span>
+      <span class="shimmer-bar"></span>
+      <span class="shimmer-bar"></span>
+    </div>
+  `;
+  bubble.appendChild(shimmer);
+
   col.appendChild(bubble);
   wrap.appendChild(avatar); wrap.appendChild(col);
   messagesArea.appendChild(wrap);
   scrollToBottom();
-  return {bubbleEl:bubble, col};
+  return {bubbleEl:bubble, col, shimmerEl:shimmer};
 }
 
 function addTimestamp(col) {
@@ -2112,12 +2161,86 @@ function addMessageActions(col, rawText, bubble) {
   actions.appendChild(pptxBtn);
   actions.appendChild(xlsxBtn);
 
+  const followUps = renderAutonomousFollowUps(rawText, col);
+
   const ts = col.querySelector('.timestamp');
   if (ts) {
+    if (followUps) col.insertBefore(followUps, ts);
     col.insertBefore(actions, ts);
   } else {
+    if (followUps) col.appendChild(followUps);
     col.appendChild(actions);
   }
+}
+
+function renderAutonomousFollowUps(rawText, col) {
+  if (!rawText || !col) return null;
+  if (col.querySelector('.autonomous-followups-wrap')) return null;
+
+  // Extract actionable suggestions, follow-up questions, or next logical steps
+  const questions = [];
+  const lines = rawText.split('\n');
+  for (const l of lines) {
+    const trimmed = l.trim();
+    // Match bulleted/numbered questions or bold questions
+    const qMatch = trimmed.match(/^(?:(?:\d+\.|\*|-|•)\s+)?(?:(?:\*\*|__)?(?:Would you like|Shall we|Should we|Do you want to|Next step:|Action:|Recommended:|Try:)\s+)?([A-Z0-9][^.!?\n]{12,120}\?)/i)
+                || trimmed.match(/\*\*([A-Z0-9][^.!?\n]{12,110}\?)\*\*/i);
+    if (qMatch && qMatch[1]) {
+      const cleanQ = qMatch[1].replace(/[*_`]/g, '').trim();
+      if (cleanQ.length > 15 && cleanQ.length < 130 && !questions.includes(cleanQ)) {
+        questions.push(cleanQ);
+        if (questions.length >= 3) break;
+      }
+    }
+  }
+
+  // Fallback domain-aware follow-ups if response had no explicit question marks
+  if (!questions.length) {
+    const lower = rawText.toLowerCase();
+    if (lower.includes('ord-') || lower.includes('tracking') || lower.includes('shipment')) {
+      questions.push('Check carrier GPS coordinates & terminal dwell time');
+      questions.push('Generate full PDF logistics dossier for this order');
+    } else if (lower.includes('4-point') || lower.includes('astm') || lower.includes('defect')) {
+      questions.push('Show interactive defects bar chart for this batch');
+      questions.push('Export 4-point penalty report as Excel workbook');
+    } else if (lower.includes('gsm') || lower.includes('fabric') || lower.includes('yarn')) {
+      questions.push('Check stock availability and warehouse bay count');
+      questions.push('Request instant FOB price quote for bulk order');
+    }
+  }
+
+  if (!questions.length) return null;
+
+  const container = document.createElement('div');
+  container.className = 'autonomous-followups-wrap';
+  container.innerHTML = `
+    <div class="followup-header">
+      <span class="followup-spark">⚡</span>
+      <span class="followup-title">AUTONOMOUS NEXT ACTIONS</span>
+      <span class="followup-badge">1-CLICK</span>
+    </div>
+    <div class="followup-chips"></div>
+  `;
+  const chipsRow = container.querySelector('.followup-chips');
+  questions.forEach(q => {
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'followup-chip-btn';
+    chip.innerHTML = `<span class="chip-arrow">↳</span> <span>${escapeHtml(q)}</span>`;
+    chip.title = 'Click to trigger this action autonomously';
+    chip.addEventListener('click', (e) => {
+      e.stopPropagation();
+      playClick();
+      // Animate chip selection
+      chip.classList.add('chip-selected');
+      if (typeof sendMessage === 'function') {
+        sendMessage(q);
+      }
+    });
+    chipsRow.appendChild(chip);
+  });
+
+  return container;
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -2407,7 +2530,7 @@ newChatBtn.addEventListener('click', async () => {
   currentChatId = Date.now();
   conversationHistory = [];
   appendWelcomeCard();
-  clearImagePreview();
+  clearFilePreview();
   setStatus('ready');
   playClick();
   if (window.speechSynthesis) speechSynthesis.cancel();
@@ -2490,25 +2613,22 @@ if (shareBtn && shareOverlay) {
   });
 }
 
-function copyInputToClipboard(inputEl, btnEl) {
+async function copyInputToClipboard(inputEl, btnEl) {
   if (!inputEl) return;
-  inputEl.select();
-  navigator.clipboard.writeText(inputEl.value).then(() => {
-    const origText = btnEl.textContent;
-    btnEl.textContent = '✅ Copied!';
+  const val = inputEl.value || '';
+  const success = await copyToClipboard(val);
+  if (success) {
+    const origText = btnEl.innerHTML;
+    btnEl.innerHTML = '✅ Copied!';
     btnEl.style.background = '#10b981';
+    btnEl.style.color = '#030712';
     playClick();
     setTimeout(() => {
-      btnEl.textContent = origText;
+      btnEl.innerHTML = origText;
       btnEl.style.background = '';
+      btnEl.style.color = '';
     }, 2000);
-  }).catch(() => {
-    try {
-      document.execCommand('copy');
-      btnEl.textContent = '✅ Copied!';
-      setTimeout(() => { btnEl.textContent = '📋 Copy Link'; }, 2000);
-    } catch (_) {}
-  });
+  }
 }
 
 if (copyPublicBtn && sharePublicUrl) {

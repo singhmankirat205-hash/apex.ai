@@ -49,6 +49,17 @@ _SESSION.mount("https://", requests.adapters.HTTPAdapter(pool_connections=8, poo
 HEDGE_AFTER_SECONDS = 1.5
 STREAM_TIMEOUT = (5, 20)  # (connect, read-between-chunks) seconds
 
+# Models that accept thinkingBudget=0. Measured: gemini-3.5-flash first word 5.6s -> 1.8s.
+# (flash-lite variants reject this flag with HTTP 400, so it is applied selectively.)
+_NO_THINK_MODELS = {"gemini-3.5-flash"}
+
+
+def _gen_config(model: str) -> dict:
+    cfg = {"maxOutputTokens": MAX_TOKENS, "temperature": 0.35}
+    if model in _NO_THINK_MODELS:
+        cfg["thinkingConfig"] = {"thinkingBudget": 0}
+    return cfg
+
 INDUSTRY_CONTEXT = {
     "textile":      "Textile & Fabric Quality Control — spinning, weaving, knitting, wet processing, dyeing chemistry, finishing, 4-Point ASTM D5430 inspection, defect diagnosis, and laboratory testing standards (AATCC / ISO).",
     "pharma":       "Pharmaceutical Manufacturing & Biotechnology — cGMP, FDA 21 CFR, ICH guidelines, batch record compliance, cleanrooms, HPLC/dissolution testing, sterility assurance, and contamination control.",
@@ -888,7 +899,7 @@ def _stream_attempt(model: str, contents: list, system: str, q: queue.Queue, can
     payload = {
         "system_instruction": {"parts": [{"text": system}]},
         "contents": contents,
-        "generationConfig": {"maxOutputTokens": MAX_TOKENS, "temperature": 0.35},
+        "generationConfig": _gen_config(model),
     }
     resp = None
     try:
@@ -1007,7 +1018,7 @@ def _try_nonstream(model: str, contents: list, system: str) -> str | None:
     payload = {
         "system_instruction": {"parts": [{"text": system}]},
         "contents": contents,
-        "generationConfig": {"maxOutputTokens": MAX_TOKENS, "temperature": 0.35}
+        "generationConfig": _gen_config(model)
     }
     try:
         resp = _SESSION.post(url, json=payload, timeout=(5, 25),

@@ -77,11 +77,19 @@ def verify_url_live(url: str, timeout: float = 7.0) -> bool:
         return False
 
 
+_SHARE_CACHE: dict[str, Any] = {"ts": 0.0, "data": None}
+_SHARE_CACHE_TTL = 60.0
+
+
 def get_share_info() -> dict[str, Any]:
     """
     Returns verified share URLs (both worldwide Cloudflare tunnel and local Wi-Fi).
-    Auto-updates active_tunnel.json and desktop link file.
+    Cached for 60s so the Share modal opens instantly.
     """
+    import time as _time
+    if _SHARE_CACHE["data"] and _time.monotonic() - _SHARE_CACHE["ts"] < _SHARE_CACHE_TTL:
+        return _SHARE_CACHE["data"]
+
     local_ip = get_local_ip()
     local_url = f"http://{local_ip}:5000"
 
@@ -94,17 +102,17 @@ def get_share_info() -> dict[str, Any]:
         except Exception:
             pass
 
-    # Verify if current is healthy
+    # Verify if current is healthy (short timeout — never keep the user waiting)
     is_live = False
     if current_public:
-        is_live = verify_url_live(current_public, timeout=5.0)
+        is_live = verify_url_live(current_public, timeout=2.0)
 
     if not is_live:
         # Re-scan logs for newest tunnel
         found = find_latest_tunnel_url_from_logs()
-        if found:
+        if found and found != current_public:
             current_public = found
-            is_live = verify_url_live(current_public, timeout=5.0)
+            is_live = verify_url_live(current_public, timeout=2.0)
 
     # If verification timed out on local loopback but URL exists and is recent, keep live
     if current_public and not is_live:
@@ -134,4 +142,6 @@ def get_share_info() -> dict[str, Any]:
     except Exception as e:
         logger.debug("Failed to cache tunnel file: %s", e)
 
+    _SHARE_CACHE["data"] = result
+    _SHARE_CACHE["ts"] = _time.monotonic()
     return result

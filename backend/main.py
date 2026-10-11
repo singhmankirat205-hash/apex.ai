@@ -403,7 +403,8 @@ async def download_file(filename: str):
 @app.get("/api/share-info")
 async def get_share_links():
     """Dynamically returns verified live public and local Wi-Fi links for sharing."""
-    return get_share_info()
+    import asyncio
+    return await asyncio.to_thread(get_share_info)
 
 
 @app.post("/api/documents/generate")
