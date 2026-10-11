@@ -1599,26 +1599,48 @@ function convertPythonPlotToChartConfig(pyCode) {
 
 function prepareStreamMarkdown(text) {
   if (!text) return '';
-  // 1. Cleanly hide chart code blocks in progress (NEVER show raw code or JSON syntax to user)
-  let display = text.replace(/```(?:chart|chart:[a-z0-9_\-]+|json:chart|graph|plot|visualization|pie|doughnut|bar|line)[\s\S]*?(?:```|$)/gi, () => {
+  let display = text;
+
+  // 1. Hide full or in-progress chart code blocks (including incomplete fences during streaming)
+  display = display.replace(/```(?:chart|chart:[a-z0-9_\-]+|json:chart|graph|plot|visualization|pie|doughnut|bar|line)[\s\S]*?(?:```|$)/gi, () => {
     return '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Rendering Chart Visualization…</div>\n\n';
   });
+
   // 2. Hide Python plotting scripts (matplotlib, seaborn, plt) during streaming
   display = display.replace(/```(?:python|py)?[\s\S]*?(?:matplotlib|plt\.|seaborn|sns\.|fig\s*=|ax\s*=)[\s\S]*?(?:```|$)/gi, () => {
     return '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Rendering Chart Visualization…</div>\n\n';
   });
-  // 3. Hide JSON blocks that define charts during streaming
+
+  // 3. Hide JSON / data blocks that define charts during streaming
   display = display.replace(/```(?:json|javascript|js)?[\s\S]*?"(?:type|data)"[\s\S]*?(?:```|$)/gi, () => {
     return '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Rendering Chart Visualization…</div>\n\n';
   });
-  // 4. Hide in-progress action blocks during streaming
+
+  // 4. If the message starts with or currently ends with an incomplete code block containing chart keywords or json
+  display = display.replace(/```(?:[a-z0-9_\-:]+)?[\s\S]*$/i, (match) => {
+    const mLower = match.toLowerCase();
+    if (mLower.includes('chart') || mLower.includes('plot') || mLower.includes('graph') || mLower.includes('pie') || mLower.includes('bar') || mLower.includes('type') || mLower.includes('data') || mLower.includes('plt') || mLower.includes('matplotlib')) {
+      return '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Rendering Chart Visualization…</div>\n\n';
+    }
+    return match;
+  });
+
+  // 5. Mask any trailing unclosed fence at the tail during streaming
+  display = display.replace(/```[a-z0-9_\-:]*\s*$/i, '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Rendering Chart Visualization…</div>\n\n');
+
+  // 6. Hide in-progress action blocks during streaming
   display = display.replace(/```(?:action|json:action)[\s\S]*?(?:```|$)/gi, () => {
     return '\n\n<div class="apex-action-generating-hud"><span class="apex-pulse-dot"></span> ⚡ Executing Operations Protocol…</div>\n\n';
   });
-  // 5. Hide in-progress file export blocks during streaming
+
+  // 7. Hide in-progress file export blocks during streaming
   display = display.replace(/```(?:file_export|export|document)[\s\S]*?(?:```|$)/gi, () => {
     return '\n\n<div class="apex-doc-generating-hud"><span class="apex-pulse-dot"></span> 📄 Preparing Technical Document…</div>\n\n';
   });
+
+  // 8. Safety cleanup: if standalone trailing backticks exist at the very end of stream, mask them
+  display = display.replace(/`{1,3}\s*$/g, '');
+
   return display;
 }
 
