@@ -872,18 +872,35 @@ def _build_contents(messages: list[dict], web_ctx: str, learned_ctx: str = "", p
                     web_ctx
                 )
 
-        b64 = re.search(r'\[IMAGE_BASE64\]:(\S+)', text)
-        if b64:
-            clean = text[:b64.start()].strip() or "Perform comprehensive image defect and feature analysis."
-            try:
-                contents.append({"role": role, "parts": [
-                    {"text": clean},
-                    {"inline_data": {"mime_type": "image/jpeg", "data": b64.group(1)}}
-                ]})
-            except Exception:
-                contents.append({"role": role, "parts": [{"text": clean}]})
-        else:
-            contents.append({"role": role, "parts": [{"text": text}]})
+        # Extract image base64 if present
+        b64_match = re.search(r'\[IMAGE_BASE64\]:(\S+)', text)
+        image_data = None
+        mime_type = "image/jpeg"
+        if b64_match:
+            raw_b64 = b64_match.group(1).strip()
+            # Remove [IMAGE_BASE64]:... tag completely from text so prompt is clean
+            text = (text[:b64_match.start()] + text[b64_match.end():]).strip()
+            # Parse possible data URL format (e.g. data:image/png;base64,...)
+            if "base64," in raw_b64:
+                prefix, data_part = raw_b64.split("base64,", 1)
+                image_data = data_part.strip()
+                if ";" in prefix and "data:" in prefix:
+                    mime_type = prefix.split(";")[0].replace("data:", "").strip()
+            else:
+                image_data = raw_b64
+
+        if not text and image_data:
+            text = "Please perform a detailed, rigorous visual inspection and analysis of this attached image."
+
+        parts = [{"text": text}]
+        if image_data:
+            parts.append({
+                "inline_data": {
+                    "mime_type": mime_type,
+                    "data": image_data
+                }
+            })
+        contents.append({"role": role, "parts": parts})
     return contents
 
 
