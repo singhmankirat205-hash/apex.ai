@@ -639,19 +639,83 @@ function playDone() {
   } catch(_){}
 }
 
-// ── TTS ───────────────────────────────────────────────────────────────────────
-ttsToggle.addEventListener('click', ()=>{ ttsEnabled=!ttsEnabled; ttsToggle.classList.toggle('active',ttsEnabled); playClick(); });
+// ── TTS & AUDIO PLAYBACK ENGINE (START / STOP / TOGGLE) ─────────────────────────
+let activeAudioBtn = null;
 
-function speakText(text) {
+function stopAudio() {
   try {
-    if (typeof ttsEnabled === 'undefined' || !ttsEnabled || !window.speechSynthesis) return;
-    const clean = (text || '').replace(/[*#_`]/g, '').slice(0, 600);
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+  } catch (_) {}
+  if (activeAudioBtn) {
+    activeAudioBtn.classList.remove('speaking');
+    activeAudioBtn.innerHTML = `<span class="btn-icon">🔊</span> Listen`;
+    activeAudioBtn.title = 'Read this answer aloud';
+    activeAudioBtn = null;
+  }
+}
+
+ttsToggle.addEventListener('click', () => {
+  ttsEnabled = !ttsEnabled;
+  ttsToggle.classList.toggle('active', ttsEnabled);
+  ttsToggle.textContent = ttsEnabled ? '🔊' : '🔇';
+  ttsToggle.title = ttsEnabled ? 'Voice readout: ON (Click to mute)' : 'Voice readout: OFF (Click to unmute)';
+  if (!ttsEnabled) {
+    stopAudio();
+  }
+  playClick();
+});
+
+function speakText(text, triggerBtn = null) {
+  try {
+    if (!window.speechSynthesis) return;
+
+    // If currently speaking, check if clicking the same trigger button or global toggle means STOP
+    if (window.speechSynthesis.speaking) {
+      const isSameBtn = (triggerBtn && triggerBtn === activeAudioBtn);
+      stopAudio();
+      if (isSameBtn) {
+        return; // User intentionally clicked Stop
+      }
+    }
+
+    if (!text) return;
+    const clean = text.replace(/[*#_`]/g, '').slice(0, 1000);
     const utt = new SpeechSynthesisUtterance(clean);
     utt.lang = LANG_BCP47[currentLang] || 'en-IN';
     utt.rate = 0.95;
     utt.pitch = 1;
+
     const voices = speechSynthesis.getVoices().filter(v => v.lang.startsWith(utt.lang.split('-')[0]));
     if (voices.length) utt.voice = voices[0];
+
+    utt.onstart = () => {
+      if (triggerBtn) {
+        activeAudioBtn = triggerBtn;
+        triggerBtn.classList.add('speaking');
+        triggerBtn.innerHTML = `<span class="btn-icon">⏹️</span> Stop Audio`;
+        triggerBtn.title = 'Stop reading aloud';
+      }
+    };
+
+    utt.onend = () => {
+      if (triggerBtn) {
+        triggerBtn.classList.remove('speaking');
+        triggerBtn.innerHTML = `<span class="btn-icon">🔊</span> Listen`;
+        triggerBtn.title = 'Read this answer aloud';
+        if (activeAudioBtn === triggerBtn) activeAudioBtn = null;
+      }
+    };
+
+    utt.onerror = () => {
+      if (triggerBtn) {
+        triggerBtn.classList.remove('speaking');
+        triggerBtn.innerHTML = `<span class="btn-icon">🔊</span> Listen`;
+        if (activeAudioBtn === triggerBtn) activeAudioBtn = null;
+      }
+    };
+
     speechSynthesis.cancel();
     speechSynthesis.speak(utt);
   } catch (err) {
@@ -2099,7 +2163,9 @@ async function sendMessage(text) {
     addTimestamp(col);
     setStatus('ready');
     playDone();
-    try { speakText(fullReply); } catch(_) {}
+    if (typeof ttsEnabled !== 'undefined' && ttsEnabled) {
+      try { speakText(fullReply); } catch(_) {}
+    }
 
     // Safely render interactive charts, documents, images, actions, escalations, exports & copy buttons
     try { renderCharts(bubbleEl); } catch(e) { console.warn('Chart render error:', e); }
@@ -2515,13 +2581,13 @@ function addMessageActions(col, rawText, bubble) {
   const listenBtn = document.createElement('button');
   listenBtn.className = 'msg-action-btn listen-msg-btn';
   listenBtn.type = 'button';
-  listenBtn.title = 'Read this answer aloud';
+  listenBtn.title = 'Read this answer aloud (Click again to stop)';
   listenBtn.innerHTML = `<span class="btn-icon">🔊</span> Listen`;
 
   listenBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     const textToSpeak = getCleanTextToCopy(rawText, bubble);
-    speakText(textToSpeak);
+    speakText(textToSpeak, listenBtn);
   });
 
   const videoBtn = document.createElement('button');

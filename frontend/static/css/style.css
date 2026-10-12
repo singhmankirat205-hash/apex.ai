@@ -945,6 +945,20 @@ button.feature.starter-question-btn:active {
   box-shadow: 0 0 16px var(--mint-glow) !important;
 }
 
+.msg-action-btn.speaking {
+  background: rgba(239, 68, 68, 0.18) !important;
+  border-color: #EF4444 !important;
+  color: #FCA5A5 !important;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.35) !important;
+  animation: pulseAudio 1.5s infinite ease-in-out;
+}
+
+@keyframes pulseAudio {
+  0% { transform: scale(1); box-shadow: 0 0 8px rgba(239, 68, 68, 0.2); }
+  50% { transform: scale(1.03); box-shadow: 0 0 18px rgba(239, 68, 68, 0.5); }
+  100% { transform: scale(1); box-shadow: 0 0 8px rgba(239, 68, 68, 0.2); }
+}
+
 /* ── Cyber Code Blocks with One-Click Copy ───────────────────────────────── */
 .code-block-container {
   margin: 14px 0;
