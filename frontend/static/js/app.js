@@ -650,11 +650,27 @@ function playDone() {
 
 // ── TTS & AUDIO PLAYBACK ENGINE (START / STOP / TOGGLE) ─────────────────────────
 let activeAudioBtn = null;
+let currentUtterance = null;
+let cachedVoices = [];
+
+function loadVoices() {
+  if (typeof window === 'undefined' || !window.speechSynthesis) return [];
+  cachedVoices = window.speechSynthesis.getVoices() || [];
+  return cachedVoices;
+}
+
+if (typeof window !== 'undefined' && window.speechSynthesis) {
+  loadVoices();
+  if (speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = loadVoices;
+  }
+}
 
 function stopAudio() {
   try {
     if (window.speechSynthesis) {
       window.speechSynthesis.cancel();
+      window.speechSynthesis.resume();
     }
   } catch (_) {}
   if (activeAudioBtn) {
@@ -663,41 +679,86 @@ function stopAudio() {
     activeAudioBtn.title = 'Read this answer aloud';
     activeAudioBtn = null;
   }
+  currentUtterance = null;
 }
 
-ttsToggle.addEventListener('click', () => {
-  ttsEnabled = !ttsEnabled;
-  ttsToggle.classList.toggle('active', ttsEnabled);
-  ttsToggle.textContent = ttsEnabled ? '🔊' : '🔇';
-  ttsToggle.title = ttsEnabled ? 'Voice readout: ON (Click to mute)' : 'Voice readout: OFF (Click to unmute)';
-  if (!ttsEnabled) {
-    stopAudio();
-  }
-  playClick();
-});
+if (ttsToggle) {
+  ttsToggle.addEventListener('click', () => {
+    ttsEnabled = !ttsEnabled;
+    ttsToggle.classList.toggle('active', ttsEnabled);
+    ttsToggle.textContent = ttsEnabled ? '🔊' : '🔇';
+    ttsToggle.title = ttsEnabled ? 'Voice readout: ON (Click to mute)' : 'Voice readout: OFF (Click to unmute)';
+    if (!ttsEnabled) {
+      stopAudio();
+    } else {
+      // Warm up synthesis engine on user click (unlocks mobile audio)
+      try {
+        if (window.speechSynthesis) {
+          window.speechSynthesis.resume();
+          const warmup = new SpeechSynthesisUtterance(' ');
+          warmup.volume = 0.01;
+          speechSynthesis.speak(warmup);
+        }
+      } catch (_) {}
+    }
+    playClick();
+  });
+}
 
 function speakText(text, triggerBtn = null) {
   try {
-    if (!window.speechSynthesis) return;
+    if (typeof window === 'undefined' || !window.speechSynthesis) {
+      console.warn('SpeechSynthesis not supported on this browser.');
+      return;
+    }
 
-    // If currently speaking, check if clicking the same trigger button or global toggle means STOP
-    if (window.speechSynthesis.speaking) {
+    // Toggle logic: If already speaking from this button or anywhere, stop it
+    if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
       const isSameBtn = (triggerBtn && triggerBtn === activeAudioBtn);
       stopAudio();
       if (isSameBtn) {
-        return; // User intentionally clicked Stop
+        return; // User clicked the active button to stop
       }
     }
 
     if (!text) return;
-    const clean = text.replace(/[*#_`]/g, '').slice(0, 1000);
-    const utt = new SpeechSynthesisUtterance(clean);
-    utt.lang = LANG_BCP47[currentLang] || 'en-IN';
-    utt.rate = 0.95;
-    utt.pitch = 1;
 
-    const voices = speechSynthesis.getVoices().filter(v => v.lang.startsWith(utt.lang.split('-')[0]));
-    if (voices.length) utt.voice = voices[0];
+    // Clean markdown, links, LaTeX, and code fences so speech sounds natural & intelligible
+    let clean = text
+      .replace(/```[\s\S]*?```/g, ' [Code block omitted] ')
+      .replace(/`([^`]+)`/g, '$1')
+      .replace(/\[IMAGE_BASE64\]:\S+/g, '')
+      .replace(/https?:\/\/\S+/g, '')
+      .replace(/[*#_~]/g, '')
+      .replace(/\|[\s\S]*?\|/g, '') // omit raw table pipes
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (!clean) return;
+    if (clean.length > 2500) clean = clean.slice(0, 2500) + '...';
+
+    // Resume speech synthesis queue if paused (common Chrome bug)
+    window.speechSynthesis.resume();
+
+    const utt = new SpeechSynthesisUtterance(clean);
+    currentUtterance = utt;
+
+    const bcp47 = LANG_BCP47[currentLang] || 'en-US';
+    utt.lang = bcp47;
+    utt.rate = 1.0;
+    utt.pitch = 1.0;
+    utt.volume = 1.0; // Maximum loudness
+
+    // Pick highest quality natural human voice
+    let voices = loadVoices();
+    if (voices && voices.length) {
+      const langPrefix = bcp47.split('-')[0].toLowerCase();
+      const matched = voices.find(v => v.lang.toLowerCase() === bcp47.toLowerCase()) ||
+                      voices.find(v => v.lang.toLowerCase().startsWith(langPrefix)) ||
+                      voices.find(v => v.lang.toLowerCase().includes('en')) ||
+                      voices[0];
+      if (matched) utt.voice = matched;
+    }
 
     utt.onstart = () => {
       if (triggerBtn) {
@@ -715,20 +776,33 @@ function speakText(text, triggerBtn = null) {
         triggerBtn.title = 'Read this answer aloud';
         if (activeAudioBtn === triggerBtn) activeAudioBtn = null;
       }
+      currentUtterance = null;
     };
 
-    utt.onerror = () => {
+    utt.onerror = (e) => {
+      console.warn('SpeechSynthesis error:', e);
       if (triggerBtn) {
         triggerBtn.classList.remove('speaking');
         triggerBtn.innerHTML = `<span class="btn-icon">🔊</span> Listen`;
         if (activeAudioBtn === triggerBtn) activeAudioBtn = null;
       }
+      currentUtterance = null;
     };
+
+    // Chrome long-speech heartbeat safeguard (prevents Chrome cutting off speech after 15s)
+    const heartbeat = setInterval(() => {
+      if (!window.speechSynthesis.speaking) {
+        clearInterval(heartbeat);
+      } else {
+        window.speechSynthesis.pause();
+        window.speechSynthesis.resume();
+      }
+    }, 10000);
 
     speechSynthesis.cancel();
     speechSynthesis.speak(utt);
   } catch (err) {
-    console.warn('TTS audio readout warning (safely ignored):', err);
+    console.warn('TTS audio readout warning:', err);
   }
 }
 
