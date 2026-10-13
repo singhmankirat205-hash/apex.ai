@@ -90,9 +90,14 @@
 
       <div class="auth-divider"><span>OR QUICK START</span></div>
 
-      <button type="button" id="quickDemoBtn" class="auth-demo-btn">
-        ⚡ 1-Click Demo Login (Lead Engineer)
-      </button>
+      <div style="display: flex; gap: 8px;">
+        <button type="button" id="quickDemoBtn" class="auth-demo-btn" style="flex: 1;" title="Pre-fills demo engineer credentials and signs in">
+          ⚡ Demo Login
+        </button>
+        <button type="button" id="guestAccessBtn" class="auth-demo-btn auth-guest-btn" style="flex: 1;" title="Proceed without signing in">
+          👤 Guest Access
+        </button>
+      </div>
 
       <div class="auth-switch-text">
         Don't have an account? <a href="#" id="linkToRegister">Create account here →</a>
@@ -877,6 +882,6 @@
 
 <script src="/static/js/chart.min.js"></script>
 <script src="/static/js/marked.min.js"></script>
-<script src="/static/js/app.js?v=5.0.0"></script>
+<script src="/static/js/app.js?v=5.1.0"></script>
 </body>
 </html>

@@ -58,5 +58,15 @@
     "role": "GENERAL",
     "industry": "general",
     "createdAt": "2026-10-03T11:25:51.866435+00:00"
+  },
+  {
+    "id": "usr_84ef20b0bc14",
+    "name": "Akshit bedi",
+    "email": "bediakshit04@gmail.com",
+    "salt": "2304aeeeb14046e78d892655adeb4409",
+    "password_hash": "b38391e53d72cedc2ebdb3c3ca610ac9b17a23e58a339854563456978feb01fc",
+    "role": "GENERAL",
+    "industry": "general",
+    "createdAt": "2026-10-13T08:27:47.700135+00:00"
   }
 ]

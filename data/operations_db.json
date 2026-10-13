@@ -57,6 +57,16 @@
       "id": "REC-0008",
       "created_at": "2026-10-04T18:51:54.947402+00:00",
       "updated_at": "2026-10-04T18:51:54.947402+00:00"
+    },
+    {
+      "id": "REC-0009",
+      "created_at": "2026-10-10T21:02:24.340596+00:00",
+      "updated_at": "2026-10-10T21:02:24.340596+00:00"
+    },
+    {
+      "id": "REC-0010",
+      "created_at": "2026-10-12T03:31:55.439931+00:00",
+      "updated_at": "2026-10-12T03:31:55.439931+00:00"
     }
   ],
   "inventory": [
@@ -384,6 +394,36 @@
         "id": "REC-0008",
         "created_at": "2026-10-04T18:51:54.947402+00:00",
         "updated_at": "2026-10-04T18:51:54.947402+00:00"
+      }
+    },
+    {
+      "execution_id": "EXEC-1791666144340",
+      "tool": "update_record",
+      "target": "qc_records",
+      "status": "EXECUTED_AND_COMMITTED",
+      "timestamp": "2026-10-10T21:02:24.340596+00:00",
+      "author": "APEX Autonomous (ENGINEER)",
+      "summary": "Created new record 'REC-0009' in 'qc_records'.",
+      "action_type": "RECORD_CREATED",
+      "record": {
+        "id": "REC-0009",
+        "created_at": "2026-10-10T21:02:24.340596+00:00",
+        "updated_at": "2026-10-10T21:02:24.340596+00:00"
+      }
+    },
+    {
+      "execution_id": "EXEC-1791775915439",
+      "tool": "update_record",
+      "target": "qc_records",
+      "status": "EXECUTED_AND_COMMITTED",
+      "timestamp": "2026-10-12T03:31:55.439931+00:00",
+      "author": "APEX Autonomous (GENERAL)",
+      "summary": "Created new record 'REC-0010' in 'qc_records'.",
+      "action_type": "RECORD_CREATED",
+      "record": {
+        "id": "REC-0010",
+        "created_at": "2026-10-12T03:31:55.439931+00:00",
+        "updated_at": "2026-10-12T03:31:55.439931+00:00"
       }
     }
   ]

@@ -26,6 +26,15 @@
       "total_chunks": 1,
       "character_count": 98,
       "sample_snippet": "[IMAGE FILE ATTACHED: images.jpg — Ready for high-resolution visual defect and metrology analysis]..."
+    },
+    "ce95d20c9f22": {
+      "doc_id": "ce95d20c9f22",
+      "filename": "contact_sheet.png",
+      "content_type": "document",
+      "learned_at": "12 Oct 2026, 03:23 UTC",
+      "total_chunks": 1,
+      "character_count": 105,
+      "sample_snippet": "[IMAGE FILE ATTACHED: contact_sheet.png — Ready for high-resolution visual defect and metrology analysis]..."
     }
   },
   "chunks": [
@@ -132,6 +141,28 @@
         "analysis"
       ],
       "created_at": "2026-10-04T14:16:41.679435"
+    },
+    {
+      "chunk_id": "ce95d20c9f22_0",
+      "doc_id": "ce95d20c9f22",
+      "filename": "contact_sheet.png",
+      "content_type": "document",
+      "text": "[IMAGE FILE ATTACHED: contact_sheet.png — Ready for high-resolution visual defect and metrology analysis]",
+      "tokens": [
+        "image",
+        "file",
+        "attached",
+        "contact_sheet",
+        "png",
+        "ready",
+        "high",
+        "resolution",
+        "visual",
+        "defect",
+        "metrology",
+        "analysis"
+      ],
+      "created_at": "2026-10-12T03:23:43.439904"
     }
   ]
 }

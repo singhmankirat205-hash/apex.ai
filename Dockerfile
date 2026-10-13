@@ -16,7 +16,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Ensure data directory exists
-RUN mkdir -p /app/data /app/data/history /app/data/exports /app/data/memory /app/data/knowledge_vault
+# Ensure data directories exist and have open permissions for non-root containers
+RUN mkdir -p /app/data /app/data/history /app/data/exports /app/data/memory /app/data/knowledge_vault && \
+    chmod -R 777 /app/data
 
-CMD ["sh", "-c", "uvicorn run:app --host 0.0.0.0 --port ${PORT:-5000}"]
+# Hugging Face Spaces listens on port 7860 by default
+EXPOSE 7860
+
+CMD ["sh", "-c", "uvicorn run:app --host 0.0.0.0 --port ${PORT:-7860}"]

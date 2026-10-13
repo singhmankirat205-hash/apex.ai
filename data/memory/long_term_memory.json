@@ -1,10 +1,10 @@
 {
   "user_profile": {
     "title": "Industrial Operations & Quality Director",
-    "current_industry": "textile",
+    "current_industry": "general",
     "preferred_role": "GENERAL",
     "tone_preference": "Action-oriented, authoritative, highly precise, concise when appropriate",
-    "last_active": "2026-10-05T15:35:02.562118+00:00"
+    "last_active": "2026-10-13T08:28:23.571224+00:00"
   },
   "enterprise_context": {
     "primary_facility": "Apex Mills \u2014 Plant 1 (Weaving & Wet Finishing Complex)",
@@ -84,6 +84,12 @@
         "type": "Plant Equipment",
         "status": "ACTIVE",
         "last_event": "Referenced in active session (2026-10-05)"
+      },
+      {
+        "machine_id": "Unit #-02",
+        "type": "Plant Equipment",
+        "status": "ACTIVE",
+        "last_event": "Referenced in active session (2026-10-11)"
       }
     ],
     "active_batches": [
@@ -113,6 +119,18 @@
         "batch_id": "BT-count",
         "status": "ACTIVE_MONITORING",
         "noted_at": "2026-10-04T19:01:33.661107+00:00",
+        "source": "Discovered from user dialogue"
+      },
+      {
+        "batch_id": "BT-905",
+        "status": "ACTIVE_MONITORING",
+        "noted_at": "2026-10-11T17:15:59.791454+00:00",
+        "source": "Discovered from user dialogue"
+      },
+      {
+        "batch_id": "BT-and",
+        "status": "ACTIVE_MONITORING",
+        "noted_at": "2026-10-11T17:15:59.791502+00:00",
         "source": "Discovered from user dialogue"
       }
     ],

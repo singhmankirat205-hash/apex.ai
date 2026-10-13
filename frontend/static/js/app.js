@@ -144,6 +144,7 @@ const toggleLoginPwd    = document.getElementById('toggleLoginPwd');
 const rememberMe        = document.getElementById('rememberMe');
 const signInSubmitBtn   = document.getElementById('signInSubmitBtn');
 const quickDemoBtn      = document.getElementById('quickDemoBtn');
+const guestAccessBtn    = document.getElementById('guestAccessBtn');
 const linkToRegister    = document.getElementById('linkToRegister');
 const linkToSignIn      = document.getElementById('linkToSignIn');
 const regName           = document.getElementById('regName');
@@ -273,9 +274,7 @@ async function handleSignIn(email, password) {
     }
 
     setAuthAlert('Access granted. Welcome to APEX!', 'success');
-    if (rememberMe && rememberMe.checked) {
-      setStoredUser(data.user);
-    }
+    setStoredUser(data.user);
     updateUIForLoggedInUser(data.user);
 
     playDone();
@@ -407,6 +406,24 @@ if (quickDemoBtn) {
   });
 }
 
+if (guestAccessBtn) {
+  guestAccessBtn.addEventListener('click', async () => {
+    const guest = {
+      name: 'Guest User',
+      email: 'guest@apex.ai',
+      role: 'GENERAL',
+      industry: (industrySelect ? industrySelect.value : 'textile')
+    };
+    setStoredUser(guest);
+    updateUIForLoggedInUser(guest);
+    hideAuthModal();
+    await syncHistoryWithServer(guest.email).catch(() => {});
+    currentChatId = Date.now();
+    conversationHistory = [];
+    appendWelcomeCard(industrySelect ? industrySelect.value : 'textile');
+  });
+}
+
 if (toggleLoginPwd && loginPassword) {
   toggleLoginPwd.addEventListener('click', () => {
     const isPwd = loginPassword.type === 'password';
@@ -428,7 +445,7 @@ if (userSignoutBtn) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// SPLASH SCREEN — auto-dismiss after 2.5s then check auth & start particles
+// SPLASH SCREEN — auto-dismiss then check auth & start particles
 // ══════════════════════════════════════════════════════════════════════════════
 setTimeout(() => {
   splash.classList.add('hidden');
@@ -436,22 +453,14 @@ setTimeout(() => {
   initParticles();
   // Check auth state upon splash dismiss
   const stored = getStoredUser();
-  if (stored) {
+  if (stored && stored.name && stored.name !== 'Guest User' && stored.email && !stored.email.startsWith('guest')) {
     updateUIForLoggedInUser(stored);
     hideAuthModal();
     syncHistoryWithServer(stored.email).catch(() => {});
   } else {
-    // Automatically create guest user so anyone can start chatting instantly without barriers
-    const guest = {
-      name: 'Guest User',
-      email: 'guest@apex.ai',
-      role: 'GENERAL',
-      industry: (industrySelect ? industrySelect.value : 'textile')
-    };
-    setStoredUser(guest);
-    updateUIForLoggedInUser(guest);
-    hideAuthModal();
-    syncHistoryWithServer(guest.email).catch(() => {});
+    // New visitor / device: Prompt with the Sign In & Create Account modal
+    showAuthModal();
+    switchAuthTab('login');
   }
 }, 600);
 
@@ -3878,20 +3887,17 @@ bindStarterQuestionButtons();
     setStatus('error');
   }
 
-  // Restore user session or create guest immediately
+  // Restore user session if existing registered account, otherwise display Access Portal
   let user = getStoredUser();
-  if (!user) {
-    user = {
-      name: 'Guest User',
-      email: 'guest@apex.ai',
-      role: 'GENERAL',
-      industry: (industrySelect ? industrySelect.value : 'textile')
-    };
-    setStoredUser(user);
+  if (user && user.name && user.name !== 'Guest User' && user.email && !user.email.startsWith('guest')) {
+    updateUIForLoggedInUser(user);
+    hideAuthModal();
+    await syncHistoryWithServer(user.email);
+  } else {
+    // New device or visitor without account: show Sign In / Register popup
+    showAuthModal();
+    switchAuthTab('login');
   }
-  updateUIForLoggedInUser(user);
-  hideAuthModal();
-  await syncHistoryWithServer(user.email);
   currentChatId = Date.now();
   conversationHistory = [];
   appendWelcomeCard(industrySelect ? industrySelect.value : 'textile');

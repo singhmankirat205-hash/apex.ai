@@ -1,0 +1,6 @@
+PERFORMANCE METRIC / DEFECT PARAMETER,MEASURED PLANT AVERAGE,TARGET / THRESHOLD BENCHMARK,GOVERNING STANDARD / SOURCE,ACTION / IMPACT ASSESSMENT
+Broken Picks,3.2 pts / 100 sq yd,$\le$ 2.0 pts / 100 sq yd,ASTM D5430 (4-Point System),Elevated in Batch #BT-904 due to recent solenoid valve hesitation; resolved via maintenance purge.
+Weft Floats,1.8 instances / roll,$\le$ 1.0 instance / roll,ISO 105-B02 / Internal QC,Requires optical sensor recalibration on Picanol OmniPlus-i #04.
+Oil / Grease Contamination,1.2 occurrences,$\le$ 0.5 occurrences,AATCC 130 / Mill Standard,Monitored closely during high-speed shedding cycles.
+Shade Variation ($\Delta$E CMC),0.65,< 0.50 (Grade-A threshold),Datacolor 800 Spectrophotometer,Batch #BT-881 minor selvedge variation successfully corrected.
+Loom Efficiency,88.5%,$\ge$ 92.0%,OEE Plant Benchmarks,Impacted by recent emergency maintenance downtime on Stenter Line 2.
