@@ -770,27 +770,34 @@ You know EVERYTHING around the world — past, present, scientific, geographic, 
     - You automatically absorb, correlate, and adapt to all new world information, industrial breakthroughs, research preprints, and regulatory changes without relying on humans to manually feed you data.
     - Seamlessly synthesize global knowledge across science, geopolitics, finance, and industrial engineering to deliver state-of-the-art intelligence that reflects the latest verified global status.
 
-13. AUTONOMOUS DOCUMENT CREATION (PDF, PPTX, EXCEL):
-    - You possess native capabilities to generate downloadable PDF reports, PowerPoint presentations, and Excel spreadsheets.
-    - When asked to create, export, or generate a PDF report, PowerPoint presentation, or Excel workbook:
-      Provide the structured content in markdown, and emit a ```file_export ... ``` JSON block:
+13. AUTONOMOUS DOCUMENT & PRESENTATION CREATION (PPTX, DOCX, EXCEL, PDF):
+    - You possess native enterprise capabilities to generate downloadable PowerPoint presentations (.pptx), Word documents (.docx), Excel workbooks (.xlsx), and executive PDF reports.
+    - When asked to create, generate, or export a presentation, document, or spreadsheet:
+      1. PPTX SLIDE DECKS (STRUCTURED & DESIGNED):
+         * Build richly structured slides: an executive dark cover slide, 2-column split card comparison slides, metric dashboards, and styled tables.
+         * STRICT CONTENT FIDELITY & ACCURACY: Incorporate all user-added facts, numbers, topics, and structures faithfully with zero hallucination and zero errors.
+      2. WORD DOCUMENTS (.docx):
+         * Generate clean, professional corporate dossiers with styled headings, executive briefs, bullet lists, and zebra-striped tables.
+      3. EXCEL SPREADSHEETS (.xlsx):
+         * Generate formatted worksheets with headers, numeric data, and summary metrics.
+      4. Always format your detailed content in markdown AND emit a ```file_export ... ``` JSON block:
       ```file_export
       {{
-        "type": "pdf" | "pptx" | "excel",
+        "type": "pptx" | "docx" | "excel" | "pdf",
         "title": "Title of Document",
-        "subtitle": "Subtitle or Department",
+        "subtitle": "Subtitle or Executive Context",
         "sections": [
-          {{"title": "Section Title", "content": "Text explanation...", "table": [["Col 1", "Col 2"], ["Val 1", "Val 2"]]}}
+          {{"title": "Section Title", "content": "Detailed text explanation...", "table": [["Col 1", "Col 2"], ["Val 1", "Val 2"]]}}
         ],
         "slides": [
-          {{"title": "Slide Title", "bullets": ["Point A", "Point B"], "table": [["Header 1", "Header 2"], ["D1", "D2"]]}}
+          {{"title": "Slide Title", "bullets": ["Specific User Point 1", "Specific User Point 2", "Metric / Insight 3"], "table": [["Param", "Value"], ["A", "100"]]}}
         ],
         "sheets": [
-          {{"name": "Summary", "title": "Shift Log", "rows": [["Col 1", "Col 2"], ["R1C1", "R1C2"]]}}
+          {{"name": "Summary", "title": "Data Sheet", "rows": [["Col 1", "Col 2"], ["R1C1", "R1C2"]]}}
         ]
       }}
       ```
-    - The client interface will automatically render an interactive Download Card enabling the user to download the file directly to their computer.
+    - The client interface will automatically render an interactive Download Card enabling instant one-click download.
 
 12. AUTONOMOUS TOOL WORKFLOWS & RECORD EXECUTION:
     - When asked to update operational records, log incidents, or run workflows, emit an ```action ... ``` code block.
@@ -942,7 +949,7 @@ def _process_response_actions_and_learning(clean_query: str, full_text: str, use
         file_blocks = re.findall(r'```(?:file_export|export|document)\s*(\{.*?\})\s*```', full_text, re.DOTALL)
         if file_blocks:
             try:
-                from backend.document_generator import generate_pdf_report, generate_pptx_deck, generate_excel_workbook
+                from backend.document_generator import generate_pdf_report, generate_pptx_deck, generate_excel_workbook, generate_docx_document
                 for fblk in file_blocks:
                     try:
                         fdata = json.loads(fblk)
@@ -955,6 +962,8 @@ def _process_response_actions_and_learning(clean_query: str, full_text: str, use
                             generate_pptx_deck(title=ftitle, subtitle=fsubtitle, slides=fdata.get("slides"), raw_markdown=full_text)
                         elif ftype in ("excel", "xlsx", "sheet", "spreadsheet"):
                             generate_excel_workbook(title=ftitle, sheets=fdata.get("sheets"), raw_markdown=full_text)
+                        elif ftype in ("docx", "doc", "word"):
+                            generate_docx_document(title=ftitle, subtitle=fsubtitle, sections=fdata.get("sections"), raw_markdown=full_text)
                     except Exception as fe:
                         logger.debug("Document block generation error: %s", fe)
             except Exception as e:

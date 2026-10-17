@@ -100,7 +100,8 @@ _DEFAULT_MEMORY: Dict[str, Any] = {
         "Prefers proactive autonomous tool execution and record commits over generic passive text advice.",
         "Expects direct root-cause identification and ASTM / ISO technical precision.",
         "Requires immediate containment protocol and escalation HUD during operational distress or line halts."
-    ]
+    ],
+    "learned_facts": []
 }
 
 
@@ -180,10 +181,9 @@ def update_batch_memory(batch_id: str, updates: Dict[str, Any]) -> None:
 
 def auto_learn_from_dialogue(user_text: str, assistant_text: str) -> None:
     """
-    Extract dynamic operational facts mentioned in chat turns and persist to long-term memory:
-    - New batch IDs (e.g. Batch #BT-905, Lot #402)
-    - Machinery IDs (e.g. Loom #04, Line 3, Stenter #2)
-    - Explicit user preferences ("always show formula", "our tolerance is 5%")
+    Extract dynamic operational facts, rules, and user knowledge mentioned in chat turns
+    and persist permanently to long-term memory and the persistent Knowledge Vault.
+    Enables APEX to learn facts on its own without requiring repetitive prompt instructions.
     """
     if not user_text or len(user_text.strip()) < 5:
         return
@@ -220,18 +220,62 @@ def auto_learn_from_dialogue(user_text: str, assistant_text: str) -> None:
                 })
                 dirty = True
 
-        # 3. Preference extraction ("our tolerance is...", "we prefer...")
-        pref_match = re.search(r'\b(?:we prefer|always remember|our tolerance is|my name is)\s+([^.!?]+)', user_text, re.IGNORECASE)
-        if pref_match:
-            new_pref = pref_match.group(0).strip()
-            prefs = mem.setdefault("learned_preferences", [])
-            if new_pref not in prefs:
-                prefs.append(new_pref)
+        # 3. Explicit preferences & operational rules
+        pref_matches = re.findall(
+            r'\b(?:we prefer|always remember|our tolerance is|my name is|from now on|our rule is|in our mill|in our company|we always|never forget|note that|keep in mind)\s+([^.!?\n]+)',
+            user_text,
+            re.IGNORECASE
+        )
+        prefs = mem.setdefault("learned_preferences", [])
+        for pm in pref_matches:
+            clean_pm = pm.strip()
+            if len(clean_pm) > 4 and clean_pm not in prefs:
+                prefs.append(clean_pm)
+                if len(prefs) > 30:
+                    mem["learned_preferences"] = prefs[-30:]
                 dirty = True
+
+        # 4. Declarative organizational facts & enterprise knowledge
+        fact_patterns = [
+            r'(\b(?:our|my)\s+(?:[a-zA-Z0-9_\-\s]{0,20})?(?:company|ceo|founder|director|factory|plant|mill|supplier|customer|client|headquarters|location|standard|product|brand|target|gsm|tolerance)\s+(?:is|are|located in|uses?)\s+[^.!?\n]+)',
+            r'(\b(?:standard|target|minimum|maximum|moq|gsm|lead time|capacity|tolerance)\s+(?:is|set to|should be)\s+[^.!?\n]+)',
+            r'(\b(?:rule|fact|policy|instruction|note):\s*[^.!?\n]+)'
+        ]
+        facts = mem.setdefault("learned_facts", [])
+        for pat in fact_patterns:
+            matches = re.findall(pat, user_text, re.IGNORECASE)
+            for m in matches:
+                clean_f = m.strip() if isinstance(m, str) else m[0].strip()
+                # Clean up any leading conjunctions
+                clean_f = re.sub(r'^(?:and|also|that|plus)\s+', '', clean_f, flags=re.IGNORECASE).strip()
+                if len(clean_f) > 8:
+                    fact_entry = {
+                        "fact": clean_f,
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                        "source": "Autonomous dialogue capture"
+                    }
+                    if not any(f.get("fact").lower() == clean_f.lower() for f in facts):
+                        facts.append(fact_entry)
+                        if len(facts) > 50:
+                            mem["learned_facts"] = facts[-50:]
+                        dirty = True
 
         if dirty:
             _save_memory(mem)
-            logger.info("APEX Long-Term Memory updated from dialogue turn.")
+            logger.info("APEX Long-Term Memory updated with new autonomous facts/preferences.")
+            # Also sync into persistent Knowledge Vault for semantic recall
+            try:
+                from backend.knowledge_engine import learn_document
+                all_facts_text = "\n".join([f"• Rule/Fact: {f.get('fact')}" for f in mem.get("learned_facts", [])] +
+                                           [f"• User Preference: {p}" for p in mem.get("learned_preferences", [])])
+                if all_facts_text.strip():
+                    learn_document(
+                        filename="autonomous_dialogue_knowledge.txt",
+                        content_type="text/plain",
+                        parsed_text=all_facts_text
+                    )
+            except Exception as ke:
+                logger.debug("Failed to sync memory to knowledge vault: %s", ke)
 
 
 def get_memory_prompt_context() -> str:
@@ -245,7 +289,8 @@ def get_memory_prompt_context() -> str:
     batches = ent.get("active_batches", [])
     machinery = ent.get("critical_machinery", [])
     milestones = mem.get("session_milestones", [])[-3:]
-    prefs = mem.get("learned_preferences", [])[-3:]
+    prefs = mem.get("learned_preferences", [])[-5:]
+    facts = mem.get("learned_facts", [])[-6:]
 
     lines = [
         "══════════════════════════════════════════════════════════════════════════════",
@@ -263,19 +308,23 @@ def get_memory_prompt_context() -> str:
         m_strs = [f"{m.get('machine_id')} [{m.get('status', 'OK')}]" for m in machinery[:3]]
         lines.append(f"• Active Equipment: {'; '.join(m_strs)}")
 
+    if facts:
+        lines.append("• Autonomously Learned Enterprise Facts & Custom Rules:")
+        for f in facts:
+            lines.append(f"  - {f.get('fact')}")
+
+    if prefs:
+        lines.append("• Continuous Learned Preferences & Working Standards:")
+        for p in prefs:
+            lines.append(f"  - {p}")
+
     if milestones:
         lines.append("• Recent Cross-Session Milestones:")
         for ms in milestones:
             lines.append(f"  - [{ms.get('timestamp', '')[:10]}] {ms.get('note')}")
 
-    if prefs:
-        lines.append("• Continuous Learned Preferences:")
-        for p in prefs:
-            lines.append(f"  - {p}")
-
     lines.append(
-        "CRITICAL INSTRUCTION: You possess continuous memory of these batches, machines, and past actions. "
-        "Never treat the user as a stranger or a blank slate. If the user refers to 'the batch', 'our loom', "
-        "or previous decisions, seamlessly leverage this exact context!"
+        "CRITICAL AUTONOMOUS LEARNING INSTRUCTION: You possess continuous memory of these facts, batches, machines, and past decisions. "
+        "Never treat the user as a blank slate. If the user refers to past rules, company facts, or equipment, seamlessly apply them without requiring the user to re-type or re-prompt!"
     )
     return "\n".join(lines)

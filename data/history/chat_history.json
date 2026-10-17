@@ -1,5 +1,45 @@
 [
   {
+    "id": 1792213319852,
+    "title": "hi",
+    "createdAt": "2026-10-17T05:07:47.464Z",
+    "user_email": "singhmankirat205@gmail.com",
+    "messages": [
+      {
+        "role": "user",
+        "content": "hi"
+      },
+      {
+        "role": "assistant",
+        "content": "Greetings! I am APEX, ready to explore ideas, solve complex problems, or dive into any topic you'd like to tackle today. What shall we investigate?"
+      },
+      {
+        "role": "user",
+        "content": "i want a ppt which includes 6 slides of textile defects"
+      },
+      {
+        "role": "assistant",
+        "content": "```file_export\n{\n  \"type\": \"pptx\",\n  \"title\": \"Textile Defect Analysis & Quality Control\",\n  \"subtitle\": \"Technical Overview for Production Optimization\",\n  \"slides\": [\n    {\n      \"title\": \"1. Broken Pick (Weft Breakage)\",\n      \"bullets\": [\n        \"Definition: A discontinuity in the weft yarn across the fabric width.\",\n        \"Root Cause: Excessive weft tension, faulty air-jet nozzle timing, or yarn quality issues.\",\n        \"ASTM D5430 Impact: 4 penalty points per occurrence.\",\n        \"Corrective Action: Inspect solenoid manifold and adjust air-jet pressure settings.\"\n      ]\n    },\n    {\n      \"title\": \"2. Oil Stains\",\n      \"bullets\": [\n        \"Definition: Lubricant contamination transferred from machinery to the fabric surface.\",\n        \"Root Cause: Excessive lubrication of loom components or leaking seals.\",\n        \"ASTM D5430 Impact: 2-4 penalty points depending on size/visibility.\",\n        \"Corrective Action: Implement strict preventative maintenance schedules and seal checks.\"\n      ]\n    },\n    {\n      \"title\": \"3. Slubs (Yarn Faults)\",\n      \"bullets\": [\n        \"Definition: Thick or thin places in the yarn caused by improper spinning.\",\n        \"Root Cause: Raw material inconsistency or spinning frame mechanical failure.\",\n        \"ASTM D5430 Impact: 2 penalty points per occurrence.\",\n        \"Corrective Action: Audit raw material supplier quality and spinning frame apron condition.\"\n      ]\n    },\n    {\n      \"title\": \"4. Mispick (Pattern Distortion)\",\n      \"bullets\": [\n        \"Definition: Incorrect insertion of the weft yarn relative to the weave design.\",\n        \"Root Cause: Electronic controller error or timing misalignment in the shedding motion.\",\n        \"ASTM D5430 Impact: 4 penalty points.\",\n        \"Corrective Action: Re-calibrate loom timing and verify pattern software synchronization.\"\n      ]\n    },\n    {\n      \"title\": \"5. Selvedge Variation\",\n      \"bullets\": [\n        \"Definition: Uneven tension or density at the fabric edges.\",\n        \"Root Cause: Improper temple settings or uneven warp tension.\",\n        \"ASTM D5430 Impact: 1-2 penalty points.\",\n        \"Corrective Action: Adjust temple pressure and ensure uniform warp beam let-off.\"\n      ]\n    },\n    {\n      \"title\": \"6. Shade Variation (Delta E)\",\n      \"bullets\": [\n        \"Definition: Inconsistent color distribution across the batch.\",\n        \"Root Cause: Fluctuations in dye concentration, temperature, or pH levels.\",\n        \"ASTM D5430 Impact: Failure if Delta E > 0.80.\",\n        \"Corrective Action: Calibrate spectrophotometer and standardize wet-finishing chemical dosing.\"\n      ]\n    }\n  ]\n}\n```\n\nThis presentation covers the critical defects we have monitored in our recent production cycles, particularly referencing the issues identified in your previous sessions regarding Batch #BT-904. \n\nWould you like me to generate a specific **Root Cause Analysis (RCA) report** for the \"Broken Pick\" defect, or shall we analyze the **Delta E shade consistency data** from our last wet-finishing run?"
+      }
+    ]
+  },
+  {
+    "id": 1791898930335,
+    "title": "hi",
+    "createdAt": "2026-10-13T14:45:19.965Z",
+    "user_email": "singhmankirat205@gmail.com",
+    "messages": [
+      {
+        "role": "user",
+        "content": "hi"
+      },
+      {
+        "role": "assistant",
+        "content": "Hello! It is a pleasure to cross paths with you today—I am fully charged and ready to assist with whatever inquiries or complex challenges you have on your mind. How can I be of service to you?"
+      }
+    ]
+  },
+  {
     "id": 1791880183851,
     "title": "Conduct a rigorous 5-Why and Ishikawa fishbone dia",
     "createdAt": "2026-10-13T08:30:28.379Z",

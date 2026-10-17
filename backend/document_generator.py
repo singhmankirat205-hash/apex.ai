@@ -344,30 +344,43 @@ def generate_pptx_deck(
     prs.slide_height = Inches(7.5)
     blank_layout = prs.slide_layouts[6]
 
+    # Color Palettes
     NAVY_DARK = RGBColor(10, 15, 29)
     CYBER_CYAN = RGBColor(6, 182, 212)
     NEON_MINT = RGBColor(0, 245, 160)
+    ELECTRIC_BLUE = RGBColor(59, 130, 246)
+    AMBER_GOLD = RGBColor(245, 158, 11)
     TEXT_LIGHT = RGBColor(241, 245, 249)
     TEXT_MUTED = RGBColor(148, 163, 184)
     TEXT_DARK = RGBColor(15, 23, 42)
-    CARD_BG = RGBColor(248, 250, 252)
+    CARD_BG = RGBColor(255, 255, 255)
+    SLIDE_BG = RGBColor(248, 250, 252)
     BORDER_COLOR = RGBColor(226, 232, 240)
+    ACCENT_MUTED = RGBColor(241, 245, 249)
 
-    # ── SLIDE 1: Title Slide ─────────────────────────────────────────────────
+    # ── SLIDE 1: Executive Cover Slide ───────────────────────────────────────
     slide1 = prs.slides.add_slide(blank_layout)
     bg1 = slide1.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, Inches(13.333), Inches(7.5))
     bg1.fill.solid()
     bg1.fill.fore_color.rgb = NAVY_DARK
     bg1.line.color.rgb = NAVY_DARK
 
-    # Top accent bar
-    top_bar = slide1.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(1.0), Inches(1.5), Inches(11.333), Inches(0.08))
-    top_bar.fill.solid()
-    top_bar.fill.fore_color.rgb = NEON_MINT
-    top_bar.line.fill.background()
+    # Geometric background accents
+    accent_bar = slide1.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(1.0), Inches(1.4), Inches(11.333), Inches(0.08))
+    accent_bar.fill.solid()
+    accent_bar.fill.fore_color.rgb = NEON_MINT
+    accent_bar.line.fill.background()
+
+    tag_box = slide1.shapes.add_textbox(Inches(1.0), Inches(1.0), Inches(8.0), Inches(0.4))
+    p_tag0 = tag_box.text_frame.paragraphs[0]
+    p_tag0.text = "EXECUTIVE STRATEGIC DECK  •  CONFIDENTIAL & PROPRIETARY"
+    p_tag0.font.name = "Arial"
+    p_tag0.font.size = Pt(10)
+    p_tag0.font.bold = True
+    p_tag0.font.color.rgb = NEON_MINT
 
     # Title box
-    tx_title = slide1.shapes.add_textbox(Inches(1.0), Inches(1.8), Inches(11.333), Inches(2.5))
+    tx_title = slide1.shapes.add_textbox(Inches(1.0), Inches(1.7), Inches(11.333), Inches(2.8))
     tf1 = tx_title.text_frame
     tf1.word_wrap = True
     p1 = tf1.paragraphs[0]
@@ -379,18 +392,23 @@ def generate_pptx_deck(
 
     # Subtitle box
     p1_sub = tf1.add_paragraph()
-    p1_sub.text = subtitle or "Enterprise Operational Intelligence & Technical Strategic Dossier"
+    p1_sub.text = subtitle or "Operational Architecture & Rigorous Data Analysis Dossier"
     p1_sub.font.name = "Arial"
     p1_sub.font.size = Pt(18)
     p1_sub.font.color.rgb = CYBER_CYAN
-    p1_sub.space_before = Pt(14)
+    p1_sub.space_before = Pt(12)
 
-    # Footer note
-    tx_foot = slide1.shapes.add_textbox(Inches(1.0), Inches(5.8), Inches(11.333), Inches(1.0))
-    p_foot = tx_foot.text_frame.paragraphs[0]
-    p_foot.text = f"Prepared by {author}  •  {time.strftime('%B %Y')}  •  APEX Autonomous Systems"
-    p_foot.font.size = Pt(12)
-    p_foot.font.color.rgb = TEXT_MUTED
+    # Footer note & metadata badge
+    meta_card = slide1.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(1.0), Inches(5.6), Inches(11.333), Inches(1.0))
+    meta_card.fill.solid()
+    meta_card.fill.fore_color.rgb = RGBColor(18, 26, 48)
+    meta_card.line.color.rgb = RGBColor(30, 41, 59)
+    meta_tf = meta_card.text_frame
+    meta_p = meta_tf.paragraphs[0]
+    meta_p.text = f"Prepared by: {author}    |    Date: {time.strftime('%B %d, %Y')}    |    System: APEX AI Cognitive Core"
+    meta_p.font.name = "Arial"
+    meta_p.font.size = Pt(12)
+    meta_p.font.color.rgb = TEXT_MUTED
 
     # ── CONTENT SLIDES ───────────────────────────────────────────────────────
     slides_data = slides or _extract_slides_from_markdown(title, raw_markdown)
@@ -398,30 +416,36 @@ def generate_pptx_deck(
     for s_idx, s in enumerate(slides_data, start=2):
         slide = prs.slides.add_slide(blank_layout)
 
-        # Light background
+        # Light executive background
         bg = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, Inches(13.333), Inches(7.5))
         bg.fill.solid()
-        bg.fill.fore_color.rgb = CARD_BG
+        bg.fill.fore_color.rgb = SLIDE_BG
         bg.line.fill.background()
 
-        # Header band
-        h_band = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, Inches(13.333), Inches(1.1))
+        # Top dark header band
+        h_band = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, Inches(13.333), Inches(1.2))
         h_band.fill.solid()
         h_band.fill.fore_color.rgb = NAVY_DARK
         h_band.line.fill.background()
 
+        # Neon divider line
+        h_line = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, Inches(1.2), Inches(13.333), Inches(0.04))
+        h_line.fill.solid()
+        h_line.fill.fore_color.rgb = NEON_MINT
+        h_line.line.fill.background()
+
         # Header title
-        tx_h = slide.shapes.add_textbox(Inches(0.8), Inches(0.2), Inches(11.7), Inches(0.7))
+        tx_h = slide.shapes.add_textbox(Inches(0.8), Inches(0.18), Inches(11.7), Inches(0.55))
         p_h = tx_h.text_frame.paragraphs[0]
         p_h.text = s.get("title", f"Section {s_idx - 1}")
         p_h.font.name = "Arial"
-        p_h.font.size = Pt(22)
+        p_h.font.size = Pt(21)
         p_h.font.bold = True
         p_h.font.color.rgb = NEON_MINT
 
         # Category tag
         p_tag = tx_h.text_frame.add_paragraph()
-        p_tag.text = f"APEX STRATEGIC INTELLIGENCE  •  SLIDE {s_idx} OF {len(slides_data) + 1}"
+        p_tag.text = f"APEX TECHNICAL ARCHITECTURE  •  SLIDE {s_idx} OF {len(slides_data) + 1}"
         p_tag.font.size = Pt(9)
         p_tag.font.color.rgb = TEXT_MUTED
         p_tag.font.bold = True
@@ -430,10 +454,10 @@ def generate_pptx_deck(
         table_rows = s.get("table", [])
 
         if table_rows and len(table_rows) > 1:
-            # Render Table Slide
+            # ── Table Layout Slide ──
             rows_cnt = min(8, len(table_rows))
             cols_cnt = len(table_rows[0])
-            tbl_shape = slide.shapes.add_table(rows_cnt, cols_cnt, Inches(0.8), Inches(1.5), Inches(11.733), Inches(0.6 * rows_cnt))
+            tbl_shape = slide.shapes.add_table(rows_cnt, cols_cnt, Inches(0.8), Inches(1.6), Inches(11.733), Inches(0.6 * rows_cnt))
             table = tbl_shape.table
 
             for r_i in range(rows_cnt):
@@ -452,15 +476,86 @@ def generate_pptx_deck(
                             p.font.color.rgb = TEXT_DARK
                             cell.fill.solid()
                             cell.fill.fore_color.rgb = RGBColor(255, 255, 255) if r_i % 2 == 1 else RGBColor(241, 245, 249)
+
+        elif len(bullets) >= 4 and len(bullets) <= 6:
+            # ── 2-Column Split Card Layout (High-Design Structure) ──
+            half = (len(bullets) + 1) // 2
+            col1_bullets = bullets[:half]
+            col2_bullets = bullets[half:]
+
+            # Col 1 Card
+            card1 = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(1.6), Inches(5.7), Inches(5.2))
+            card1.fill.solid()
+            card1.fill.fore_color.rgb = CARD_BG
+            card1.line.color.rgb = BORDER_COLOR
+            card1.line.width = Pt(1.5)
+
+            c1_top = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), Inches(1.6), Inches(5.7), Inches(0.45))
+            c1_top.fill.solid()
+            c1_top.fill.fore_color.rgb = RGBColor(241, 245, 249)
+            c1_top.line.fill.background()
+            p_c1 = c1_top.text_frame.paragraphs[0]
+            p_c1.text = "CORE SPECIFICATIONS & ANALYSIS"
+            p_c1.font.name = "Arial"
+            p_c1.font.size = Pt(10)
+            p_c1.font.bold = True
+            p_c1.font.color.rgb = RGBColor(71, 85, 105)
+
+            tx_c1 = slide.shapes.add_textbox(Inches(1.0), Inches(2.2), Inches(5.3), Inches(4.4))
+            tf_c1 = tx_c1.text_frame
+            tf_c1.word_wrap = True
+            for b_i, b in enumerate(col1_bullets):
+                p_b = tf_c1.paragraphs[0] if b_i == 0 else tf_c1.add_paragraph()
+                p_b.text = f"•  {b}"
+                p_b.font.name = "Arial"
+                p_b.font.size = Pt(13)
+                p_b.font.color.rgb = TEXT_DARK
+                p_b.space_after = Pt(10)
+
+            # Col 2 Card
+            card2 = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(6.8), Inches(1.6), Inches(5.7), Inches(5.2))
+            card2.fill.solid()
+            card2.fill.fore_color.rgb = CARD_BG
+            card2.line.color.rgb = BORDER_COLOR
+            card2.line.width = Pt(1.5)
+
+            c2_top = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(6.8), Inches(1.6), Inches(5.7), Inches(0.45))
+            c2_top.fill.solid()
+            c2_top.fill.fore_color.rgb = RGBColor(241, 245, 249)
+            c2_top.line.fill.background()
+            p_c2 = c2_top.text_frame.paragraphs[0]
+            p_c2.text = "OPERATIONAL IMPACT & ACTIONS"
+            p_c2.font.name = "Arial"
+            p_c2.font.size = Pt(10)
+            p_c2.font.bold = True
+            p_c2.font.color.rgb = RGBColor(71, 85, 105)
+
+            tx_c2 = slide.shapes.add_textbox(Inches(7.0), Inches(2.2), Inches(5.3), Inches(4.4))
+            tf_c2 = tx_c2.text_frame
+            tf_c2.word_wrap = True
+            for b_i, b in enumerate(col2_bullets):
+                p_b = tf_c2.paragraphs[0] if b_i == 0 else tf_c2.add_paragraph()
+                p_b.text = f"•  {b}"
+                p_b.font.name = "Arial"
+                p_b.font.size = Pt(13)
+                p_b.font.color.rgb = TEXT_DARK
+                p_b.space_after = Pt(10)
+
         else:
-            # Bullet point card
-            box = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(1.5), Inches(11.733), Inches(5.2))
+            # ── Full-Width Structured Card Layout ──
+            box = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(1.6), Inches(11.733), Inches(5.2))
             box.fill.solid()
-            box.fill.fore_color.rgb = RGBColor(255, 255, 255)
+            box.fill.fore_color.rgb = CARD_BG
             box.line.color.rgb = BORDER_COLOR
             box.line.width = Pt(1.5)
 
-            tx_b = slide.shapes.add_textbox(Inches(1.2), Inches(1.8), Inches(10.9), Inches(4.6))
+            # Left accent highlight stripe
+            stripe = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(1.6), Inches(0.12), Inches(5.2))
+            stripe.fill.solid()
+            stripe.fill.fore_color.rgb = CYBER_CYAN
+            stripe.line.fill.background()
+
+            tx_b = slide.shapes.add_textbox(Inches(1.2), Inches(1.9), Inches(10.9), Inches(4.5))
             tf_b = tx_b.text_frame
             tf_b.word_wrap = True
 
@@ -468,9 +563,9 @@ def generate_pptx_deck(
                 p_b = tf_b.paragraphs[0] if b_i == 0 else tf_b.add_paragraph()
                 p_b.text = f"•  {b}"
                 p_b.font.name = "Arial"
-                p_b.font.size = Pt(15)
+                p_b.font.size = Pt(14)
                 p_b.font.color.rgb = TEXT_DARK
-                p_b.space_after = Pt(12)
+                p_b.space_after = Pt(10)
                 p_b.line_spacing = 1.25
 
     if not filename:
@@ -686,3 +781,188 @@ def _extract_tables_from_markdown(main_title: str, md: str) -> list[dict[str, An
             ]
         }]
     return sheets
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# 4. WORD DOCUMENT GENERATOR (.docx)
+# ══════════════════════════════════════════════════════════════════════════════
+def generate_docx_document(
+    title: str,
+    subtitle: str = "",
+    sections: list[dict[str, Any]] | None = None,
+    raw_markdown: str = "",
+    author: str = "APEX Universal AI Intelligence",
+    filename: str | None = None,
+) -> dict[str, Any]:
+    """
+    Generate an executive Word document (.docx) with structured headers, styled tables,
+    metadata callouts, and clean typographic layout.
+    """
+    try:
+        import docx
+        from docx import Document
+        from docx.shared import Inches, Pt, RGBColor
+        from docx.enum.text import WD_ALIGN_PARAGRAPH
+        from docx.enum.table import WD_TABLE_ALIGNMENT
+        from docx.oxml import OxmlElement
+        from docx.oxml.ns import qn
+    except ImportError as e:
+        logger.error("python-docx not available: %s", e)
+        raise RuntimeError("python-docx library is required for Word document generation.")
+
+    doc = Document()
+
+    # Set page margins (1 inch all around)
+    for section in doc.sections:
+        section.top_margin = Inches(1.0)
+        section.bottom_margin = Inches(1.0)
+        section.left_margin = Inches(1.0)
+        section.right_margin = Inches(1.0)
+
+    # Document Title
+    p_title = doc.add_paragraph()
+    p_title.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    run_title = p_title.add_run(title)
+    run_title.font.name = "Arial"
+    run_title.font.size = Pt(24)
+    run_title.font.bold = True
+    run_title.font.color.rgb = RGBColor(10, 15, 29) # NAVY_DARK
+
+    # Subtitle & Metadata Callout
+    sub_text = subtitle or "Enterprise Operational Intelligence & Technical Strategic Dossier"
+    p_sub = doc.add_paragraph()
+    run_sub = p_sub.add_run(sub_text)
+    run_sub.font.name = "Arial"
+    run_sub.font.size = Pt(12)
+    run_sub.font.italic = True
+    run_sub.font.color.rgb = RGBColor(6, 182, 212) # CYBER_CYAN
+
+    p_meta = doc.add_paragraph()
+    p_meta.paragraph_format.space_after = Pt(18)
+    run_meta = p_meta.add_run(f"Author: {author}  |  Generated: {time.strftime('%Y-%m-%d %H:%M:%S UTC')}  |  Status: Verified")
+    run_meta.font.name = "Arial"
+    run_meta.font.size = Pt(9.5)
+    run_meta.font.color.rgb = RGBColor(100, 116, 139) # SLATE_MUTED
+
+    # Divider line
+    doc.add_paragraph().paragraph_format.space_after = Pt(6)
+
+    def _set_cell_background(cell, fill_hex):
+        tcPr = cell._element.get_or_add_tcPr()
+        shd = OxmlElement('w:shd')
+        shd.set(qn('w:val'), 'clear')
+        shd.set(qn('w:color'), 'auto')
+        shd.set(qn('w:fill'), fill_hex)
+        tcPr.append(shd)
+
+    def _build_docx_table(rows):
+        if not rows or len(rows) < 1:
+            return
+        tbl = doc.add_table(rows=len(rows), cols=len(rows[0]))
+        tbl.alignment = WD_TABLE_ALIGNMENT.CENTER
+        for r_i, r in enumerate(rows):
+            is_head = (r_i == 0)
+            for c_i, val in enumerate(r):
+                cell = tbl.cell(r_i, c_i)
+                cell.text = str(val).strip()
+                p = cell.paragraphs[0]
+                p.paragraph_format.space_before = Pt(3)
+                p.paragraph_format.space_after = Pt(3)
+                if p.runs:
+                    p.runs[0].font.name = "Arial"
+                    p.runs[0].font.size = Pt(9.5)
+                    if is_head:
+                        p.runs[0].font.bold = True
+                        p.runs[0].font.color.rgb = RGBColor(255, 255, 255)
+                        _set_cell_background(cell, "0A0F1D")
+                    else:
+                        p.runs[0].font.color.rgb = RGBColor(15, 23, 42)
+                        _set_cell_background(cell, "FFFFFF" if r_i % 2 == 1 else "F8FAFC")
+        doc.add_paragraph().paragraph_format.space_after = Pt(12)
+
+    # Render content
+    if sections:
+        for sec in sections:
+            sec_title = sec.get("title", "")
+            if sec_title:
+                h = doc.add_heading(sec_title, level=1)
+                h.paragraph_format.space_before = Pt(14)
+                h.paragraph_format.space_after = Pt(6)
+            content = sec.get("content", "")
+            if content:
+                for line in content.split("\n"):
+                    l = line.strip()
+                    if not l:
+                        continue
+                    if l.startswith(("-", "*", "•")):
+                        p = doc.add_paragraph(style='List Bullet')
+                        p.add_run(l.lstrip("-*• ")).font.name = "Arial"
+                    else:
+                        p = doc.add_paragraph()
+                        p.add_run(l).font.name = "Arial"
+            table_data = sec.get("table")
+            if table_data:
+                _build_docx_table(table_data)
+    else:
+        # Parse from raw markdown
+        lines = (raw_markdown or "").split("\n")
+        table_buffer = []
+        for line in lines:
+            line_s = line.strip()
+            if not line_s:
+                if table_buffer:
+                    _build_docx_table(table_buffer)
+                    table_buffer = []
+                continue
+
+            if "|" in line_s:
+                parts = [p.strip() for p in line_s.strip("|").split("|")]
+                if not all(set(p).issubset({"-", ":", " "}) for p in parts):
+                    table_buffer.append(parts)
+                continue
+            elif table_buffer:
+                _build_docx_table(table_buffer)
+                table_buffer = []
+
+            if line_s.startswith("#"):
+                clean_h = re.sub(r'[*_`#]', '', line_s).strip()
+                lvl = 1 if line_s.startswith("# ") else (2 if line_s.startswith("## ") else 3)
+                h = doc.add_heading(clean_h, level=lvl)
+                h.paragraph_format.space_before = Pt(12)
+                h.paragraph_format.space_after = Pt(4)
+            elif line_s.startswith(("-", "*", "•")):
+                clean_b = re.sub(r'[*_`]', '', line_s.lstrip("-*• ")).strip()
+                p = doc.add_paragraph(style='List Bullet')
+                p.paragraph_format.space_after = Pt(3)
+                run = p.add_run(clean_b)
+                run.font.name = "Arial"
+                run.font.size = Pt(10.5)
+            else:
+                clean_p = re.sub(r'[*_`]', '', line_s).strip()
+                p = doc.add_paragraph()
+                p.paragraph_format.space_after = Pt(6)
+                run = p.add_run(clean_p)
+                run.font.name = "Arial"
+                run.font.size = Pt(10.5)
+
+        if table_buffer:
+            _build_docx_table(table_buffer)
+
+    if not filename:
+        clean_name = re.sub(r'[^a-zA-Z0-9_-]', '_', title.lower())[:35]
+        filename = f"apex_{clean_name}_{int(time.time())}.docx"
+
+    file_path = os.path.join(EXPORTS_DIR, filename)
+    doc.save(file_path)
+
+    file_size = os.path.getsize(file_path)
+    return {
+        "status": "success",
+        "file_type": "docx",
+        "title": title,
+        "filename": filename,
+        "download_url": f"/api/download/{filename}",
+        "file_size": file_size,
+        "file_size_formatted": f"{file_size / 1024:.1f} KB",
+    }
+

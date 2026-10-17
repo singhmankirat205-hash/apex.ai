@@ -4,7 +4,7 @@
     "current_industry": "general",
     "preferred_role": "GENERAL",
     "tone_preference": "Action-oriented, authoritative, highly precise, concise when appropriate",
-    "last_active": "2026-10-13T08:28:23.571224+00:00"
+    "last_active": "2026-10-17T05:02:38.358698+00:00"
   },
   "enterprise_context": {
     "primary_facility": "Apex Mills \u2014 Plant 1 (Weaving & Wet Finishing Complex)",
@@ -174,6 +174,25 @@
   "learned_preferences": [
     "Prefers proactive autonomous tool execution and record commits over generic passive text advice.",
     "Expects direct root-cause identification and ASTM / ISO technical precision.",
-    "Requires immediate containment protocol and escalation HUD during operational distress or line halts."
+    "Requires immediate containment protocol and escalation HUD during operational distress or line halts.",
+    "ASTM 4-point grading",
+    "our factory is located in Ludhiana"
+  ],
+  "learned_facts": [
+    {
+      "fact": "our yarn supplier is Vardhman Textiles and our standard GSM target is 220",
+      "timestamp": "2026-10-17T05:27:45.951010+00:00",
+      "source": "Autonomous dialogue capture"
+    },
+    {
+      "fact": "our factory is located in Ludhiana",
+      "timestamp": "2026-10-17T05:27:45.951028+00:00",
+      "source": "Autonomous dialogue capture"
+    },
+    {
+      "fact": "target is 220",
+      "timestamp": "2026-10-17T05:27:45.951195+00:00",
+      "source": "Autonomous dialogue capture"
+    }
   ]
 }

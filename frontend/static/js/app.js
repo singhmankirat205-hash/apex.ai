@@ -2716,12 +2716,23 @@ function addMessageActions(col, rawText, bubble) {
     await exportDocumentFromMessage('excel', rawText, bubble, xlsxBtn);
   });
 
+  const wordBtn = document.createElement('button');
+  wordBtn.className = 'msg-action-btn doc-export-btn docx-export-btn';
+  wordBtn.type = 'button';
+  wordBtn.title = 'Generate & Download Word Document (.docx)';
+  wordBtn.innerHTML = `<span class="btn-icon">📝</span> Word`;
+  wordBtn.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    await exportDocumentFromMessage('docx', rawText, bubble, wordBtn);
+  });
+
   actions.appendChild(copyBtn);
   actions.appendChild(listenBtn);
   actions.appendChild(videoBtn);
   actions.appendChild(pdfBtn);
   actions.appendChild(pptxBtn);
   actions.appendChild(xlsxBtn);
+  actions.appendChild(wordBtn);
 
   const followUps = renderAutonomousFollowUps(rawText, col);
 
@@ -3859,6 +3870,12 @@ function createDocumentCardElement(docData, fullText = '') {
     badgeLabel = 'EXCEL WORKBOOK';
     const sheetCount = Array.isArray(docData.sheets) ? docData.sheets.length : 1;
     metaDesc = `Cyber-styled workbook · ${sheetCount} worksheet${sheetCount > 1 ? 's' : ''} formatted`;
+  } else if (type === 'docx' || type === 'doc' || type === 'word') {
+    icon = '📝';
+    badgeClass = 'docx';
+    badgeLabel = 'WORD DOCUMENT';
+    const secCount = Array.isArray(docData.sections) ? docData.sections.length : 1;
+    metaDesc = `Executive Microsoft Word (.docx) document · ${secCount} section${secCount > 1 ? 's' : ''} formatted`;
   } else {
     const secCount = Array.isArray(docData.sections) ? docData.sections.length : 1;
     metaDesc = `ReportLab executive dossier · ${secCount} section${secCount > 1 ? 's' : ''} with tables`;
@@ -3884,7 +3901,7 @@ function createDocumentCardElement(docData, fullText = '') {
     </div>
     <div class="apex-doc-actions">
       <button class="apex-doc-dl-btn" type="button">
-        <span>⚡</span> Download ${badgeLabel} (.${type === 'excel' ? 'xlsx' : type})
+        <span>⚡</span> Download ${badgeLabel} (.${type === 'excel' ? 'xlsx' : (type === 'word' || type === 'doc' ? 'docx' : type)})
       </button>
     </div>
   `;

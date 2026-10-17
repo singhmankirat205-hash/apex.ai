@@ -3079,6 +3079,11 @@ pre:has(code.language-json\:action) {
   border: 1px solid rgba(16, 185, 129, 0.35);
   color: #34d399;
 }
+.apex-doc-badge.docx {
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  color: #60a5fa;
+}
 
 .apex-doc-meta-row {
   display: flex;
@@ -3142,6 +3147,14 @@ pre:has(code.language-json\:action) {
 .pptx-export-btn:hover {
   border-color: #fb923c !important;
   color: #fb923c !important;
+}
+.xlsx-export-btn:hover {
+  border-color: #34d399 !important;
+  color: #34d399 !important;
+}
+.docx-export-btn:hover {
+  border-color: #60a5fa !important;
+  color: #60a5fa !important;
 }
 /* ══════════════════════════════════════════════════════════════════════════
    AI SENTINEL TELEMETRY MODAL & REAL-TIME SELF-HEALING TOASTS

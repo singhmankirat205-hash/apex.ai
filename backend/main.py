@@ -38,6 +38,7 @@ from backend.document_generator import (
     generate_pdf_report,
     generate_pptx_deck,
     generate_excel_workbook,
+    generate_docx_document,
 )
 
 logging.basicConfig(
@@ -125,7 +126,7 @@ class ChatRequest(BaseModel):
     current_chat_id: Any = Field(None, description="Active chat session ID")
 
 class DocumentGenerateRequest(BaseModel):
-    type: str = Field("pdf", description="pdf | pptx | excel")
+    type: str = Field("pdf", description="pdf | pptx | excel | docx")
     title: str = Field("APEX Technical Dossier")
     subtitle: str = Field("")
     raw_markdown: str = Field("")
@@ -433,6 +434,14 @@ async def generate_document_endpoint(req: DocumentGenerateRequest):
             res = generate_excel_workbook(
                 title=req.title,
                 sheets=req.sheets,
+                raw_markdown=req.raw_markdown,
+                author=req.author,
+            )
+        elif doc_type in ("docx", "doc", "word"):
+            res = generate_docx_document(
+                title=req.title,
+                subtitle=req.subtitle,
+                sections=req.sections,
                 raw_markdown=req.raw_markdown,
                 author=req.author,
             )
