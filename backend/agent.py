@@ -719,13 +719,17 @@ You know EVERYTHING around the world — past, present, scientific, geographic, 
      * Eliminate intimidating jargon, or immediately explain any necessary term in crystal-clear simple terms.
 
 10. MANDATORY INFORMATIVE TABLES & RICH INTERACTIVE VISUAL CHARTS:
-    - MANDATORY DETAILED INFORMATIVE MARKDOWN TABLES:
-      * For ANY question involving data, comparisons, step-by-step procedures, machine parameters, quality metrics, specifications, timelines, or financial/technical breakdowns:
+    - CRITICAL EXCEPTION FOR PRESENTATIONS (PPT / PPTX):
+      * When asked to make or export a PowerPoint presentation (PPT, PPTX, slides, slide deck):
+      * STRICTLY DO NOT GENERATE CHARTS (NO ```chart ... ``` blocks) AND DO NOT GENERATE RAW TABLES ON SLIDES.
+      * Follow the Claude-style slide presentation architecture below instead.
+    - MANDATORY DETAILED INFORMATIVE MARKDOWN TABLES (for standard data answers):
+      * For standard informational questions involving data, comparisons, step-by-step procedures, machine parameters, quality metrics, specifications, timelines, or financial/technical breakdowns:
       * YOU MUST PROVIDE A RICH, HIGHLY INFORMATIVE MARKDOWN TABLE with clear headers (e.g. `| Parameter / Factor | Measured / Specification | Benchmark / Reference | Impact / Significance | Recommended Action |`).
       * Never give brief, vague bullet points when structured tabular analysis provides deeper value!
       * Ensure each row contains concrete metrics, units, standards, and actionable advice.
     - MANDATORY RICH INTERACTIVE DATA CHARTS (ZERO CODING IN FRONTEND):
-      * Whenever asked for a chart, graph, visualization, trend, comparison, distribution, breakdown, or defect analysis (or when comparing 3+ numeric parameters):
+      * Whenever explicitly asked for a chart, graph, visualization, trend, comparison, distribution, breakdown, or defect analysis (or when comparing 3+ numeric parameters):
       * Supported chart types: "bar" (comparisons), "line" (time-series, trends), "pie" / "doughnut" (shares, percentage breakdowns, distributions), "radar" (multi-variable profiles).
       * YOU MUST EMIT A VALID ```chart ... ``` CODE BLOCK containing standard JSON:
         ```chart
@@ -773,9 +777,17 @@ You know EVERYTHING around the world — past, present, scientific, geographic, 
 13. AUTONOMOUS DOCUMENT & PRESENTATION CREATION (PPTX, DOCX, EXCEL, PDF):
     - You possess native enterprise capabilities to generate downloadable PowerPoint presentations (.pptx), Word documents (.docx), Excel workbooks (.xlsx), and executive PDF reports.
     - When asked to create, generate, or export a presentation, document, or spreadsheet:
-      1. PPTX SLIDE DECKS (STRUCTURED & DESIGNED):
-         * Build richly structured slides: an executive dark cover slide, 2-column split card comparison slides, metric dashboards, and styled tables.
-         * STRICT CONTENT FIDELITY & ACCURACY: Incorporate all user-added facts, numbers, topics, and structures faithfully with zero hallucination and zero errors.
+      1. CLAUDE-STYLE PPTX PRESENTATION DECKS:
+         * When asked for a PPT or presentation:
+           - STRICTLY DO NOT emit any ```chart ... ``` blocks.
+           - STRICTLY DO NOT emit raw data tables.
+           - Build a clean, structured Claude-style executive presentation deck (4 to 6 thematic slides).
+           - Each slide MUST have:
+             a. A clear, impactful thematic Title (e.g. "Root Cause & Mechanical Diagnostics").
+             b. Exactly 3 to 4 distinct, punchy takeaway bullet points.
+             c. EVERY bullet point MUST have a bold lead-in headline followed by an explanation:
+                `**Headline / Pillar**: Clear factual insight, metric, or action.`
+           - STRICT ACCURACY: Faithfully include all facts, numbers, and topics added by the user with zero error.
       2. WORD DOCUMENTS (.docx):
          * Generate clean, professional corporate dossiers with styled headings, executive briefs, bullet lists, and zebra-striped tables.
       3. EXCEL SPREADSHEETS (.xlsx):
@@ -787,10 +799,17 @@ You know EVERYTHING around the world — past, present, scientific, geographic, 
         "title": "Title of Document",
         "subtitle": "Subtitle or Executive Context",
         "sections": [
-          {{"title": "Section Title", "content": "Detailed text explanation...", "table": [["Col 1", "Col 2"], ["Val 1", "Val 2"]]}}
+          {{"title": "Section Title", "content": "Detailed text explanation..."}}
         ],
         "slides": [
-          {{"title": "Slide Title", "bullets": ["Specific User Point 1", "Specific User Point 2", "Metric / Insight 3"], "table": [["Param", "Value"], ["A", "100"]]}}
+          {{
+            "title": "Slide Title",
+            "bullets": [
+              "**Headline 1**: Actionable detail and insight.",
+              "**Headline 2**: Specific factual metric or outcome.",
+              "**Headline 3**: Concrete operational takeaway."
+            ]
+          }}
         ],
         "sheets": [
           {{"name": "Summary", "title": "Data Sheet", "rows": [["Col 1", "Col 2"], ["R1C1", "R1C2"]]}}
@@ -1282,8 +1301,27 @@ def _stream_worker(messages, user_role, language, industry, user_email, current_
                 "- Do NOT summarize or abbreviate; deliver exhaustive, authoritative, and multi-faceted coverage."
             )
 
-        # Check for chart requests (reinforce backend-only emission)
-        if any(w in q_lower for w in ["chart", "pie chart", "graph", "plot", "histogram", "visualization", "breakdown chart"]):
+        # Check for Presentation / PPT requests (Claude-style slide decks without charts or tables)
+        is_ppt_request = any(w in q_lower for w in [
+            "ppt", "presentation", "powerpoint", "slides", "slide deck", "deck", "power point"
+        ])
+        if is_ppt_request:
+            intent_directives.append(
+                "[CLAUDE-STYLE PRESENTATION DIRECTIVE ACTIVATED]:\n"
+                "- The user is requesting a PowerPoint Presentation / PPT slide deck.\n"
+                "- STRICTLY DO NOT GENERATE CHARTS (NO ```chart ... ``` blocks).\n"
+                "- STRICTLY DO NOT GENERATE RAW TABLES ON SLIDES.\n"
+                "- ADOPT CLAUDE'S SIGNATURE EXECUTIVE PRESENTATION ARCHITECTURE:\n"
+                "  1. Structure the deck into 4 to 6 clean, purposeful thematic slides.\n"
+                "  2. Each slide must contain a strong thematic Title and 3 to 4 punchy, distinct bullet points.\n"
+                "  3. EVERY bullet point MUST have a bold lead-in headline followed by a 1-2 sentence explanation:\n"
+                "     `**Key Headline / Lead-in**: Actionable point, fact, or metric.`\n"
+                "  4. Ensure ALL user-provided content, numbers, instructions, and facts are incorporated accurately with zero error.\n"
+                "  5. Emit the ```file_export ... ``` block with `type: \"pptx\"` and the structured `slides` array."
+            )
+
+        # Check for chart requests (reinforce backend-only emission; suppress if PPT was requested)
+        if not is_ppt_request and any(w in q_lower for w in ["chart", "pie chart", "graph", "plot", "histogram", "visualization", "breakdown chart"]):
             intent_directives.append(
                 "[VISUAL CHART REQUEST DIRECTIVE]:\n"
                 "- The user requested a chart / visualization.\n"

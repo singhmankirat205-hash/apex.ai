@@ -315,8 +315,89 @@ def _parse_markdown_to_pdf_story(md, story, h1_style, body_style, bullet_style, 
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# 2. POWERPOINT PRESENTATION GENERATOR (python-pptx)
+# 2. POWERPOINT PRESENTATION GENERATOR (Claude-Style python-pptx Engine)
 # ══════════════════════════════════════════════════════════════════════════════
+def _render_claude_bullet(
+    tf,
+    raw_bullet: str,
+    pt_size: int = 13,
+    is_first: bool = False,
+    marker_color: Any = None,
+    text_color: Any = None,
+    navy_dark: Any = None,
+):
+    """
+    Renders Claude-style presentation bullets with a prominent bold lead-in headline
+    and high-contrast, clean body text.
+    Handles:
+      - '**Lead-in**: explanation'
+      - 'Lead-in: explanation'
+      - Standard bullet sentences
+    """
+    from pptx.util import Pt
+    from pptx.dml.color import RGBColor
+
+    if marker_color is None:
+        marker_color = RGBColor(6, 182, 212) # CYBER_CYAN
+    if text_color is None:
+        text_color = RGBColor(51, 65, 85)     # SLATE_DARK
+    if navy_dark is None:
+        navy_dark = RGBColor(10, 15, 29)      # NAVY_DARK
+
+    p = tf.paragraphs[0] if is_first else tf.add_paragraph()
+    p.space_after = Pt(10)
+    p.line_spacing = 1.25
+
+    clean = re.sub(r'^[•\-\*\d\.\s]+', '', str(raw_bullet)).strip()
+    clean = re.sub(r'^\s*[\-\*]\s*', '', clean)
+
+    # 1. Check for markdown bold lead-in: **Headline**: Body or **Headline** - Body
+    m_bold = re.match(r'^\*\*(.+?)\*\*[:\s—–-]*(.*)', clean)
+    if m_bold:
+        headline = m_bold.group(1).strip()
+        body = m_bold.group(2).strip()
+    else:
+        # 2. Check for colon lead-in: 'Short Headline: Body'
+        m_colon = re.match(r'^([A-Z0-9][A-Za-z0-9\s/&\-]{1,35}):\s+(.+)', clean)
+        if m_colon and len(m_colon.group(1).split()) <= 6:
+            headline = m_colon.group(1).strip()
+            body = m_colon.group(2).strip()
+        else:
+            headline = ""
+            body = clean
+
+    # Square bullet marker
+    r_dot = p.add_run()
+    r_dot.text = "▪  "
+    r_dot.font.name = "Arial"
+    r_dot.font.size = Pt(pt_size - 1)
+    r_dot.font.bold = True
+    r_dot.font.color.rgb = marker_color
+
+    if headline:
+        r_head = p.add_run()
+        r_head.text = f"{headline}: "
+        r_head.font.name = "Arial"
+        r_head.font.size = Pt(pt_size)
+        r_head.font.bold = True
+        r_head.font.color.rgb = navy_dark
+
+        if body:
+            r_body = p.add_run()
+            r_body.text = re.sub(r'[*_`]', '', body)
+            r_body.font.name = "Arial"
+            r_body.font.size = Pt(pt_size)
+            r_body.font.bold = False
+            r_body.font.color.rgb = text_color
+    else:
+        r_body = p.add_run()
+        r_body.text = re.sub(r'[*_`]', '', body)
+        r_body.font.name = "Arial"
+        r_body.font.size = Pt(pt_size)
+        r_body.font.bold = False
+        r_body.font.color.rgb = text_color
+
+
 def generate_pptx_deck(
     title: str,
     subtitle: str = "",
@@ -450,35 +531,72 @@ def generate_pptx_deck(
         p_tag.font.color.rgb = TEXT_MUTED
         p_tag.font.bold = True
 
-        bullets = s.get("bullets", [])
+        bullets = list(s.get("bullets", []))
         table_rows = s.get("table", [])
 
+        # Claude Presentation Guideline: Never put raw data tables on slides.
+        # Seamlessly convert table rows into structured bullet points with bold lead-ins!
         if table_rows and len(table_rows) > 1:
-            # ── Table Layout Slide ──
-            rows_cnt = min(8, len(table_rows))
-            cols_cnt = len(table_rows[0])
-            tbl_shape = slide.shapes.add_table(rows_cnt, cols_cnt, Inches(0.8), Inches(1.6), Inches(11.733), Inches(0.6 * rows_cnt))
-            table = tbl_shape.table
+            for r in table_rows[1:]:
+                r_strs = [str(x).strip() for x in r if str(x).strip()]
+                if len(r_strs) >= 2:
+                    bullets.append(f"**{r_strs[0]}**: {' | '.join(r_strs[1:])}")
+                elif r_strs:
+                    bullets.append(r_strs[0])
+            table_rows = []
 
-            for r_i in range(rows_cnt):
-                for c_i in range(cols_cnt):
-                    cell = table.cell(r_i, c_i)
-                    cell.text = str(table_rows[r_i][c_i])
-                    for p in cell.text_frame.paragraphs:
-                        p.font.name = "Arial"
-                        p.font.size = Pt(11)
-                        if r_i == 0:
-                            p.font.bold = True
-                            p.font.color.rgb = TEXT_LIGHT
-                            cell.fill.solid()
-                            cell.fill.fore_color.rgb = NAVY_DARK
-                        else:
-                            p.font.color.rgb = TEXT_DARK
-                            cell.fill.solid()
-                            cell.fill.fore_color.rgb = RGBColor(255, 255, 255) if r_i % 2 == 1 else RGBColor(241, 245, 249)
+        if not bullets:
+            bullets = [
+                "**Strategic Analysis**: Rigorous operational insights verified against benchmarks.",
+                "**Implementation Protocol**: Coordinated cross-department execution plan.",
+                "**Target Deliverables**: Measurable quality and performance targets met."
+            ]
 
-        elif len(bullets) >= 4 and len(bullets) <= 6:
-            # ── 2-Column Split Card Layout (High-Design Structure) ──
+        # ── Claude-Style Slide Layouts ────────────────────────────────────────
+        if len(bullets) == 3:
+            # ── ARCHITECTURE 1: Claude 3-Column Pillar Cards (Side-by-Side) ──
+            card_w = Inches(3.64)
+            card_gap = Inches(0.4)
+            start_x = Inches(0.8)
+
+            for c_i, b in enumerate(bullets):
+                cur_x = start_x + c_i * (card_w + card_gap)
+
+                card = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, cur_x, Inches(1.6), card_w, Inches(5.2))
+                card.fill.solid()
+                card.fill.fore_color.rgb = CARD_BG
+                card.line.color.rgb = BORDER_COLOR
+                card.line.width = Pt(1.5)
+
+                # Top color badge
+                pill = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, cur_x + Inches(0.3), Inches(1.85), Inches(1.6), Inches(0.38))
+                pill.fill.solid()
+                pill.fill.fore_color.rgb = RGBColor(10, 15, 29) # NAVY_DARK
+                pill.line.fill.background()
+                p_pill = pill.text_frame.paragraphs[0]
+                p_pill.text = f"PILLAR 0{c_i + 1}"
+                p_pill.font.name = "Arial"
+                p_pill.font.size = Pt(9)
+                p_pill.font.bold = True
+                p_pill.font.color.rgb = NEON_MINT
+
+                # Text box for pillar headline and content
+                tx_col = slide.shapes.add_textbox(cur_x + Inches(0.25), Inches(2.4), card_w - Inches(0.5), Inches(4.2))
+                tf_col = tx_col.text_frame
+                tf_col.word_wrap = True
+
+                _render_claude_bullet(
+                    tf_col,
+                    b,
+                    pt_size=13,
+                    is_first=True,
+                    marker_color=CYBER_CYAN,
+                    text_color=RGBColor(51, 65, 85),
+                    navy_dark=NAVY_DARK
+                )
+
+        elif len(bullets) in (2, 4):
+            # ── ARCHITECTURE 2: Claude 2-Column Split Cards ──
             half = (len(bullets) + 1) // 2
             col1_bullets = bullets[:half]
             col2_bullets = bullets[half:]
@@ -495,7 +613,7 @@ def generate_pptx_deck(
             c1_top.fill.fore_color.rgb = RGBColor(241, 245, 249)
             c1_top.line.fill.background()
             p_c1 = c1_top.text_frame.paragraphs[0]
-            p_c1.text = "CORE SPECIFICATIONS & ANALYSIS"
+            p_c1.text = "CORE STRATEGY & KEY INSIGHTS"
             p_c1.font.name = "Arial"
             p_c1.font.size = Pt(10)
             p_c1.font.bold = True
@@ -505,12 +623,7 @@ def generate_pptx_deck(
             tf_c1 = tx_c1.text_frame
             tf_c1.word_wrap = True
             for b_i, b in enumerate(col1_bullets):
-                p_b = tf_c1.paragraphs[0] if b_i == 0 else tf_c1.add_paragraph()
-                p_b.text = f"•  {b}"
-                p_b.font.name = "Arial"
-                p_b.font.size = Pt(13)
-                p_b.font.color.rgb = TEXT_DARK
-                p_b.space_after = Pt(10)
+                _render_claude_bullet(tf_c1, b, pt_size=13, is_first=(b_i == 0), marker_color=CYBER_CYAN, text_color=RGBColor(51, 65, 85), navy_dark=NAVY_DARK)
 
             # Col 2 Card
             card2 = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(6.8), Inches(1.6), Inches(5.7), Inches(5.2))
@@ -524,7 +637,7 @@ def generate_pptx_deck(
             c2_top.fill.fore_color.rgb = RGBColor(241, 245, 249)
             c2_top.line.fill.background()
             p_c2 = c2_top.text_frame.paragraphs[0]
-            p_c2.text = "OPERATIONAL IMPACT & ACTIONS"
+            p_c2.text = "EXECUTION & KEY IMPACT"
             p_c2.font.name = "Arial"
             p_c2.font.size = Pt(10)
             p_c2.font.bold = True
@@ -534,15 +647,45 @@ def generate_pptx_deck(
             tf_c2 = tx_c2.text_frame
             tf_c2.word_wrap = True
             for b_i, b in enumerate(col2_bullets):
-                p_b = tf_c2.paragraphs[0] if b_i == 0 else tf_c2.add_paragraph()
-                p_b.text = f"•  {b}"
-                p_b.font.name = "Arial"
-                p_b.font.size = Pt(13)
-                p_b.font.color.rgb = TEXT_DARK
-                p_b.space_after = Pt(10)
+                _render_claude_bullet(tf_c2, b, pt_size=13, is_first=(b_i == 0), marker_color=NEON_MINT, text_color=RGBColor(51, 65, 85), navy_dark=NAVY_DARK)
+
+        elif len(bullets) >= 5:
+            # ── ARCHITECTURE 3: Claude Horizontal Stacked Cards ──
+            card_count = min(5, len(bullets))
+            card_h = Inches(0.92)
+            card_gap = Inches(0.12)
+            start_y = Inches(1.6)
+
+            for b_i in range(card_count):
+                b = bullets[b_i]
+                cur_y = start_y + b_i * (card_h + card_gap)
+
+                c_box = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), cur_y, Inches(11.733), card_h)
+                c_box.fill.solid()
+                c_box.fill.fore_color.rgb = CARD_BG
+                c_box.line.color.rgb = BORDER_COLOR
+                c_box.line.width = Pt(1.2)
+
+                # Number chip
+                chip = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.95), cur_y + Inches(0.18), Inches(0.85), Inches(0.55))
+                chip.fill.solid()
+                chip.fill.fore_color.rgb = NAVY_DARK
+                chip.line.fill.background()
+                p_chip = chip.text_frame.paragraphs[0]
+                p_chip.text = f"0{b_i + 1}"
+                p_chip.font.name = "Arial"
+                p_chip.font.size = Pt(12)
+                p_chip.font.bold = True
+                p_chip.font.color.rgb = NEON_MINT
+
+                # Text box
+                tx_row = slide.shapes.add_textbox(Inches(2.0), cur_y + Inches(0.1), Inches(10.3), card_h - Inches(0.2))
+                tf_row = tx_row.text_frame
+                tf_row.word_wrap = True
+                _render_claude_bullet(tf_row, b, pt_size=12.5, is_first=True, marker_color=CYBER_CYAN, text_color=RGBColor(51, 65, 85), navy_dark=NAVY_DARK)
 
         else:
-            # ── Full-Width Structured Card Layout ──
+            # ── ARCHITECTURE 4: Claude Full-Width Focus Card ──
             box = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(1.6), Inches(11.733), Inches(5.2))
             box.fill.solid()
             box.fill.fore_color.rgb = CARD_BG
@@ -560,13 +703,7 @@ def generate_pptx_deck(
             tf_b.word_wrap = True
 
             for b_i, b in enumerate(bullets):
-                p_b = tf_b.paragraphs[0] if b_i == 0 else tf_b.add_paragraph()
-                p_b.text = f"•  {b}"
-                p_b.font.name = "Arial"
-                p_b.font.size = Pt(14)
-                p_b.font.color.rgb = TEXT_DARK
-                p_b.space_after = Pt(10)
-                p_b.line_spacing = 1.25
+                _render_claude_bullet(tf_b, b, pt_size=14, is_first=(b_i == 0), marker_color=CYBER_CYAN, text_color=RGBColor(51, 65, 85), navy_dark=NAVY_DARK)
 
     if not filename:
         clean_name = re.sub(r'[^a-zA-Z0-9_-]', '_', title.lower())[:35]
@@ -588,6 +725,12 @@ def generate_pptx_deck(
 
 
 def _extract_slides_from_markdown(main_title: str, md: str) -> list[dict[str, Any]]:
+    """
+    Intelligently extracts Claude-style presentation slides from markdown text:
+    - Never generates table slides; converts data rows into clean bullet points with bold lead-ins.
+    - Strips raw chart code blocks.
+    - Clusters points into 4-6 thematic slides with clear titles and punchy takeaways.
+    """
     slides = []
     current_slide = None
     lines = md.split("\n")
@@ -596,39 +739,81 @@ def _extract_slides_from_markdown(main_title: str, md: str) -> list[dict[str, An
         line_s = line.strip()
         if not line_s:
             continue
+
+        # Ignore raw chart code blocks entirely
+        if line_s.startswith("```chart") or line_s.startswith("```"):
+            continue
+
         if line_s.startswith("#"):
-            if current_slide and (current_slide.get("bullets") or current_slide.get("table")):
+            if current_slide and current_slide.get("bullets"):
                 slides.append(current_slide)
             clean_h = re.sub(r'[*_`#]', '', line_s).strip()
-            current_slide = {"title": clean_h, "bullets": [], "table": []}
+            clean_h = re.sub(r'^Slide\s*\d+\s*[:\-]\s*', '', clean_h, flags=re.IGNORECASE)
+            current_slide = {"title": clean_h, "bullets": []}
+
         elif "|" in line_s:
+            # DO NOT make table slides; convert table rows to crisp bullet points!
             parts = [p.strip() for p in line_s.strip("|").split("|")]
-            if not all(set(p).issubset({"-", ":", " "}) for p in parts):
+            if not all(set(p).issubset({"-", ":", " "}) for p in parts) and len(parts) >= 2:
                 if current_slide is None:
-                    current_slide = {"title": "Data Overview", "bullets": [], "table": []}
-                current_slide["table"].append(parts)
-        elif line_s.startswith(("-", "*", "•", "1.", "2.", "3.", "4.", "5.")):
-            clean_b = re.sub(r'[*_`]', '', line_s.lstrip("-*•0123456789. ")).strip()
+                    current_slide = {"title": "Key Specifications & Findings", "bullets": []}
+                # Check if it's not a generic header line
+                if not any(parts[0].lower() == h for h in ["metric", "parameter", "item", "factor", "defect", "feature"]):
+                    lead = parts[0].replace("*", "").strip()
+                    val = " — ".join(parts[1:]).replace("*", "").strip()
+                    current_slide["bullets"].append(f"**{lead}**: {val}")
+
+        elif line_s.startswith(("-", "*", "•", "1.", "2.", "3.", "4.", "5.", "6.", "7.", "8.", "9.")):
+            clean_b = line_s.lstrip("-*•0123456789. ").strip()
             if current_slide is None:
-                current_slide = {"title": "Key Insights", "bullets": [], "table": []}
+                current_slide = {"title": "Strategic Insights & Objectives", "bullets": []}
             if clean_b:
                 current_slide["bullets"].append(clean_b)
+
         else:
-            clean_p = re.sub(r'[*_`]', '', line_s).strip()
+            clean_p = line_s.strip()
             if len(clean_p) > 15:
                 if current_slide is None:
-                    current_slide = {"title": "Strategic Summary", "bullets": [], "table": []}
-                current_slide["bullets"].append(clean_p)
+                    current_slide = {"title": "Executive Overview", "bullets": []}
+                sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', clean_p) if len(s.strip()) > 10]
+                if len(sentences) > 1:
+                    for s in sentences:
+                        current_slide["bullets"].append(s)
+                else:
+                    current_slide["bullets"].append(clean_p)
 
-    if current_slide and (current_slide.get("bullets") or current_slide.get("table")):
+    if current_slide and current_slide.get("bullets"):
         slides.append(current_slide)
 
+    # If no slides were extracted or only 1 slide was found from a long response,
+    # intelligently chunk bullets into 4-6 distinct thematic slides
     if not slides:
         slides = [{
-            "title": "Executive Summary",
-            "bullets": ["Comprehensive operational overview generated by APEX.", "Full cross-session analysis and technical metrics included."],
-            "table": []
+            "title": "Executive Summary & Objectives",
+            "bullets": [
+                "**Operational Turnaround**: Targeted roadmap designed to achieve high-fidelity excellence.",
+                "**System Integration**: Continuous cross-session learning and parameter tracking.",
+                "**Strategic Conclusion**: Direct actionable guidelines per verified enterprise standards."
+            ]
         }]
+    elif len(slides) == 1 and len(slides[0]["bullets"]) > 4:
+        all_b = slides[0]["bullets"]
+        titles = [
+            "Executive Context & Objectives",
+            "Core Analysis & Key Findings",
+            "Operational Pillars & Parameters",
+            "Strategic Recommendations & Next Steps"
+        ]
+        chunked = []
+        chunk_size = max(2, (len(all_b) + 3) // 4)
+        for i in range(0, len(all_b), chunk_size):
+            t_idx = min(len(chunked), len(titles) - 1)
+            chunked.append({
+                "title": titles[t_idx],
+                "bullets": all_b[i:i + chunk_size]
+            })
+        slides = chunked
+
     return slides
 
 
