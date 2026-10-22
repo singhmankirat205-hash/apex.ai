@@ -47,7 +47,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger("apex.api")
 
-app = FastAPI(title="APEX Universal Intelligence", version="2.0.0")
+app = FastAPI(title="TEXO Universal Intelligence", version="2.0.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 
@@ -132,7 +132,7 @@ class DocumentGenerateRequest(BaseModel):
     raw_markdown: str = Field("")
     sections: list[dict[str, Any]] = Field(default_factory=list)
     sheets: list[dict[str, Any]] = Field(default_factory=list)
-    author: str = Field("APEX Universal Intelligence")
+    author: str = Field("TEXO Universal Intelligence")
 
 class ExportRequest(BaseModel):
     format: str = Field("excel", description="excel | csv")
@@ -250,6 +250,18 @@ async def generate_video_endpoint(req: VideoGenerateRequest):
         raise HTTPException(status_code=500, detail=f"Video generation failed: {str(e)}")
 
 
+@app.get("/robots.txt", response_class=FileResponse)
+async def serve_robots():
+    robots_path = os.path.join(_base, "frontend", "static", "robots.txt")
+    return FileResponse(robots_path, media_type="text/plain")
+
+
+@app.get("/sitemap.xml", response_class=FileResponse)
+async def serve_sitemap():
+    sitemap_path = os.path.join(_base, "frontend", "static", "sitemap.xml")
+    return FileResponse(sitemap_path, media_type="application/xml")
+
+
 @app.get("/", response_class=HTMLResponse)
 async def serve_ui(request: Request):
     return templates.TemplateResponse(request=request, name="index.html")
@@ -280,7 +292,7 @@ async def report_client_glitch(req: Request):
 
 @app.get("/api/health")
 async def health():
-    return {"status": "ok", "service": "APEX Premium AI Intelligence"}
+    return {"status": "ok", "service": "TEXO Universal AI Intelligence"}
 
 
 @app.get("/api/knowledge")

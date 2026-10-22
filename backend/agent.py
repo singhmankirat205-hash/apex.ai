@@ -648,7 +648,7 @@ Never revert to English unless technical code symbols or specific acronyms requi
     mem_block = f"\n\n{memory_context}\n" if memory_context else ""
     tone_block = f"\n\n{tone_instructions}\n" if tone_instructions else ""
 
-    return f"""You are APEX — Universal Cognitive Intelligence, Scientific Polymath, and Technical Thought Partner.
+    return f"""You are TEXO — Universal Cognitive Intelligence, Scientific Polymath, and Technical Thought Partner.
 
 ================================================================================
 CRITICAL OPERATIONAL DIRECTIVE — ROLE-BASED COGNITIVE ADAPTATION:
@@ -840,7 +840,7 @@ You know EVERYTHING around the world — past, present, scientific, geographic, 
       * Quality Algorithms: Perform ASTM D5430 4-Point System calculations (Points/100 sq yds) and Delta E CMC (2:1) spectrophotometer shade match acceptability (< 0.80 pass threshold).
 
 16. RADICAL TEXTILE CREATIVE & ADVANCED ENGINEERING SUITE:
-    - You are equipped with APEX's proprietary Real-Time Creative Textile Studio:
+    - You are equipped with TEXO's proprietary Real-Time Creative Textile Studio:
       * Tactile-to-Digital Haptic Emulation: Translates fabric specs (GSM, fiber blend, weave) into exact tactile vibration frequencies (Hz), surface friction (μ), and mobile touch vibration sequences. Explain tactile hand-feel and offer interactive haptic drag testing.
       * Drape & Movement Physics: Physics simulation parameters (bending stiffness, shear resistance, gravity scale, wind sensitivity) showing how Silk Chiffon, Linen, Heavy Denim, and Jersey fold and flow in real-time.
       * Loomside Computer Vision & Macro GSM: ASTM D5430 4-point defect detection (warp skips, weft floats, oil spots), defect meter logging, yield loss %, and macro optical estimation of thread count (EPI x PPI) and Peirce geometry GSM.
@@ -957,7 +957,7 @@ def _process_response_actions_and_learning(clean_query: str, full_text: str, use
                     payload=payload,
                     record_id=rec_id,
                     summary=summary,
-                    author=f"APEX Autonomous ({user_role})"
+                    author=f"TEXO Autonomous ({user_role})"
                 )
                 if summary:
                     record_session_milestone(f"Executed: {summary}")
@@ -973,7 +973,7 @@ def _process_response_actions_and_learning(clean_query: str, full_text: str, use
                     try:
                         fdata = json.loads(fblk)
                         ftype = fdata.get("type", "pdf").lower()
-                        ftitle = fdata.get("title", "APEX Technical Dossier")
+                        ftitle = fdata.get("title", "TEXO Technical Dossier")
                         fsubtitle = fdata.get("subtitle", "")
                         if ftype == "pdf":
                             generate_pdf_report(title=ftitle, subtitle=fsubtitle, sections=fdata.get("sections"), raw_markdown=full_text)
@@ -1245,14 +1245,14 @@ def _stream_worker(messages, user_role, language, industry, user_email, current_
                     comp = ate.stress_test_compliance(clean_query, ["Reactive Blue 21", "PFAS C6 Fluorocarbon repellent", "Alum mordant"])
                     blocks.append(f"• Compliance Stress-Test: Status {comp['status']}, DPP Readiness: {comp['digital_product_passport_readiness']}")
                 if blocks:
-                    creative_ctx = "APEX RADICAL TEXTILE ENGINE REAL-TIME TELEMETRY:\n" + "\n".join(blocks) + "\n"
+                    creative_ctx = "TEXO RADICAL TEXTILE ENGINE REAL-TIME TELEMETRY:\n" + "\n".join(blocks) + "\n"
                     erp_ctx = (erp_ctx + "\n" + creative_ctx) if erp_ctx else creative_ctx
             except Exception as ex:
                 logger.debug("Creative textile query error: %s", ex)
 
         # 7. Intercept casual greetings & conversational openings ("hi", "hello", "hey", "hello there", etc.)
         is_greeting = bool(re.match(
-            r'^(?:(?:hi|hello|hey|greetings|howdy|sup|hola|namaste|hlo|heyy|heya|yo|good\s+(?:morning|afternoon|evening|day))(?:\s+(?:there|apex|assistant|friend|everyone|everybody|all|team|folks))?)[!?., ]*$',
+            r'^(?:(?:hi|hello|hey|greetings|howdy|sup|hola|namaste|hlo|heyy|heya|yo|good\s+(?:morning|afternoon|evening|day))(?:\s+(?:there|texo|apex|assistant|friend|everyone|everybody|all|team|folks))?)[!?., ]*$',
             clean_query.strip(),
             re.IGNORECASE
         ))
@@ -1389,7 +1389,7 @@ def _stream_worker(messages, user_role, language, industry, user_email, current_
         )
     except Exception as e:
         logger.exception("Fatal error in stream worker: %s", e)
-        out_q.put(f"⚠️ APEX server encountered an unexpected error: {str(e)[:150]}. Please try re-sending.")
+        out_q.put(f"⚠️ TEXO server encountered an unexpected error: {str(e)[:150]}. Please try re-sending.")
     finally:
         out_q.put(None)
 

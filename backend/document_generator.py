@@ -26,7 +26,7 @@ def generate_pdf_report(
     subtitle: str = "",
     sections: list[dict[str, Any]] | None = None,
     raw_markdown: str = "",
-    author: str = "APEX Universal AI Intelligence",
+    author: str = "TEXO Universal AI Intelligence",
     filename: str | None = None,
 ) -> dict[str, Any]:
     """
@@ -47,7 +47,7 @@ def generate_pdf_report(
 
     if not filename:
         clean_name = re.sub(r'[^a-zA-Z0-9_-]', '_', title.lower())[:35]
-        filename = f"apex_{clean_name}_{int(time.time())}.pdf"
+        filename = f"texo_{clean_name}_{int(time.time())}.pdf"
 
     file_path = os.path.join(EXPORTS_DIR, filename)
 
@@ -73,7 +73,7 @@ def generate_pdf_report(
             self.saveState()
             self.setFont("Helvetica-Bold", 8)
             self.setFillColor(colors.HexColor("#00F5A0"))
-            self.drawString(54, 750, "APEX //")
+            self.drawString(54, 750, "TEXO //")
             self.setFont("Helvetica", 8)
             self.setFillColor(colors.HexColor("#64748B"))
             self.drawString(92, 750, "ENTERPRISE COGNITIVE INTELLIGENCE REPORT")
@@ -403,7 +403,7 @@ def generate_pptx_deck(
     subtitle: str = "",
     slides: list[dict[str, Any]] | None = None,
     raw_markdown: str = "",
-    author: str = "APEX Enterprise AI",
+    author: str = "TEXO Enterprise AI",
     filename: str | None = None,
 ) -> dict[str, Any]:
     """
@@ -486,7 +486,7 @@ def generate_pptx_deck(
     meta_card.line.color.rgb = RGBColor(30, 41, 59)
     meta_tf = meta_card.text_frame
     meta_p = meta_tf.paragraphs[0]
-    meta_p.text = f"Prepared by: {author}    |    Date: {time.strftime('%B %d, %Y')}    |    System: APEX AI Cognitive Core"
+    meta_p.text = f"Prepared by: {author}    |    Date: {time.strftime('%B %d, %Y')}    |    System: TEXO AI Cognitive Core"
     meta_p.font.name = "Arial"
     meta_p.font.size = Pt(12)
     meta_p.font.color.rgb = TEXT_MUTED
@@ -526,7 +526,7 @@ def generate_pptx_deck(
 
         # Category tag
         p_tag = tx_h.text_frame.add_paragraph()
-        p_tag.text = f"APEX TECHNICAL ARCHITECTURE  •  SLIDE {s_idx} OF {len(slides_data) + 1}"
+        p_tag.text = f"TEXO TECHNICAL ARCHITECTURE  •  SLIDE {s_idx} OF {len(slides_data) + 1}"
         p_tag.font.size = Pt(9)
         p_tag.font.color.rgb = TEXT_MUTED
         p_tag.font.bold = True
@@ -707,7 +707,7 @@ def generate_pptx_deck(
 
     if not filename:
         clean_name = re.sub(r'[^a-zA-Z0-9_-]', '_', title.lower())[:35]
-        filename = f"apex_{clean_name}_{int(time.time())}.pptx"
+        filename = f"texo_{clean_name}_{int(time.time())}.pptx"
 
     file_path = os.path.join(EXPORTS_DIR, filename)
     prs.save(file_path)
@@ -824,7 +824,7 @@ def generate_excel_workbook(
     title: str,
     sheets: list[dict[str, Any]] | None = None,
     raw_markdown: str = "",
-    author: str = "APEX Enterprise AI",
+    author: str = "TEXO Enterprise AI",
     filename: str | None = None,
 ) -> dict[str, Any]:
     """
@@ -914,7 +914,7 @@ def generate_excel_workbook(
 
     if not filename:
         clean_name = re.sub(r'[^a-zA-Z0-9_-]', '_', title.lower())[:35]
-        filename = f"apex_{clean_name}_{int(time.time())}.xlsx"
+        filename = f"texo_{clean_name}_{int(time.time())}.xlsx"
 
     file_path = os.path.join(EXPORTS_DIR, filename)
     wb.save(file_path)
@@ -976,7 +976,7 @@ def generate_docx_document(
     subtitle: str = "",
     sections: list[dict[str, Any]] | None = None,
     raw_markdown: str = "",
-    author: str = "APEX Universal AI Intelligence",
+    author: str = "TEXO Universal AI Intelligence",
     filename: str | None = None,
 ) -> dict[str, Any]:
     """
@@ -1135,7 +1135,7 @@ def generate_docx_document(
 
     if not filename:
         clean_name = re.sub(r'[^a-zA-Z0-9_-]', '_', title.lower())[:35]
-        filename = f"apex_{clean_name}_{int(time.time())}.docx"
+        filename = f"texo_{clean_name}_{int(time.time())}.docx"
 
     file_path = os.path.join(EXPORTS_DIR, filename)
     doc.save(file_path)

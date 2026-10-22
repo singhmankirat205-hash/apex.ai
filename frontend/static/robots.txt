@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Allow: /api/health
+Allow: /static/
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /static/
+
+User-agent: Bingbot
+Allow: /
+
+Sitemap: https://apex-ai-1-48wg.onrender.com/sitemap.xml

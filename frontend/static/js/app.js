@@ -273,7 +273,7 @@ async function handleSignIn(email, password) {
       throw new Error(data.detail || 'Invalid email or password.');
     }
 
-    setAuthAlert('Access granted. Welcome to APEX!', 'success');
+    setAuthAlert('Access granted. Welcome to TEXO!', 'success');
     setStoredUser(data.user);
     updateUIForLoggedInUser(data.user);
 
@@ -1665,7 +1665,7 @@ function parseChartJSON(raw) {
       if (labels.length && data.length) {
         return {
           type: typeMatch ? typeMatch[1].toLowerCase() : 'bar',
-          title: titleMatch ? titleMatch[1] : 'APEX Data Visualization',
+          title: titleMatch ? titleMatch[1] : 'TEXO Data Visualization',
           data: {
             labels: labels,
             datasets: [{
@@ -1867,7 +1867,7 @@ function buildChartCardElement(chartConfig) {
   const card = document.createElement('div');
   card.className = 'apex-chart-card';
 
-  const title = chartConfig.title || 'APEX Data Visualization';
+  const title = chartConfig.title || 'TEXO Data Visualization';
   let chartType = (chartConfig.type || 'bar').toLowerCase();
   if (chartType === 'column') chartType = 'bar';
   if (chartType === 'combo' || chartType === 'mixed') chartType = 'bar';
@@ -1906,7 +1906,7 @@ function initChartInstance(card, chartConfig) {
 
   let chartType = (chartConfig.type || 'bar').toLowerCase();
   if (chartType === 'column' || chartType === 'combo' || chartType === 'mixed') chartType = 'bar';
-  const title = chartConfig.title || 'APEX Data Visualization';
+  const title = chartConfig.title || 'TEXO Data Visualization';
 
   // Style datasets with Cyber Neon theme
   const datasets = (chartConfig.data.datasets || []).map((ds, idx) => {
@@ -2827,7 +2827,7 @@ async function exportDocumentFromMessage(type, rawText, bubble, btn) {
 
   try {
     let cleanText = getCleanTextToCopy(rawText, bubble);
-    let title = 'APEX Technical Dossier';
+    let title = 'TEXO Technical Dossier';
     const hMatch = cleanText.match(/^#+\s*(.+)$/m) || cleanText.match(/^([^\n]+)/);
     if (hMatch && hMatch[1]) {
       title = hMatch[1].replace(/[#*_`]/g, '').trim().slice(0, 50);
@@ -2843,7 +2843,7 @@ async function exportDocumentFromMessage(type, rawText, bubble, btn) {
         title: title,
         subtitle: `${industry.toUpperCase()} · ${role.toUpperCase()} DOSSIER`,
         raw_markdown: cleanText,
-        author: `APEX Universal Intelligence (${(currentUser && currentUser.name) || 'Auditor'})`,
+        author: `TEXO Universal Intelligence (${(currentUser && currentUser.name) || 'Auditor'})`,
       }),
     });
 
@@ -3850,7 +3850,7 @@ function renderDocumentCards(container, fullText = '') {
 
 function createDocumentCardElement(docData, fullText = '') {
   const type = (docData.type || 'pdf').toLowerCase();
-  const title = docData.title || 'APEX Intelligence Report';
+  const title = docData.title || 'TEXO Intelligence Report';
   const subtitle = docData.subtitle || 'Automated Technical Deliverable';
 
   let icon = '📄';
@@ -3925,7 +3925,7 @@ function createDocumentCardElement(docData, fullText = '') {
           sections: docData.sections || [],
           slides: docData.slides || [],
           sheets: docData.sheets || [],
-          author: `APEX Universal Intelligence (${(currentUser && currentUser.name) || 'Auditor'})`,
+          author: `TEXO Universal Intelligence (${(currentUser && currentUser.name) || 'Auditor'})`,
         }),
       });
 
@@ -3996,7 +3996,7 @@ bindStarterQuestionButtons();
 })();
 
 // ══════════════════════════════════════════════════════════════════════════════
-// APEX AI SENTINEL BROWSER GUARD & PRE-EMPTIVE DATA SHIELD
+// TEXO AI SENTINEL BROWSER GUARD & PRE-EMPTIVE DATA SHIELD
 // ══════════════════════════════════════════════════════════════════════════════
 function showSentinelToast(msg, duration = 4000) {
   const existing = document.querySelector('.sentinel-toast');
