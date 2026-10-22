@@ -282,7 +282,7 @@ async function handleSignIn(email, password) {
       hideAuthModal();
       if (signInSubmitBtn) {
         signInSubmitBtn.disabled = false;
-        signInSubmitBtn.innerHTML = `<span class="auth-btn-glow"></span><span>🚀 Sign In to APEX</span>`;
+        signInSubmitBtn.innerHTML = `<span class="auth-btn-glow"></span><span>🚀 Sign In to TEXO</span>`;
       }
       // Sync user history into History option without populating main chat
       await syncHistoryWithServer(data.user.email);
@@ -294,7 +294,7 @@ async function handleSignIn(email, password) {
   } catch (err) {
     if (signInSubmitBtn) {
       signInSubmitBtn.disabled = false;
-      signInSubmitBtn.innerHTML = `<span class="auth-btn-glow"></span><span>🚀 Sign In to APEX</span>`;
+      signInSubmitBtn.innerHTML = `<span class="auth-btn-glow"></span><span>🚀 Sign In to TEXO</span>`;
     }
     setAuthAlert(err.message || 'Login failed. Please check credentials.', 'error');
   }
@@ -328,7 +328,7 @@ async function handleRegister(name, email, password, industry, role) {
       throw new Error(data.detail || 'Registration failed.');
     }
 
-    setAuthAlert('Account created successfully! Launching APEX…', 'success');
+    setAuthAlert('Account created successfully! Launching TEXO…', 'success');
     setStoredUser(data.user);
     updateUIForLoggedInUser(data.user);
 
@@ -337,7 +337,7 @@ async function handleRegister(name, email, password, industry, role) {
       hideAuthModal();
       if (registerSubmitBtn) {
         registerSubmitBtn.disabled = false;
-        registerSubmitBtn.innerHTML = `<span class="auth-btn-glow"></span><span>✨ Create &amp; Launch APEX</span>`;
+        registerSubmitBtn.innerHTML = `<span class="auth-btn-glow"></span><span>✨ Create &amp; Launch TEXO</span>`;
       }
       await syncHistoryWithServer(data.user.email);
       currentChatId = Date.now();
@@ -348,14 +348,14 @@ async function handleRegister(name, email, password, industry, role) {
   } catch (err) {
     if (registerSubmitBtn) {
       registerSubmitBtn.disabled = false;
-      registerSubmitBtn.innerHTML = `<span class="auth-btn-glow"></span><span>✨ Create &amp; Launch APEX</span>`;
+      registerSubmitBtn.innerHTML = `<span class="auth-btn-glow"></span><span>✨ Create &amp; Launch TEXO</span>`;
     }
     setAuthAlert(err.message || 'Registration failed.', 'error');
   }
 }
 
 function handleSignOut() {
-  if (!confirm('Are you sure you want to sign out of APEX?')) return;
+  if (!confirm('Are you sure you want to sign out of TEXO?')) return;
   clearStoredUser();
   currentUser = null;
   if (userProfileBadge) userProfileBadge.style.display = 'none';
@@ -1265,7 +1265,7 @@ const STUDIO_INDUSTRY_PROFILES = {
       hapticTab: '1. Choose a fabric below · 2. Drag your finger/mouse on the Touchpad · 3. Click & toss the live cloth mesh on the right canvas.',
       acousticTab: '1. Pick a music genre preset or type audio tempo to generate a Jacquard draft matrix · 2. Type culinary notes to extract 5 Pantone TCX colors.',
       chronoTab: '1. Click time buttons (Brand New → 5 Years) to see denim whisker erosion render · 2. Move Humidity/Temp sliders to watch living bio-cellulose swell.',
-      origamiTab: '1. Click steps 1 through 5 to follow origami tessellation folds · 2. Tap "Ask APEX" to transfer pattern formulas to chat.',
+      origamiTab: '1. Click steps 1 through 5 to follow origami tessellation folds · 2. Tap "Ask TEXO" to transfer pattern formulas to chat.',
       visionTab: '1. Click "Run Real-Time Loomside Audit" to simulate camera feed and defect bounding boxes · 2. Enter chemicals to test EU REACH restrictions.',
     }
   },
@@ -1507,7 +1507,7 @@ if (memoryBadge) {
       const machinery = (ent.critical_machinery || []).map(m => `• ${m.machine_id}: ${m.status || ''}`).join('\n');
       const milestones = (data.session_milestones || []).slice(-3).map(m => `• [${(m.timestamp||'').slice(0,10)}] ${m.note}`).join('\n');
       
-      alert(`🧠 APEX CONTINUOUS LONG-TERM MEMORY & CONTEXT\n\nFacility: ${ent.primary_facility || 'Apex Production Shed'}\n\nMonitored Batches:\n${batches || 'None'}\n\nMonitored Machinery:\n${machinery || 'None'}\n\nRecent Milestones:\n${milestones || 'None'}\n\nContinuous memory is actively injected into every chat session!`);
+      alert(`🧠 TEXO CONTINUOUS LONG-TERM MEMORY & CONTEXT\n\nFacility: ${ent.primary_facility || 'TEXO Intelligence Shed'}\n\nMonitored Batches:\n${batches || 'None'}\n\nMonitored Machinery:\n${machinery || 'None'}\n\nRecent Milestones:\n${milestones || 'None'}\n\nContinuous memory is actively injected into every chat session!`);
     } catch(err) {
       alert('Continuous Memory Engine is ACTIVE and tracking sessions.');
     }
@@ -2425,11 +2425,11 @@ function appendWelcomeCard(indKey) {
   ` : '';
 
   card.innerHTML = `
-    <div class="welcome-logo-wrap">
-      <img src="/static/apex_logo.jpg" alt="APEX" class="welcome-logo-img"/>
+    <div class="welcome-logo-wrap celebration-interactive" title="Tap for celebration fireworks! 🎆🎉" style="cursor:pointer;">
+      <img src="/static/apex_logo.jpg" alt="TEXO" class="welcome-logo-img"/>
       <div class="welcome-glow"></div>
     </div>
-    <h1 class="welcome-h1">APEX</h1>
+    <h1 class="welcome-h1 celebration-interactive" id="welcomeH1" title="Tap for celebration fireworks! 🎆🎉" style="cursor:pointer; user-select:none;">TEXO <span class="celebration-spark-badge" title="Tap for celebration fireworks!">🎆</span></h1>
     ${welcomeBannerHtml}
     <p class="welcome-tagline">You didn't stumble here by chance — you arrived because you need answers that actually matter. Ask anything. I'll give you clarity, precision, and insight that moves you forward.</p>
     <div class="welcome-features welcome-questions" id="welcomeQuestions">
@@ -4980,3 +4980,309 @@ function initSentinelBrowserGuard() {
   }
 })();
 
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TEXO CELEBRATION & FIRECRACKERS INTERACTIVE ENGINE
+// ══════════════════════════════════════════════════════════════════════════════
+
+(function initTexoCelebrationEngine() {
+  let celebrationCanvas = null;
+  let celebrationCtx = null;
+  let particles = [];
+  let animId = null;
+
+  function ensureCanvas() {
+    if (!celebrationCanvas || !document.body.contains(celebrationCanvas)) {
+      celebrationCanvas = document.createElement('canvas');
+      celebrationCanvas.id = 'celebrationCanvas';
+      celebrationCanvas.className = 'celebration-canvas-layer';
+      celebrationCanvas.width = window.innerWidth;
+      celebrationCanvas.height = window.innerHeight;
+      celebrationCtx = celebrationCanvas.getContext('2d');
+      document.body.appendChild(celebrationCanvas);
+
+      window.addEventListener('resize', () => {
+        if (celebrationCanvas) {
+          celebrationCanvas.width = window.innerWidth;
+          celebrationCanvas.height = window.innerHeight;
+        }
+      });
+    }
+    return celebrationCtx;
+  }
+
+  // Realistic Web Audio Firecracker crackle & Victory arpeggio
+  function playFirecrackerAudio() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const now = ctx.currentTime;
+
+      // 1. Firecracker crackle burst (noise pops)
+      const pops = 7;
+      for (let i = 0; i < pops; i++) {
+        const t = now + (i * 0.05) + (Math.random() * 0.025);
+        const bufLen = Math.floor(ctx.sampleRate * 0.045);
+        const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let j = 0; j < bufLen; j++) {
+          data[j] = (Math.random() * 2 - 1) * Math.exp(-j / (bufLen * 0.22));
+        }
+        const src = ctx.createBufferSource();
+        src.buffer = buf;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 1100 + Math.random() * 1800;
+        filter.Q.value = 2.5;
+
+        const gain = ctx.createGain();
+        const vol = 0.35 / (1 + i * 0.25);
+        gain.gain.setValueAtTime(vol, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+
+        src.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        src.start(t);
+      }
+
+      // 2. Victory sparkle fanfare arpeggio (C6, E6, G6, C7, E7)
+      const freqs = [1046.5, 1318.5, 1567.98, 2093.0, 2637.0];
+      freqs.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const noteGain = ctx.createGain();
+        osc.type = 'triangle';
+        const startT = now + 0.08 + idx * 0.06;
+        osc.frequency.setValueAtTime(freq, startT);
+        noteGain.gain.setValueAtTime(0.16, startT);
+        noteGain.gain.exponentialRampToValueAtTime(0.0001, startT + 0.38);
+        osc.connect(noteGain);
+        noteGain.connect(ctx.destination);
+        osc.start(startT);
+        osc.stop(startT + 0.4);
+      });
+    } catch (e) {
+      // Graceful fallback if audio permissions are restricted
+    }
+  }
+
+  // Visual Particle Loop
+  function updateAndDrawParticles() {
+    if (!celebrationCtx || !particles.length) {
+      if (animId) {
+        cancelAnimationFrame(animId);
+        animId = null;
+      }
+      if (celebrationCtx && celebrationCanvas) {
+        celebrationCtx.clearRect(0, 0, celebrationCanvas.width, celebrationCanvas.height);
+      }
+      return;
+    }
+
+    celebrationCtx.clearRect(0, 0, celebrationCanvas.width, celebrationCanvas.height);
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += p.gravity;
+      p.vx *= p.drag;
+      p.vy *= p.drag;
+      p.rotation += p.vRot;
+      p.alpha -= p.fadeRate;
+
+      if (p.alpha <= 0) {
+        particles.splice(i, 1);
+        continue;
+      }
+
+      celebrationCtx.save();
+      celebrationCtx.globalAlpha = Math.max(0, p.alpha);
+      celebrationCtx.translate(p.x, p.y);
+      celebrationCtx.rotate(p.rotation);
+
+      if (p.shape === 'spark') {
+        // Glowing firecracker spark
+        celebrationCtx.fillStyle = p.color;
+        celebrationCtx.shadowColor = p.color;
+        celebrationCtx.shadowBlur = 10;
+        celebrationCtx.beginPath();
+        celebrationCtx.arc(0, 0, p.size, 0, Math.PI * 2);
+        celebrationCtx.fill();
+        // Mini streak line
+        celebrationCtx.strokeStyle = '#FFFFFF';
+        celebrationCtx.lineWidth = 1.5;
+        celebrationCtx.beginPath();
+        celebrationCtx.moveTo(0, 0);
+        celebrationCtx.lineTo(-p.vx * 1.8, -p.vy * 1.8);
+        celebrationCtx.stroke();
+      } else if (p.shape === 'confetti') {
+        // Fluttering rectangular confetti
+        celebrationCtx.fillStyle = p.color;
+        celebrationCtx.fillRect(-p.size, -p.size * 0.5, p.size * 2, p.size);
+      } else {
+        // Twinkling star
+        celebrationCtx.fillStyle = p.color;
+        celebrationCtx.beginPath();
+        celebrationCtx.arc(0, 0, p.size, 0, Math.PI * 2);
+        celebrationCtx.fill();
+      }
+
+      celebrationCtx.restore();
+    }
+
+    if (particles.length > 0) {
+      animId = requestAnimationFrame(updateAndDrawParticles);
+    }
+  }
+
+  function spawnFirecrackerParticles(originX, originY) {
+    ensureCanvas();
+    const colors = [
+      '#00F5A0', '#06B6D4', '#F59E0B', '#EC4899', '#8B5CF6',
+      '#FDE047', '#3B82F6', '#FF3366', '#FFFFFF', '#10B981'
+    ];
+    const particleCount = 85;
+
+    for (let i = 0; i < particleCount; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 4 + Math.random() * 11;
+      const shapeType = Math.random() < 0.5 ? 'spark' : (Math.random() < 0.8 ? 'confetti' : 'circle');
+
+      particles.push({
+        x: originX,
+        y: originY,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - (Math.random() * 3 + 1), // upward bias
+        gravity: 0.22,
+        drag: 0.965,
+        rotation: Math.random() * Math.PI * 2,
+        vRot: (Math.random() - 0.5) * 0.25,
+        size: shapeType === 'confetti' ? (5 + Math.random() * 5) : (2.5 + Math.random() * 3.5),
+        color: colors[Math.floor(Math.random() * colors.length)],
+        shape: shapeType,
+        alpha: 1,
+        fadeRate: 0.012 + Math.random() * 0.016
+      });
+    }
+
+    if (!animId) {
+      animId = requestAnimationFrame(updateAndDrawParticles);
+    }
+  }
+
+  function spawnFloatingCelebrationEmojis(originX, originY) {
+    const emojis = ['🎆', '🎉', '✨', '💥', '🎇', '🌟', '🥳', '🎊', '🚀', '⚡'];
+    const count = 7;
+
+    for (let i = 0; i < count; i++) {
+      const el = document.createElement('div');
+      el.className = 'celebration-floating-item';
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+
+      const dx = (Math.random() - 0.5) * 260;
+      const dy = -(120 + Math.random() * 180);
+      const rot = (Math.random() - 0.5) * 70;
+
+      el.style.left = `${originX}px`;
+      el.style.top = `${originY}px`;
+      el.style.setProperty('--dx', `${dx}px`);
+      el.style.setProperty('--dy', `${dy}px`);
+      el.style.setProperty('--rot', `${rot}deg`);
+
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1850);
+    }
+  }
+
+  function spawnShockwaveRing(originX, originY) {
+    const ring = document.createElement('div');
+    ring.className = 'celebration-shockwave-ring';
+    ring.style.left = `${originX}px`;
+    ring.style.top = `${originY}px`;
+    document.body.appendChild(ring);
+    setTimeout(() => ring.remove(), 800);
+  }
+
+  function spawnCelebrationPill(originX, originY) {
+    const toasts = [
+      '🎆 TEXO AI Celebration! 🎉',
+      '⚡ Boom! Firecracker Spark! 💥',
+      '✨ TEXO Intelligence Unleashed! 🚀',
+      '🌟 Welcome to TEXO! 🥳'
+    ];
+    const pill = document.createElement('div');
+    pill.className = 'celebration-toast-pill';
+    pill.textContent = toasts[Math.floor(Math.random() * toasts.length)];
+    pill.style.left = `${originX}px`;
+    pill.style.top = `${originY - 35}px`;
+    document.body.appendChild(pill);
+    setTimeout(() => pill.remove(), 1750);
+  }
+
+  window.triggerTexoCelebration = function(e, specificTarget) {
+    let target = specificTarget || (e ? e.target : null);
+    if (target && !target.classList) target = target.parentElement;
+
+    // Determine origin coords
+    let originX = window.innerWidth / 2;
+    let originY = window.innerHeight * 0.35;
+
+    if (e && e.clientX && e.clientY && (e.clientX !== 0 || e.clientY !== 0)) {
+      originX = e.clientX;
+      originY = e.clientY;
+    } else if (target && target.getBoundingClientRect) {
+      const rect = target.getBoundingClientRect();
+      originX = rect.left + rect.width / 2;
+      originY = rect.top + rect.height / 2;
+    }
+
+    // Bounce animation on clicked target
+    if (target) {
+      const bounceElem = target.closest('.welcome-h1, .welcome-logo-wrap, .header-logo, .logo-text') || target;
+      bounceElem.classList.remove('celebration-bounce-fx');
+      // Trigger reflow to restart animation
+      void bounceElem.offsetWidth;
+      bounceElem.classList.add('celebration-bounce-fx');
+      setTimeout(() => bounceElem.classList.remove('celebration-bounce-fx'), 860);
+    }
+
+    // Audio & Haptics
+    playFirecrackerAudio();
+    if (navigator && navigator.vibrate) {
+      try { navigator.vibrate([40, 50, 40, 60, 100]); } catch (_) {}
+    }
+
+    // Visuals
+    spawnShockwaveRing(originX, originY);
+    spawnFirecrackerParticles(originX, originY);
+    spawnFloatingCelebrationEmojis(originX, originY);
+    spawnCelebrationPill(originX, originY);
+  };
+
+  // Global Event Delegation for Clicks & Touches
+  function handleTriggerEvent(e) {
+    const trigger = e.target.closest(
+      '.celebration-interactive, .welcome-h1, #welcomeH1, .celebration-spark-badge, .welcome-logo-wrap, .header-logo, .logo-text'
+    );
+    if (trigger) {
+      window.triggerTexoCelebration(e, trigger);
+    }
+  }
+
+  document.addEventListener('click', handleTriggerEvent, { passive: true });
+  document.addEventListener('touchstart', (e) => {
+    const trigger = e.target.closest(
+      '.celebration-interactive, .welcome-h1, #welcomeH1, .celebration-spark-badge, .welcome-logo-wrap, .header-logo, .logo-text'
+    );
+    if (trigger && e.touches && e.touches[0]) {
+      const touch = e.touches[0];
+      window.triggerTexoCelebration({ clientX: touch.clientX, clientY: touch.clientY }, trigger);
+    }
+  }, { passive: true });
+
+  console.log('⚡ TEXO Interactive Celebration & Firecrackers Engine Initialized');
+})();

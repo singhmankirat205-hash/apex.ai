@@ -377,11 +377,13 @@
   <!-- Messages (Scrolling Part on the Right) -->
   <div class="messages-area" id="messagesArea">
     <div class="welcome-card" id="welcomeCard">
-      <div class="welcome-logo-wrap">
+      <div class="welcome-logo-wrap celebration-interactive" title="Tap for celebration fireworks! 🎆🎉" style="cursor:pointer;">
         <img src="/static/apex_logo.jpg" alt="TEXO" class="welcome-logo-img"/>
         <div class="welcome-glow"></div>
       </div>
-      <h1 class="welcome-h1">TEXO</h1>
+      <h1 class="welcome-h1 celebration-interactive" id="welcomeH1" title="Tap for celebration fireworks! 🎆🎉" style="cursor:pointer; user-select:none;">
+        TEXO <span class="celebration-spark-badge" title="Tap for celebration fireworks!">🎆</span>
+      </h1>
       <p class="welcome-tagline">You didn't stumble here by chance — you arrived because you need answers that actually matter. Ask anything. I'll give you clarity, precision, and insight that moves you forward.</p>
       <div class="welcome-features welcome-questions" id="welcomeQuestions">
         <button class="feature starter-question-btn" type="button" data-prompt="Where is my fabric roll order? Track Order #ORD-8492 with container status and port arrival ETA" title="Click to ask this question immediately">
