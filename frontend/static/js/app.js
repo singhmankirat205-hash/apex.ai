@@ -1627,15 +1627,20 @@ const CYBER_PALETTES = [
 
 function parseChartJSON(raw) {
   if (!raw) return null;
-  let clean = raw.replace(/^```(?:chart|json:chart|json)?/i, '').replace(/```$/i, '').trim();
+  let clean = raw.replace(/^```[a-z0-9_\-:]*\s*/i, '').replace(/```\s*$/i, '').trim();
 
-  // Try direct parse
+  // Strip single-line JS/JSON comments
+  clean = clean.replace(/\/\/.*$/gm, '');
+  // Strip multi-line comments
+  clean = clean.replace(/\/\*[\s\S]*?\*\//g, '');
+
+  // 1. Try direct JSON.parse
   try {
     const parsed = JSON.parse(clean);
     if (parsed && typeof parsed === 'object') return parsed;
   } catch (_) {}
 
-  // If wrapped in commentary, extract outermost JSON object { ... }
+  // 2. Extract outermost { ... }
   const jsonMatch = clean.match(/\{[\s\S]*\}/);
   if (jsonMatch) {
     const candidate = jsonMatch[0];
@@ -1643,14 +1648,20 @@ function parseChartJSON(raw) {
       return JSON.parse(candidate);
     } catch (_) {
       try {
-        // Strip trailing commas before } or ]
+        // Fix trailing commas and unquoted/single-quoted keys
         let fixed = candidate.replace(/,\s*([}\]])/g, '$1');
         return JSON.parse(fixed);
-      } catch (_) {}
+      } catch (_) {
+        try {
+          // Replace single quotes with double quotes
+          let fixedQuotes = candidate.replace(/'/g, '"').replace(/,\s*([}\]])/g, '$1');
+          return JSON.parse(fixedQuotes);
+        } catch (_) {}
+      }
     }
   }
 
-  // Fallback: extract type, title, labels and data arrays heuristically
+  // 3. Fallback: extract type, title, labels and data arrays heuristically
   try {
     const typeMatch = clean.match(/"type"\s*:\s*"([a-zA-Z0-9_\-]+)"/i);
     const titleMatch = clean.match(/"title"\s*:\s*"([^"]+)"/i);
@@ -1674,7 +1685,7 @@ function parseChartJSON(raw) {
             }]
           },
           options: {
-            description: 'Rendered by APEX Quantum Visuals Engine.'
+            description: 'Rendered directly by TEXO Visual Engine.'
           }
         };
       }
@@ -1689,36 +1700,70 @@ function parseChartJSON(raw) {
 function convertPythonPlotToChartConfig(pyCode) {
   if (!pyCode) return null;
   try {
-    let title = 'APEX Operational Visualization';
-    const titleMatch = pyCode.match(/plt\.title\s*\(\s*["']([^"']+)["']/i);
+    const cleanCode = pyCode.replace(/#.*$/gm, '');
+    let title = 'TEXO Data Visualization';
+    const titleMatch = cleanCode.match(/(?:plt\.title|ax\.set_title|title\s*=)\s*\(\s*["']([^"']+)["']/i) || cleanCode.match(/title\s*=\s*["']([^"']+)["']/i);
     if (titleMatch) title = titleMatch[1].trim();
 
     let chartType = 'bar';
-    if (/plt\.plot\s*\(/i.test(pyCode)) chartType = 'line';
-    else if (/plt\.pie\s*\(/i.test(pyCode)) chartType = 'pie';
-    else if (/plt\.scatter\s*\(/i.test(pyCode)) chartType = 'scatter';
+    if (/plt\.plot\s*\(|sns\.lineplot/i.test(cleanCode)) chartType = 'line';
+    else if (/plt\.pie\s*\(/i.test(cleanCode)) chartType = 'pie';
+    else if (/plt\.scatter\s*\(|sns\.scatterplot/i.test(cleanCode)) chartType = 'scatter';
+    else if (/plt\.barh\s*\(/i.test(cleanCode)) chartType = 'bar';
 
-    // Find lists or arrays: var = [...]
-    const listMatches = [...pyCode.matchAll(/([a-zA-Z0-9_]+)\s*=\s*\[([^\]]+)\]/g)];
+    // 1. Check for dictionary: data = { 'A': 10, 'B': 20 }
+    const dictMatch = cleanCode.match(/([a-zA-Z0-9_]+)\s*=\s*\{([^}]+)\}/);
+    if (dictMatch) {
+      try {
+        const pairs = dictMatch[2].split(',').map(p => p.trim()).filter(Boolean);
+        const labels = [];
+        const data = [];
+        pairs.forEach(pair => {
+          const parts = pair.split(':');
+          if (parts.length === 2) {
+            const k = parts[0].trim().replace(/^['"]|['"]$/g, '');
+            const v = parseFloat(parts[1].trim().replace(/[%$,]/g, ''));
+            if (k && !isNaN(v)) {
+              labels.push(k);
+              data.push(v);
+            }
+          }
+        });
+        if (labels.length >= 2 && data.length >= 2) {
+          return {
+            type: chartType,
+            title: title,
+            data: {
+              labels: labels,
+              datasets: [{ label: title, data: data }]
+            },
+            options: { description: 'Rendered directly by TEXO Visual Engine.' }
+          };
+        }
+      } catch (_) {}
+    }
+
+    // 2. Check for variable lists: var = [...]
+    const listMatches = [...cleanCode.matchAll(/([a-zA-Z0-9_]+)\s*=\s*\[([\s\S]*?)\]/g)];
     if (listMatches.length >= 2) {
       const parseList = (str) => str.split(',').map(s => s.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean);
       const list1 = parseList(listMatches[0][2]);
       const list2 = parseList(listMatches[1][2]);
 
-      const list1IsNumbers = list1.every(v => !isNaN(Number(v)));
-      const list2IsNumbers = list2.every(v => !isNaN(Number(v)));
+      const list1IsNumbers = list1.every(v => !isNaN(Number(v.replace(/[%$,]/g, ''))));
+      const list2IsNumbers = list2.every(v => !isNaN(Number(v.replace(/[%$,]/g, ''))));
 
       let labels = [];
       let data = [];
       if (!list1IsNumbers && list2IsNumbers) {
         labels = list1;
-        data = list2.map(Number);
+        data = list2.map(v => Number(v.replace(/[%$,]/g, '')));
       } else if (list1IsNumbers && !list2IsNumbers) {
         labels = list2;
-        data = list1.map(Number);
-      } else {
-        labels = list1;
-        data = list2.map(v => isNaN(Number(v)) ? 0 : Number(v));
+        data = list1.map(v => Number(v.replace(/[%$,]/g, '')));
+      } else if (list1IsNumbers && list2IsNumbers) {
+        labels = list1.map((_, i) => `Point ${i + 1}`);
+        data = list2.map(v => Number(v.replace(/[%$,]/g, '')));
       }
 
       if (labels.length && data.length) {
@@ -1727,19 +1772,223 @@ function convertPythonPlotToChartConfig(pyCode) {
           title: title,
           data: {
             labels: labels,
-            datasets: [{
-              label: title,
-              data: data
-            }]
+            datasets: [{ label: title, data: data }]
           },
-          options: {
-            description: "Computed directly by APEX Visual Engine."
-          }
+          options: { description: 'Rendered directly by TEXO Visual Engine.' }
+        };
+      }
+    }
+
+    // 3. Check for inline lists inside plt.bar([...], [...]) or plt.pie([...], labels=[...])
+    const inlineCallMatch = cleanCode.match(/plt\.(?:bar|plot|pie|scatter)\s*\(\s*\[([\s\S]*?)\]\s*,\s*(?:labels\s*=\s*)?\[([\s\S]*?)\]/i);
+    if (inlineCallMatch) {
+      const parseList = (str) => str.split(',').map(s => s.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean);
+      const l1 = parseList(inlineCallMatch[1]);
+      const l2 = parseList(inlineCallMatch[2]);
+      const l1IsNum = l1.every(v => !isNaN(Number(v.replace(/[%$,]/g, ''))));
+      const l2IsNum = l2.every(v => !isNaN(Number(v.replace(/[%$,]/g, ''))));
+      let labels = l1IsNum ? l2 : l1;
+      let data = (l1IsNum ? l1 : l2).map(v => Number(v.replace(/[%$,]/g, '')));
+      if (labels.length && data.length) {
+        return {
+          type: chartType,
+          title: title,
+          data: {
+            labels: labels,
+            datasets: [{ label: title, data: data }]
+          },
+          options: { description: 'Rendered directly by TEXO Visual Engine.' }
         };
       }
     }
   } catch (e) {
-    console.warn("Python plot extraction fallback:", e);
+    console.warn('Python plot extraction fallback:', e);
+  }
+  return null;
+}
+
+function normalizeChartConfig(rawOrObj) {
+  if (!rawOrObj) return null;
+
+  let obj = rawOrObj;
+  if (typeof rawOrObj === 'string') {
+    // If it contains python plotting keywords, try python plot converter first
+    if (rawOrObj.includes('matplotlib') || rawOrObj.includes('plt.') || rawOrObj.includes('seaborn') || rawOrObj.includes('sns.')) {
+      const pyCfg = convertPythonPlotToChartConfig(rawOrObj);
+      if (pyCfg) return pyCfg;
+    }
+    obj = parseChartJSON(rawOrObj);
+  }
+
+  if (!obj || typeof obj !== 'object') return null;
+
+  // If wrapped inside chart, config, or visualization property
+  if (obj.chart && typeof obj.chart === 'object') obj = obj.chart;
+  if (obj.config && typeof obj.config === 'object') obj = obj.config;
+  if (obj.visualization && typeof obj.visualization === 'object') obj = obj.visualization;
+
+  let title = obj.title || obj.name || obj.header || 'TEXO Data Visualization';
+  if (typeof title === 'object' && title && title.text) title = title.text;
+
+  let chartType = (obj.type || 'bar').toLowerCase();
+  if (chartType === 'column' || chartType === 'combo' || chartType === 'mixed') chartType = 'bar';
+  if (['polar', 'polararea'].includes(chartType)) chartType = 'pie';
+  if (!['bar', 'line', 'pie', 'doughnut', 'radar', 'scatter'].includes(chartType)) chartType = 'bar';
+
+  let labels = [];
+  let datasets = [];
+
+  // Check 1: Chart.js standard (obj.data.labels & obj.data.datasets)
+  if (obj.data && typeof obj.data === 'object' && !Array.isArray(obj.data)) {
+    if (Array.isArray(obj.data.labels)) {
+      labels = obj.data.labels.map(String);
+    }
+    if (Array.isArray(obj.data.datasets) && obj.data.datasets.length > 0) {
+      datasets = obj.data.datasets.map(ds => ({
+        label: ds.label || title,
+        data: (Array.isArray(ds.data) ? ds.data : []).map(v => (v === null || v === undefined || isNaN(Number(String(v).replace(/[%$,]/g, '')))) ? 0 : Number(String(v).replace(/[%$,]/g, ''))),
+        type: ds.type
+      }));
+    }
+  }
+
+  // Check 2: Flat labels & data/values
+  if (!labels.length) {
+    if (Array.isArray(obj.labels)) labels = obj.labels.map(String);
+    else if (Array.isArray(obj.categories)) labels = obj.categories.map(String);
+    else if (obj.xaxis && Array.isArray(obj.xaxis.categories)) labels = obj.xaxis.categories.map(String);
+    else if (obj.xAxis && Array.isArray(obj.xAxis.categories)) labels = obj.xAxis.categories.map(String);
+  }
+
+  if (!datasets.length) {
+    if (Array.isArray(obj.data)) {
+      datasets = [{
+        label: title,
+        data: obj.data.map(v => (v === null || v === undefined || isNaN(Number(String(v).replace(/[%$,]/g, '')))) ? 0 : Number(String(v).replace(/[%$,]/g, '')))
+      }];
+    } else if (Array.isArray(obj.values)) {
+      datasets = [{
+        label: title,
+        data: obj.values.map(v => (v === null || v === undefined || isNaN(Number(String(v).replace(/[%$,]/g, '')))) ? 0 : Number(String(v).replace(/[%$,]/g, '')))
+      }];
+    } else if (Array.isArray(obj.series)) {
+      datasets = obj.series.map(s => {
+        if (typeof s === 'object' && s !== null) {
+          return {
+            label: s.name || s.label || title,
+            data: (Array.isArray(s.data) ? s.data : []).map(v => isNaN(Number(String(v).replace(/[%$,]/g, ''))) ? 0 : Number(String(v).replace(/[%$,]/g, '')))
+          };
+        }
+        return { label: title, data: [Number(String(s).replace(/[%$,]/g, '')) || 0] };
+      });
+    } else if (Array.isArray(obj.datasets)) {
+      datasets = obj.datasets.map(ds => ({
+        label: ds.label || title,
+        data: (Array.isArray(ds.data) ? ds.data : []).map(v => isNaN(Number(String(v).replace(/[%$,]/g, ''))) ? 0 : Number(String(v).replace(/[%$,]/g, '')))
+      }));
+    }
+  }
+
+  // Check 3: Key-value dictionary e.g. { "Cotton": 45, "Polyester": 35, "Spandex": 20 }
+  if (!labels.length && !datasets.length) {
+    const keys = Object.keys(obj).filter(k => !['type', 'title', 'options', 'description', 'status'].includes(k));
+    const allNumeric = keys.length >= 2 && keys.every(k => !isNaN(Number(String(obj[k]).replace(/[%$,]/g, ''))));
+    if (allNumeric) {
+      labels = keys;
+      datasets = [{
+        label: title,
+        data: keys.map(k => Number(String(obj[k]).replace(/[%$,]/g, '')))
+      }];
+    }
+  }
+
+  // Check 4: Array of objects e.g. [{ category: 'A', value: 10 }, ...]
+  if (Array.isArray(obj) && obj.length > 0 && typeof obj[0] === 'object') {
+    const labelKey = Object.keys(obj[0]).find(k => typeof obj[0][k] === 'string') || Object.keys(obj[0])[0];
+    const valKey = Object.keys(obj[0]).find(k => !isNaN(Number(String(obj[0][k]).replace(/[%$,]/g, ''))));
+    if (labelKey && valKey) {
+      labels = obj.map(item => String(item[labelKey] || ''));
+      datasets = [{
+        label: title,
+        data: obj.map(item => Number(String(item[valKey]).replace(/[%$,]/g, '')) || 0)
+      }];
+    }
+  }
+
+  // Validation
+  if (!labels.length || !datasets.length || !datasets[0].data || !datasets[0].data.length) {
+    return null;
+  }
+
+  // Synchronize lengths
+  const len = Math.min(labels.length, datasets[0].data.length);
+  labels = labels.slice(0, len);
+  datasets.forEach(ds => { ds.data = ds.data.slice(0, len); });
+
+  const desc = (obj.options && obj.options.description) || obj.description || '';
+
+  return {
+    type: chartType,
+    title: title,
+    data: {
+      labels: labels,
+      datasets: datasets
+    },
+    options: {
+      description: desc
+    }
+  };
+}
+
+function extractChartFromTable(table) {
+  if (!table) return null;
+  const rows = [...table.querySelectorAll('tr')];
+  if (rows.length < 3) return null;
+
+  const ths = [...rows[0].querySelectorAll('th, td')].map(c => c.textContent.trim());
+  if (ths.length < 2) return null;
+
+  const dataRows = rows.slice(1);
+  const labels = [];
+  const numbers = [];
+
+  for (const row of dataRows) {
+    const cells = [...row.querySelectorAll('td, th')].map(c => c.textContent.trim());
+    if (cells.length < 2) continue;
+    const label = cells[0];
+    let numVal = NaN;
+    for (let c = 1; c < cells.length; c++) {
+      const cleanNum = cells[c].replace(/[%$,]/g, '').trim();
+      const parsed = parseFloat(cleanNum);
+      if (!isNaN(parsed)) {
+        numVal = parsed;
+        break;
+      }
+    }
+    if (!isNaN(numVal) && label) {
+      labels.push(label);
+      numbers.push(numVal);
+    }
+  }
+
+  if (labels.length >= 2 && numbers.length >= 2) {
+    const title = ths[0] ? `${ths[0]} Overview` : 'TEXO Data Visualization';
+    const total = numbers.reduce((a, b) => a + b, 0);
+    const isPercentage = total >= 95 && total <= 105;
+    return {
+      type: isPercentage ? 'pie' : 'bar',
+      title: title,
+      data: {
+        labels: labels,
+        datasets: [{
+          label: ths[1] || 'Value',
+          data: numbers
+        }]
+      },
+      options: {
+        description: `Visualized from structured table: ${title}`
+      }
+    };
   }
   return null;
 }
@@ -1748,42 +1997,32 @@ function prepareStreamMarkdown(text) {
   if (!text) return '';
   let display = text;
 
-  // 1. Hide full or in-progress chart code blocks (including incomplete fences during streaming)
-  display = display.replace(/```(?:chart|chart:[a-z0-9_\-]+|json:chart|graph|plot|visualization|pie|doughnut|bar|line)[\s\S]*?(?:```|$)/gi, () => {
-    return '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Rendering Chart Visualization…</div>\n\n';
-  });
+  // 1. Hide full or in-progress chart code blocks during streaming - DO NOT show HUD message before user
+  display = display.replace(/```(?:chart|chart:[a-z0-9_\-]+|json:chart|graph|plot|visualization|pie|doughnut|bar|line)[\s\S]*?(?:```|$)/gi, '');
 
-  // 2. Hide Python plotting scripts (matplotlib, seaborn, plt) during streaming
-  display = display.replace(/```(?:python|py)?[\s\S]*?(?:matplotlib|plt\.|seaborn|sns\.|fig\s*=|ax\s*=)[\s\S]*?(?:```|$)/gi, () => {
-    return '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Rendering Chart Visualization…</div>\n\n';
-  });
+  // 2. Hide Python plotting scripts during streaming
+  display = display.replace(/```(?:python|py)?[\s\S]*?(?:matplotlib|plt\.|seaborn|sns\.|fig\s*=|ax\s*=)[\s\S]*?(?:```|$)/gi, '');
 
   // 3. Hide JSON / data blocks that define charts during streaming
-  display = display.replace(/```(?:json|javascript|js)?[\s\S]*?"(?:type|data)"[\s\S]*?(?:```|$)/gi, () => {
-    return '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Rendering Chart Visualization…</div>\n\n';
-  });
+  display = display.replace(/```(?:json|javascript|js)?[\s\S]*?"(?:type|data)"[\s\S]*?(?:```|$)/gi, '');
 
   // 4. If the message starts with or currently ends with an incomplete code block containing chart keywords or json
   display = display.replace(/```(?:[a-z0-9_\-:]+)?[\s\S]*$/i, (match) => {
     const mLower = match.toLowerCase();
     if (mLower.includes('chart') || mLower.includes('plot') || mLower.includes('graph') || mLower.includes('pie') || mLower.includes('bar') || mLower.includes('type') || mLower.includes('data') || mLower.includes('plt') || mLower.includes('matplotlib')) {
-      return '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Rendering Chart Visualization…</div>\n\n';
+      return '';
     }
     return match;
   });
 
   // 5. Mask any trailing unclosed fence at the tail during streaming
-  display = display.replace(/```[a-z0-9_\-:]*\s*$/i, '\n\n<div class="apex-chart-generating-hud"><span class="apex-pulse-dot"></span> 📊 Rendering Chart Visualization…</div>\n\n');
+  display = display.replace(/```[a-z0-9_\-:]*\s*$/i, '');
 
   // 6. Hide in-progress action blocks during streaming
-  display = display.replace(/```(?:action|json:action)[\s\S]*?(?:```|$)/gi, () => {
-    return '\n\n<div class="apex-action-generating-hud"><span class="apex-pulse-dot"></span> ⚡ Executing Operations Protocol…</div>\n\n';
-  });
+  display = display.replace(/```(?:action|json:action)[\s\S]*?(?:```|$)/gi, '');
 
   // 7. Hide in-progress file export blocks during streaming
-  display = display.replace(/```(?:file_export|export|document)[\s\S]*?(?:```|$)/gi, () => {
-    return '\n\n<div class="apex-doc-generating-hud"><span class="apex-pulse-dot"></span> 📄 Preparing Technical Document…</div>\n\n';
-  });
+  display = display.replace(/```(?:file_export|export|document)[\s\S]*?(?:```|$)/gi, '');
 
   // 8. Safety cleanup: if standalone trailing backticks exist at the very end of stream, mask them
   display = display.replace(/`{1,3}\s*$/g, '');
@@ -1795,34 +2034,34 @@ function prepareFinalMarkdown(text) {
   if (!text) return '';
   let prepared = text;
 
-  // 1. Convert ```chart, ```chart:*, ```graph, ```plot, ```visualization, ```pie blocks into clean <div class="apex-chart-slot" ...></div>
-  prepared = prepared.replace(/```(?:chart|chart:[a-z0-9_\-]+|json:chart|graph|plot|visualization|pie|doughnut|bar|line)\s*([\s\S]*?)```/gi, (match, jsonStr) => {
-    const cfg = parseChartJSON(jsonStr);
-    if (cfg && cfg.data && cfg.data.labels) {
+  // 1. Convert ```chart, ```chart:*, ```graph, ```plot, ```visualization, ```pie, ```bar, ```line blocks
+  prepared = prepared.replace(/```(?:chart|chart:[a-z0-9_\-]+|json:chart|graph|plot|visualization|pie|doughnut|bar|line)\s*([\s\S]*?)```/gi, (match, raw) => {
+    const cfg = normalizeChartConfig(raw);
+    if (cfg) {
       const encoded = encodeURIComponent(JSON.stringify(cfg));
       return `\n\n<div class="apex-chart-slot" data-chart="${encoded}"></div>\n\n`;
     }
     return ''; // hide if malformed
   });
 
-  // 2. Intercept any python code blocks with matplotlib, plt, seaborn, or figure plots
+  // 2. Intercept python code blocks with matplotlib, plt, seaborn, or figure plots
   prepared = prepared.replace(/```(?:python|py)?\s*([\s\S]*?(?:matplotlib|plt\.|seaborn|sns\.|fig\s*=|ax\s*=)[\s\S]*?)```/gi, (match, pyCode) => {
-    const cfg = convertPythonPlotToChartConfig(pyCode);
-    if (cfg && cfg.data && cfg.data.labels) {
+    const cfg = normalizeChartConfig(pyCode);
+    if (cfg) {
       const encoded = encodeURIComponent(JSON.stringify(cfg));
       return `\n\n<div class="apex-chart-slot" data-chart="${encoded}"></div>\n\n`;
     }
     return ''; // completely eliminate python plotting code so user NEVER sees coding before charts
   });
 
-  // 3. Intercept ```json or ```javascript with chart structure
-  prepared = prepared.replace(/```(?:json|javascript|js)?\s*(\{[\s\S]*?"(?:type|data)"[\s\S]*?\})```/gi, (match, jsonStr) => {
-    const cfg = parseChartJSON(jsonStr);
-    if (cfg && cfg.data && cfg.data.labels) {
+  // 3. Intercept ```json or ```javascript or unlabelled code blocks with chart data
+  prepared = prepared.replace(/```(?:json|javascript|js)?\s*(\{[\s\S]*?"(?:type|data|labels|datasets|series)"[\s\S]*?\})```/gi, (match, jsonStr) => {
+    const cfg = normalizeChartConfig(jsonStr);
+    if (cfg) {
       const encoded = encodeURIComponent(JSON.stringify(cfg));
       return `\n\n<div class="apex-chart-slot" data-chart="${encoded}"></div>\n\n`;
     }
-    return match; // keep standard json code blocks
+    return match; // keep standard non-chart json code blocks
   });
 
   // 4. Intercept ```file_export or ```export blocks and turn into <div class="apex-doc-slot" data-doc="..."></div>
@@ -1840,7 +2079,6 @@ function prepareFinalMarkdown(text) {
   prepared = prepared.replace(/```(?:text|code|milestones?|timeline)?\s*\n([\s\S]*?)```/gi, (match, content) => {
     const trimmed = content.trim();
     if (!trimmed) return '';
-    // If it's a timeline (contains date/time stamps or arrows)
     if (/\[\d{4}-\d{2}-\d{2}|(?:\d{1,2}:\d{2})|-->|->|—|Dispatch|Arrival|Transit|Hub/i.test(trimmed)) {
       const lines = trimmed.split('\n').map(l => l.trim()).filter(l => l && l !== '|' && l !== '│' && l !== '↓');
       const itemsHtml = lines.map(l => {
@@ -1852,11 +2090,9 @@ function prepareFinalMarkdown(text) {
       }).join('');
       return `\n\n<div class="apex-visual-timeline-card"><div class="timeline-card-header"><span class="timeline-icon">⏱️</span> <span>OPERATIONAL MILESTONE TIMELINE</span></div><div class="timeline-card-body">${itemsHtml}</div></div>\n\n`;
     }
-    // Generic table-like data inside code blocks
     if (trimmed.includes('|') && trimmed.includes('\n')) {
       return '\n\n' + trimmed + '\n\n';
     }
-    // Return clean visual blockquote instead of raw code box
     return `\n\n<div class="apex-visual-data-card">${escapeHtml(trimmed).replace(/\n/g, '<br/>')}</div>\n\n`;
   });
 
@@ -1869,10 +2105,9 @@ function buildChartCardElement(chartConfig) {
 
   const title = chartConfig.title || 'TEXO Data Visualization';
   let chartType = (chartConfig.type || 'bar').toLowerCase();
-  if (chartType === 'column') chartType = 'bar';
-  if (chartType === 'combo' || chartType === 'mixed') chartType = 'bar';
+  if (chartType === 'column' || chartType === 'combo' || chartType === 'mixed') chartType = 'bar';
   const description = (chartConfig.options && chartConfig.options.description) || '';
-  const chartId = 'apex_chart_' + Math.random().toString(36).substring(2, 9);
+  const chartId = 'texo_chart_' + Math.random().toString(36).substring(2, 9);
 
   card.innerHTML = `
     <div class="apex-chart-header">
@@ -1892,7 +2127,7 @@ function buildChartCardElement(chartConfig) {
     ${description ? `
       <div class="apex-chart-footer">
         <span class="apex-chart-footer-desc">💡 ${escapeHtml(description)}</span>
-        <span class="apex-chart-footer-brand">APEX QUANTUM VISUALS</span>
+        <span class="apex-chart-footer-brand">TEXO QUANTUM VISUALS</span>
       </div>
     ` : ''}
   `;
@@ -1900,15 +2135,19 @@ function buildChartCardElement(chartConfig) {
 }
 
 function initChartInstance(card, chartConfig) {
-  if (!card || !chartConfig || !window.Chart) return;
+  if (!card || !chartConfig) return;
   const canvas = card.querySelector('canvas');
   if (!canvas) return;
+
+  if (!window.Chart) {
+    setTimeout(() => initChartInstance(card, chartConfig), 120);
+    return;
+  }
 
   let chartType = (chartConfig.type || 'bar').toLowerCase();
   if (chartType === 'column' || chartType === 'combo' || chartType === 'mixed') chartType = 'bar';
   const title = chartConfig.title || 'TEXO Data Visualization';
 
-  // Style datasets with Cyber Neon theme
   const datasets = (chartConfig.data.datasets || []).map((ds, idx) => {
     const palette = CYBER_PALETTES[idx % CYBER_PALETTES.length];
     const isPie = ['pie', 'doughnut'].includes(chartType);
@@ -1955,7 +2194,7 @@ function initChartInstance(card, chartConfig) {
         responsive: true,
         maintainAspectRatio: false,
         animation: {
-          duration: 800,
+          duration: 750,
           easing: 'easeOutQuart',
         },
         plugins: {
@@ -2033,7 +2272,7 @@ function initChartInstance(card, chartConfig) {
 }
 
 function renderCharts(container) {
-  if (!container || !window.Chart) return;
+  if (!container) return;
 
   // Remove any leftover streaming generating HUDs
   container.querySelectorAll('.apex-chart-generating-hud').forEach(el => el.remove());
@@ -2053,52 +2292,51 @@ function renderCharts(container) {
         console.error('Failed to parse chart slot json:', e);
       }
     }
-    if (!chartConfig || !chartConfig.data || !chartConfig.data.labels) return;
+    const normalized = normalizeChartConfig(chartConfig);
+    if (!normalized) return;
 
-    const card = buildChartCardElement(chartConfig);
+    const card = buildChartCardElement(normalized);
     slot.parentNode.replaceChild(card, slot);
-    initChartInstance(card, chartConfig);
+    initChartInstance(card, normalized);
   });
 
-  // 2. Fallback: Process any pre code blocks that contain chart data or Python plot
-  const codeBlocks = container.querySelectorAll('pre code');
+  // 2. Secondary sweep: Process any pre code blocks that contain chart data or Python plot
+  const codeBlocks = container.querySelectorAll('pre code, pre');
   codeBlocks.forEach(codeEl => {
-    const isChartLang = codeEl.classList.contains('language-chart') || 
-                        codeEl.classList.contains('language-json:chart') ||
-                        codeEl.className.includes('chart');
     const text = codeEl.textContent.trim();
-    const hasChartKeys = text.includes('"type"') && text.includes('"data"');
-    const isPyPlot = text.includes('matplotlib') || text.includes('plt.');
+    if (!text) return;
+    const preEl = codeEl.tagName.toLowerCase() === 'pre' ? codeEl : codeEl.closest('pre');
+    if (!preEl || preEl.dataset.chartRendered) return;
 
-    if (isPyPlot) {
-      const preEl = codeEl.closest('pre');
-      const cfg = convertPythonPlotToChartConfig(text);
-      if (cfg && preEl) {
-        const card = buildChartCardElement(cfg);
-        preEl.parentNode.replaceChild(card, preEl);
-        initChartInstance(card, cfg);
-        return;
-      } else if (preEl) {
-        preEl.remove(); // Never show python plot code to user
-        return;
+    const isPyPlot = text.includes('matplotlib') || text.includes('plt.') || text.includes('seaborn') || text.includes('sns.');
+    const cfg = normalizeChartConfig(text);
+    if (cfg) {
+      preEl.dataset.chartRendered = 'true';
+      const card = buildChartCardElement(cfg);
+      preEl.parentNode.replaceChild(card, preEl);
+      initChartInstance(card, cfg);
+    } else if (isPyPlot) {
+      // If it's python plotting code that failed parsing, hide it so the user never sees raw code!
+      preEl.dataset.chartRendered = 'true';
+      preEl.remove();
+    }
+  });
+
+  // 3. Tertiary sweep: If no chart card was rendered yet, check if there is a data table that can be visualized
+  const hasChart = container.querySelector('.apex-chart-card');
+  if (!hasChart) {
+    const table = container.querySelector('table');
+    if (table && !table.dataset.chartRendered) {
+      const cfgFromTable = extractChartFromTable(table);
+      if (cfgFromTable) {
+        table.dataset.chartRendered = 'true';
+        const card = buildChartCardElement(cfgFromTable);
+        table.parentNode.insertBefore(card, table);
+        initChartInstance(card, cfgFromTable);
       }
     }
-
-    if (!isChartLang && !hasChartKeys) return;
-
-    const chartConfig = parseChartJSON(text);
-    if (!chartConfig || !chartConfig.data || !chartConfig.data.labels) return;
-
-    const preEl = codeEl.closest('pre');
-    if (!preEl || preEl.dataset.chartRendered) return;
-    preEl.dataset.chartRendered = 'true';
-
-    const card = buildChartCardElement(chartConfig);
-    preEl.parentNode.replaceChild(card, preEl);
-    initChartInstance(card, chartConfig);
-  });
+  }
 }
-
 
 async function sendMessage(text) {
   if (isStreaming) return;

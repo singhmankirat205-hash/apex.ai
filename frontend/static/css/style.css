@@ -1477,7 +1477,9 @@ pre:has(code.language-json\:action) {
 }
 
 /* ── Cyber HUD Generating Placeholders ───────────────────────────────────── */
-.apex-chart-generating-hud,
+.apex-chart-generating-hud {
+  display: none !important;
+}
 .apex-action-generating-hud {
   display: flex;
   align-items: center;

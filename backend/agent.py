@@ -1321,13 +1321,37 @@ def _stream_worker(messages, user_role, language, industry, user_email, current_
             )
 
         # Check for chart requests (reinforce backend-only emission; suppress if PPT was requested)
-        if not is_ppt_request and any(w in q_lower for w in ["chart", "pie chart", "graph", "plot", "histogram", "visualization", "breakdown chart"]):
+        chart_keywords = [
+            "chart", "makme a chart", "make me a chart", "pie chart", "bar chart",
+            "line chart", "graph", "plot", "histogram", "visualization",
+            "breakdown chart", "draw chart", "create chart", "show chart", "data visual"
+        ]
+        if not is_ppt_request and any(w in q_lower for w in chart_keywords):
             intent_directives.append(
-                "[VISUAL CHART REQUEST DIRECTIVE]:\n"
-                "- The user requested a chart / visualization.\n"
-                "- YOU MUST emit a valid ```chart { ... } ``` JSON block.\n"
-                "- STAMP OUT ALL VISIBLE CODE: Do NOT print any Python code, matplotlib, script explanations, or raw programming blocks in your answer!\n"
-                "- The user must ONLY see the interactive visual chart card and an accompanying markdown data table."
+                "[VISUAL CHART REQUEST DIRECTIVE - MANDATORY]:\n"
+                "- The user explicitly requested a chart / visual graph.\n"
+                "- YOU MUST emit an interactive chart using a ```chart ... ``` block with this exact JSON format:\n"
+                "```chart\n"
+                "{\n"
+                '  "type": "bar",\n'
+                '  "title": "Descriptive Chart Title",\n'
+                '  "data": {\n'
+                '    "labels": ["Item A", "Item B", "Item C", "Item D"],\n'
+                '    "datasets": [\n'
+                '      {\n'
+                '        "label": "Metric Name (Unit)",\n'
+                '        "data": [45, 28, 18, 12]\n'
+                '      }\n'
+                '    ]\n'
+                '  },\n'
+                '  "options": {\n'
+                '    "description": "Key analytical insight from this visualization."\n'
+                '  }\n'
+                "}\n"
+                "```\n"
+                "- Supported chart types: 'bar' (comparisons), 'line' (time series), 'pie' (proportions), 'radar' (multi-variable profiles).\n"
+                "- ZERO CODE TOLERANCE: STRICTLY DO NOT emit Python code (NO `import matplotlib.pyplot as plt`, NO `plt.show()`, NO `seaborn`, NO scripts)! Strictly DO NOT output programming explanations or script snippets.\n"
+                "- The user must ONLY receive the interactive visual chart card and an accompanying rich Markdown data table.\n"
             )
 
         if intent_directives:
