@@ -75,6 +75,7 @@ const AI_VOICE_PERSONAS = {
     avatar: '🌟',
     rate: 1.02,
     pitch: 1.06,
+    lang: 'en-US',
     sample: "Hello! I am Aura, your executive AI voice. I deliver warm, articulate, and crystal-clear insights across any topic.",
     voiceKeywords: ['jenny', 'aria', 'samantha', 'natural', 'google us english', 'female', 'zira', 'karen', 'victoria']
   },
@@ -86,6 +87,7 @@ const AI_VOICE_PERSONAS = {
     avatar: '💫',
     rate: 1.06,
     pitch: 1.12,
+    lang: 'en-US',
     sample: "Hi there! I am Nova, vibrant and energetic, built to explain complex concepts with engaging clarity.",
     voiceKeywords: ['sonia', 'victoria', 'google uk english female', 'natural', 'female', 'ava', 'allison']
   },
@@ -97,6 +99,7 @@ const AI_VOICE_PERSONAS = {
     avatar: '🌸',
     rate: 0.96,
     pitch: 1.02,
+    lang: 'en-US',
     sample: "Greetings. I am Serena. My voice is gentle, empathetic, and crafted for calm, focused analytical clarity.",
     voiceKeywords: ['samantha', 'serena', 'natural', 'female', 'susan', 'clara', 'zira']
   },
@@ -108,7 +111,8 @@ const AI_VOICE_PERSONAS = {
     avatar: '🇮🇳',
     rate: 1.0,
     pitch: 1.08,
-    sample: "नमस्ते! I am Swara. I provide authentic Indian pronunciation for Hindi, Punjabi, and Indian subcontinent queries.",
+    lang: 'hi-IN',
+    sample: "नमस्ते! मैं स्वरा हूँ। हिंदी, पंजाबी और भारतीय भाषाओं के लिए मेरी आवाज़ तैयार की गई है।",
     voiceKeywords: ['swara', 'heera', 'kalpana', 'geeta', 'sunita', 'india', 'hi-in', 'pa-in', 'female', 'natural']
   },
   elena: {
@@ -119,7 +123,8 @@ const AI_VOICE_PERSONAS = {
     avatar: '💃',
     rate: 1.02,
     pitch: 1.08,
-    sample: "¡Hola! Soy Elena. I bring smooth Latin and Romance cadence for Spanish, Portuguese, and global communications.",
+    lang: 'es-ES',
+    sample: "¡Hola! Soy Elena, tu voz de inteligencia artificial para español y comunicación global.",
     voiceKeywords: ['monica', 'paulina', 'elena', 'laura', 'lucia', 'es-es', 'es-mx', 'female', 'natural']
   },
   amelie: {
@@ -130,7 +135,8 @@ const AI_VOICE_PERSONAS = {
     avatar: '🗼',
     rate: 1.0,
     pitch: 1.06,
-    sample: "Bonjour! I am Amélie, calibrated for refined European pronunciation in French, German, and continental languages.",
+    lang: 'fr-FR',
+    sample: "Bonjour! Je suis Amélie, votre voix d'intelligence européenne pour le français et les langues continentales.",
     voiceKeywords: ['amelie', 'hortense', 'celine', 'julie', 'katja', 'fr-fr', 'de-de', 'female', 'natural']
   },
   athena: {
@@ -141,7 +147,8 @@ const AI_VOICE_PERSONAS = {
     avatar: '🌍',
     rate: 1.02,
     pitch: 1.06,
-    sample: "Welcome! I am Athena. I automatically detect and adapt my female voice to any world language spoken.",
+    lang: 'en-US',
+    sample: "Welcome! I am Athena. I automatically detect and adapt my voice to any world language spoken.",
     voiceKeywords: ['female', 'natural', 'google', 'online', 'swara', 'jenny']
   },
 
@@ -154,6 +161,7 @@ const AI_VOICE_PERSONAS = {
     avatar: '🎙️',
     rate: 0.98,
     pitch: 0.90,
+    lang: 'en-US',
     sample: "Greetings. I am Orion, engineered for deep, authoritative executive communication and industrial analysis.",
     voiceKeywords: ['guy', 'christopher', 'natural', 'google uk english male', 'alex', 'david', 'male', 'george']
   },
@@ -165,6 +173,7 @@ const AI_VOICE_PERSONAS = {
     avatar: '⚡',
     rate: 1.02,
     pitch: 0.98,
+    lang: 'en-US',
     sample: "Echo online. Calibrated for technical accuracy, operational protocols, and crisp calculation.",
     voiceKeywords: ['ryan', 'daniel', 'google us english', 'natural', 'male', 'tom', 'oliver']
   },
@@ -176,6 +185,7 @@ const AI_VOICE_PERSONAS = {
     avatar: '🏛️',
     rate: 0.94,
     pitch: 0.85,
+    lang: 'en-US',
     sample: "Welcome. I am Marcus. A resonant, deep baritone voice suited for comprehensive executive briefings.",
     voiceKeywords: ['david', 'george', 'mark', 'richard', 'deep', 'male', 'natural', 'bernard']
   },
@@ -187,7 +197,8 @@ const AI_VOICE_PERSONAS = {
     avatar: '🇮🇳',
     rate: 0.98,
     pitch: 0.94,
-    sample: "नमस्ते! I am Aarav. Designed for natural Hindi, Punjabi, and Indian subcontinent cadence and phrasing.",
+    lang: 'hi-IN',
+    sample: "नमस्ते! मैं आरव हूँ। हिंदी, पंजाबी और भारतीय उपमहाद्वीप के प्रश्नों के लिए प्राकृतिक आवाज़।",
     voiceKeywords: ['madhur', 'aarav', 'hemant', 'neerja', 'india', 'hi-in', 'pa-in', 'male', 'natural']
   },
   mateo: {
@@ -198,7 +209,8 @@ const AI_VOICE_PERSONAS = {
     avatar: '🎸',
     rate: 1.0,
     pitch: 0.92,
-    sample: "¡Saludos! Soy Mateo. Delivering charismatic Spanish, Portuguese, and global male communications.",
+    lang: 'es-ES',
+    sample: "¡Saludos! Soy Mateo, diseñado para análisis ejecutivo y comunicación dinámica en español.",
     voiceKeywords: ['jorge', 'pablo', 'mateo', 'diego', 'es-es', 'es-mx', 'male', 'natural']
   },
   henri: {
@@ -209,7 +221,8 @@ const AI_VOICE_PERSONAS = {
     avatar: '🎩',
     rate: 0.98,
     pitch: 0.92,
-    sample: "Bonjour. I am Henri, crafted for distinguished European male delivery across French and continental languages.",
+    lang: 'fr-FR',
+    sample: "Bonjour. Je suis Henri, conçu pour une élocution européenne claire et professionnelle en français.",
     voiceKeywords: ['henri', 'paul', 'nicolas', 'stefan', 'hans', 'fr-fr', 'de-de', 'male', 'natural']
   },
   atlas: {
@@ -220,6 +233,7 @@ const AI_VOICE_PERSONAS = {
     avatar: '🌐',
     rate: 0.98,
     pitch: 0.92,
+    lang: 'en-US',
     sample: "Welcome. I am Atlas. I dynamically adapt my male voice to any world language spoken.",
     voiceKeywords: ['male', 'natural', 'google', 'online', 'guy', 'david']
   }
@@ -988,31 +1002,37 @@ function detectTextLanguage(text) {
   if (/[\u4E00-\u9FFF]/.test(sample)) return 'zh-CN'; // Chinese Hanzi
   if (/[\u0400-\u04FF]/.test(sample)) return 'ru-RU'; // Cyrillic / Russian
 
-  // 2. Vocabulary & specific accent checks for Latin-script languages
-  // Spanish
-  if (/[¿¡ñáéíóú]/i.test(sample) || /\b(el|la|los|las|un|una|es|son|por|para|con|este|esta|cómo|gracias|buenos|días|del|al)\b/i.test(sample)) {
-    return 'es-ES';
-  }
-  // French
-  if (/[œàâçéèêëîïôûùüÿ]/i.test(sample) || /\b(le|la|les|un|une|des|est|sont|pour|avec|dans|ce|cette|merci|bonjour|vous|nous)\b/i.test(sample)) {
-    return 'fr-FR';
-  }
-  // German
-  if (/[äöüß]/i.test(sample) || /\b(der|die|das|ein|eine|ist|sind|und|oder|für|mit|nicht|danke|bitte)\b/i.test(sample)) {
-    return 'de-DE';
-  }
-  // Italian
-  if (/\b(il|la|lo|gli|le|un|uno|una|sono|con|per|grazie|ciao|buongiorno)\b/i.test(sample)) {
-    return 'it-IT';
-  }
-  // Portuguese
-  if (/[ãõ]/i.test(sample) || /\b(obrigado|obrigada|você|para|com|não|muito|olá)\b/i.test(sample)) {
-    return 'pt-BR';
-  }
-  // Turkish
-  if (/[ğüşöçıİ]/i.test(sample) || /\b(ve|bir|bu|ile|için|teşekkürler|merhaba)\b/i.test(sample)) {
-    return 'tr-TR';
-  }
+  // 2. Strong English indicators check first to avoid false positives on Latin scripts
+  const lower = sample.toLowerCase();
+  const englishWords = lower.match(/\b(the|and|is|are|you|your|we|our|this|that|with|for|from|have|will|can|apex|textile|yarn|fabric|quality|hello|welcome|greetings|delivers|deliver|sound|voice|test)\b/g);
+  const englishScore = englishWords ? englishWords.length : 0;
+
+  // 3. Vocabulary checks for non-English Latin-script languages
+  const spanishMatches = lower.match(/\b(el|la|los|las|un|una|es|son|por|para|con|este|esta|cómo|gracias|buenos|días|hola|saludos|del|al)\b/g);
+  const spanishScore = (spanishMatches ? spanishMatches.length : 0) + (/[¿¡ñáóú]/.test(lower) ? 3 : 0);
+
+  const frenchMatches = lower.match(/\b(le|la|les|un|une|des|est|sont|pour|avec|dans|ce|cette|merci|bonjour|vous|nous|suis)\b/g);
+  const frenchScore = (frenchMatches ? frenchMatches.length : 0) + (/[œàâçèêëîïôûùü]/.test(lower) ? 3 : 0);
+
+  const germanMatches = lower.match(/\b(der|die|das|ein|eine|ist|sind|und|oder|für|mit|nicht|danke|bitte|guten|tag)\b/g);
+  const germanScore = (germanMatches ? germanMatches.length : 0) + (/[äöüß]/.test(lower) ? 3 : 0);
+
+  const italianMatches = lower.match(/\b(il|la|lo|gli|le|un|uno|una|sono|con|per|grazie|ciao|buongiorno)\b/g);
+  const italianScore = italianMatches ? italianMatches.length : 0;
+
+  const portugueseMatches = lower.match(/\b(obrigado|obrigada|você|para|com|não|muito|olá|bom|dia)\b/g);
+  const portugueseScore = (portugueseMatches ? portugueseMatches.length : 0) + (/[ãõ]/.test(lower) ? 3 : 0);
+
+  const turkishMatches = lower.match(/\b(bir|bu|ile|için|teşekkürler|merhaba|nasılsınız)\b/g);
+  const turkishScore = (turkishMatches ? turkishMatches.length : 0) + (/[ğüşö]/.test(lower) ? 3 : 0);
+
+  // Compare highest score against English
+  if (spanishScore > englishScore && spanishScore >= 2) return 'es-ES';
+  if (frenchScore > englishScore && frenchScore >= 2) return 'fr-FR';
+  if (germanScore > englishScore && germanScore >= 2) return 'de-DE';
+  if (italianScore > englishScore && italianScore >= 2) return 'it-IT';
+  if (portugueseScore > englishScore && portugueseScore >= 2) return 'pt-BR';
+  if (turkishScore > englishScore && turkishScore >= 2) return 'tr-TR';
 
   return 'en-US';
 }
@@ -1391,7 +1411,7 @@ window.previewVoice = function(voiceId, e) {
     return;
   }
 
-  const sampleLang = detectTextLanguage(persona.sample);
+  const sampleLang = persona.lang || detectTextLanguage(persona.sample);
 
   const resetBtn = () => {
     if (btn) {

@@ -102,17 +102,25 @@ def synthesize_speech_audio(text: str, lang: str = "en", persona_id: str = "aura
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
     }
 
+    clients = ["tw-ob", "gtx", "webapp"]
     for chunk in chunks:
-        try:
-            encoded_query = urllib.parse.quote(chunk)
-            url = f"https://translate.google.com/translate_tts?ie=UTF-8&tl={target_lang}&client=tw-ob&q={encoded_query}"
-            req = urllib.request.Request(url, headers=headers)
-            with urllib.request.urlopen(req, timeout=8) as resp:
-                if resp.status == 200:
-                    combined_mp3 += resp.read()
-        except Exception as err:
-            logger.warning("TTS chunk fetch error for chunk '%s': %s", chunk[:20], err)
-            continue
+        chunk_bytes = None
+        encoded_query = urllib.parse.quote(chunk)
+        for client in clients:
+            try:
+                url = f"https://translate.google.com/translate_tts?ie=UTF-8&tl={target_lang}&client={client}&q={encoded_query}"
+                req = urllib.request.Request(url, headers=headers)
+                with urllib.request.urlopen(req, timeout=6) as resp:
+                    if resp.status == 200:
+                        data = resp.read()
+                        if data and len(data) > 100:
+                            chunk_bytes = data
+                            break
+            except Exception as err:
+                logger.debug("TTS chunk attempt with client %s failed: %s", client, err)
+                continue
+        if chunk_bytes:
+            combined_mp3 += chunk_bytes
 
     if combined_mp3:
         if len(_TTS_CACHE) >= _MAX_CACHE_SIZE:
