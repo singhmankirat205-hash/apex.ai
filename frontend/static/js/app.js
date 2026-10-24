@@ -2117,7 +2117,6 @@ fileUpload.addEventListener('change', async e => {
   }
 });
 
-const removeFileBtn = document.getElementById('removeFileBtn');
 if (removeFileBtn) {
   removeFileBtn.addEventListener('click', clearFilePreview);
 }
