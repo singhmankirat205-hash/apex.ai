@@ -9,7 +9,7 @@ from typing import Any
 
 from fastapi import FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
+from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field
@@ -260,6 +260,12 @@ async def serve_robots():
 async def serve_sitemap():
     sitemap_path = os.path.join(_base, "frontend", "static", "sitemap.xml")
     return FileResponse(sitemap_path, media_type="application/xml")
+
+
+@app.get("/google{code}.html", response_class=PlainTextResponse)
+async def serve_google_verification(code: str):
+    """Automatic Google Search Console HTML file verification endpoint."""
+    return f"google-site-verification: google{code}.html"
 
 
 @app.get("/", response_class=HTMLResponse)
