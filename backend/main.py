@@ -251,6 +251,36 @@ async def generate_video_endpoint(req: VideoGenerateRequest):
 
 
 
+class TTSRequest(BaseModel):
+    text: str = Field(..., description="Text content to synthesize")
+    lang: str = Field("en", description="BCP-47 or ISO language code")
+    voice: str = Field("aura", description="Persona voice identifier")
+
+
+@app.post("/api/tts")
+async def tts_post_endpoint(req: TTSRequest):
+    """
+    Universal Neural Text-to-Speech stream supporting any language via HTTP POST.
+    Accepts full responses without URL length limit.
+    """
+    try:
+        from backend.tts_engine import synthesize_speech_audio
+        audio_bytes = synthesize_speech_audio(req.text, lang=req.lang, persona_id=req.voice)
+        if not audio_bytes:
+            raise HTTPException(status_code=400, detail="Unable to synthesize audio.")
+        return Response(
+            content=audio_bytes,
+            media_type="audio/mpeg",
+            headers={
+                "Cache-Control": "public, max-age=86400",
+                "Accept-Ranges": "bytes"
+            }
+        )
+    except Exception as e:
+        logger.error("TTS POST endpoint error: %s", e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.get("/api/tts")
 async def tts_endpoint(text: str = Query(..., description="Text to speak aloud"), lang: str = Query("en", description="BCP-47 language code"), voice: str = Query("aura", description="Persona voice ID")):
     """

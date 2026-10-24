@@ -894,6 +894,7 @@ let activePreviewBtn = null;
 let activePreviewVoiceId = null;
 let currentUtterance = null;
 let currentAudioPlayer = null;
+let currentBlobUrl = null;
 let cachedVoices = [];
 let speechHeartbeatTimer = null;
 
@@ -923,6 +924,10 @@ function stopAudio() {
     } catch (_) {}
     currentAudioPlayer = null;
   }
+  if (currentBlobUrl) {
+    try { URL.revokeObjectURL(currentBlobUrl); } catch (_) {}
+    currentBlobUrl = null;
+  }
   // 2. Stop browser local speech synthesis if active
   try {
     if (typeof window !== 'undefined' && window.speechSynthesis) {
@@ -935,13 +940,13 @@ function stopAudio() {
     speechHeartbeatTimer = null;
   }
   if (activeAudioBtn) {
-    activeAudioBtn.classList.remove('speaking');
+    activeAudioBtn.classList.remove('speaking', 'loading');
     activeAudioBtn.innerHTML = `<span class="btn-icon">🔊</span> Listen`;
     activeAudioBtn.title = 'Read this answer aloud';
     activeAudioBtn = null;
   }
   if (activePreviewBtn) {
-    activePreviewBtn.classList.remove('playing');
+    activePreviewBtn.classList.remove('playing', 'loading');
     activePreviewBtn.innerHTML = '▶ Preview';
     activePreviewBtn = null;
     activePreviewVoiceId = null;
@@ -1249,7 +1254,7 @@ function playLocalWebSpeech(clean, detectedLang, persona, onStart, onEnd, onErro
   }
 }
 
-function playUniversalSpeechAudio(text, lang, persona, onStart, onEnd, onError) {
+async function playUniversalSpeechAudio(text, lang, persona, onLoading, onStart, onEnd, onError) {
   stopAudio();
 
   const clean = (text || '')
@@ -1263,40 +1268,76 @@ function playUniversalSpeechAudio(text, lang, persona, onStart, onEnd, onError) 
     .replace(/\s+/g, ' ')
     .trim();
 
-  if (!clean) return;
+  if (!clean) {
+    if (onError) onError();
+    return;
+  }
 
-  const audioUrl = `/api/tts?text=${encodeURIComponent(clean)}&lang=${encodeURIComponent(lang || 'en')}&voice=${encodeURIComponent(persona ? persona.id : 'aura')}`;
+  // 1. Immediately indicate loading state on UI so user gets instant tactile feedback
+  if (onLoading) onLoading();
 
-  const audio = new Audio(audioUrl);
-  currentAudioPlayer = audio;
-  audio.playbackRate = selectedVoiceSpeed || 1.0;
-
-  let started = false;
-  audio.onplay = () => {
-    started = true;
-    if (onStart) onStart();
-  };
-
-  audio.onended = () => {
-    if (currentAudioPlayer === audio) currentAudioPlayer = null;
-    if (onEnd) onEnd();
-  };
-
-  audio.onerror = (e) => {
-    console.warn('Network audio playback failed, falling back to Web Speech API:', e);
-    if (currentAudioPlayer === audio) currentAudioPlayer = null;
-    playLocalWebSpeech(clean, lang, persona, onStart, onEnd, onError);
-  };
-
-  const playPromise = audio.play();
-  if (playPromise !== undefined) {
-    playPromise.catch((err) => {
-      console.warn('Audio play rejection, trying Web Speech fallback:', err);
-      if (!started) {
-        if (currentAudioPlayer === audio) currentAudioPlayer = null;
-        playLocalWebSpeech(clean, lang, persona, onStart, onEnd, onError);
-      }
+  try {
+    const res = await fetch('/api/tts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        text: clean,
+        lang: lang || 'en-US',
+        voice: persona ? persona.id : 'aura'
+      })
     });
+
+    if (!res.ok) {
+      throw new Error(`TTS server response error: ${res.status}`);
+    }
+
+    const blob = await res.blob();
+    if (!blob || blob.size < 200) {
+      throw new Error('TTS audio blob payload too small');
+    }
+
+    if (currentBlobUrl) {
+      try { URL.revokeObjectURL(currentBlobUrl); } catch (_) {}
+      currentBlobUrl = null;
+    }
+
+    const blobUrl = URL.createObjectURL(blob);
+    currentBlobUrl = blobUrl;
+
+    const audio = new Audio(blobUrl);
+    currentAudioPlayer = audio;
+    audio.playbackRate = (persona ? (persona.rate || 1.0) : 1.0) * (selectedVoiceSpeed || 1.0);
+
+    audio.onplay = () => {
+      if (onStart) onStart();
+    };
+
+    audio.onended = () => {
+      if (currentAudioPlayer === audio) currentAudioPlayer = null;
+      if (currentBlobUrl) {
+        try { URL.revokeObjectURL(currentBlobUrl); } catch (_) {}
+        currentBlobUrl = null;
+      }
+      if (onEnd) onEnd();
+    };
+
+    audio.onerror = (e) => {
+      console.warn('Blob audio play failed, trying Web Speech fallback:', e);
+      if (currentAudioPlayer === audio) currentAudioPlayer = null;
+      playLocalWebSpeech(clean, lang, persona, onStart, onEnd, onError);
+    };
+
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch((err) => {
+        if (err.name === 'AbortError') return;
+        console.warn('Audio play error, falling back to Web Speech:', err);
+        playLocalWebSpeech(clean, lang, persona, onStart, onEnd, onError);
+      });
+    }
+  } catch (err) {
+    console.warn('Network TTS fetch failed, switching to local Web Speech synthesis:', err);
+    playLocalWebSpeech(clean, lang, persona, onStart, onEnd, onError);
   }
 }
 
@@ -1309,11 +1350,14 @@ function speakText(text, triggerBtn = null) {
     }
 
     const persona = getActivePersona();
-    const detectedLang = detectTextLanguage(text);
+    let detectedLang = detectTextLanguage(text);
+    if (detectedLang === 'en-US' && (persona.id === 'swara' || persona.id === 'aarav')) {
+      detectedLang = 'hi-IN'; // Indian cadence for Swara & Aarav
+    }
 
     const resetTriggerBtn = () => {
       if (triggerBtn) {
-        triggerBtn.classList.remove('speaking');
+        triggerBtn.classList.remove('speaking', 'loading');
         triggerBtn.innerHTML = `<span class="btn-icon">🔊</span> Listen`;
         triggerBtn.title = 'Read this answer aloud';
         if (activeAudioBtn === triggerBtn) activeAudioBtn = null;
@@ -1325,9 +1369,17 @@ function speakText(text, triggerBtn = null) {
       detectedLang,
       persona,
       () => {
-        // onStart
+        // onLoading: Immediate button visual update on user click
         if (triggerBtn) {
           activeAudioBtn = triggerBtn;
+          triggerBtn.classList.add('loading');
+          triggerBtn.innerHTML = `<span class="btn-icon">⏳</span> Loading...`;
+        }
+      },
+      () => {
+        // onStart: Audio is actively playing
+        if (triggerBtn) {
+          triggerBtn.classList.remove('loading');
           triggerBtn.classList.add('speaking');
           const genderIcon = (persona.gender === 'female') ? '👩' : '👨';
           triggerBtn.innerHTML = `<span class="btn-icon">⏹️</span> Stop (${persona.name} ${genderIcon})`;
@@ -1415,7 +1467,7 @@ window.previewVoice = function(voiceId, e) {
 
   const resetBtn = () => {
     if (btn) {
-      btn.classList.remove('playing');
+      btn.classList.remove('playing', 'loading');
       btn.innerHTML = '▶ Preview';
     }
     if (activePreviewBtn === btn) {
@@ -1429,10 +1481,18 @@ window.previewVoice = function(voiceId, e) {
     sampleLang,
     persona,
     () => {
-      // onStart
+      // onLoading: Immediate visual update
       activePreviewBtn = btn;
       activePreviewVoiceId = voiceId;
       if (btn) {
+        btn.classList.add('loading');
+        btn.innerHTML = '⏳ Loading...';
+      }
+    },
+    () => {
+      // onStart: Playing audio
+      if (btn) {
+        btn.classList.remove('loading');
         btn.classList.add('playing');
         btn.innerHTML = '⏹️ Stop';
       }
