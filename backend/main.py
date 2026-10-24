@@ -755,6 +755,18 @@ async def login_account(req: LoginRequest):
     return {"status": "success", "message": message, "user": profile}
 
 
+@app.post("/api/auth/reset")
+async def reset_password(req: LoginRequest):
+    from backend.auth_manager import reset_password_and_login
+    success, message, profile = reset_password_and_login(
+        email=req.email,
+        password=req.password
+    )
+    if not success:
+        raise HTTPException(status_code=400, detail=message)
+    return {"status": "success", "message": message, "user": profile}
+
+
 @app.get("/api/auth/me")
 async def get_current_user_profile(email: str = ""):
     from backend.auth_manager import get_user_profile

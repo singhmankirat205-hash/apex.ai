@@ -351,18 +351,72 @@ function clearStoredUser() {
 function showAuthModal() {
   if (!authOverlay) return;
   authOverlay.classList.remove('hidden');
+  authOverlay.style.display = 'flex';
   clearAuthAlert();
 }
 
 function hideAuthModal() {
   if (!authOverlay) return;
   authOverlay.classList.add('hidden');
+  setTimeout(() => {
+    if (authOverlay.classList.contains('hidden')) {
+      authOverlay.style.display = 'none';
+    }
+  }, 350);
   clearAuthAlert();
 }
 
-function setAuthAlert(msg, type = 'error') {
+window.enterDirectlyAsGuest = function() {
+  const guest = {
+    name: 'Guest User',
+    email: 'guest@texo.ai',
+    role: 'GENERAL',
+    industry: (industrySelect ? industrySelect.value : 'textile')
+  };
+  setStoredUser(guest);
+  localStorage.setItem('texo_is_guest', 'true');
+  updateUIForLoggedInUser(guest);
+  hideAuthModal();
+  currentChatId = Date.now();
+  conversationHistory = [];
+  appendWelcomeCard(industrySelect ? industrySelect.value : 'textile');
+  playDone();
+};
+
+window.forceResetAndEnter = async function() {
+  const email = loginEmail ? loginEmail.value.trim() : '';
+  const password = loginPassword ? loginPassword.value : '';
+  if (!email || !password || password.length < 4) {
+    setAuthAlert('Please enter your email and a password of at least 4 characters to reset and enter.', 'error');
+    return;
+  }
+  setAuthAlert('Updating password and entering TEXO…', 'info');
+  try {
+    const res = await fetch('/api/auth/reset', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Reset failed.');
+    setStoredUser(data.user);
+    updateUIForLoggedInUser(data.user);
+    setAuthAlert('Password updated! Entering TEXO…', 'success');
+    playDone();
+    setTimeout(() => {
+      hideAuthModal();
+      currentChatId = Date.now();
+      conversationHistory = [];
+      appendWelcomeCard();
+    }, 500);
+  } catch (err) {
+    setAuthAlert(err.message || 'Reset failed.', 'error');
+  }
+};
+
+function setAuthAlert(msg, type = 'error', htmlActions = '') {
   if (!authAlert) return;
-  authAlert.textContent = msg;
+  authAlert.innerHTML = `<div>${msg}</div>${htmlActions}`;
   authAlert.className = `auth-alert ${type}`;
   authAlert.style.display = 'flex';
 }
@@ -370,7 +424,7 @@ function setAuthAlert(msg, type = 'error') {
 function clearAuthAlert() {
   if (!authAlert) return;
   authAlert.style.display = 'none';
-  authAlert.textContent = '';
+  authAlert.innerHTML = '';
   authAlert.className = 'auth-alert';
 }
 
@@ -398,7 +452,7 @@ function updateUIForLoggedInUser(user) {
 
   // Header user profile badge
   if (userProfileBadge && userNameLabel && userAvatarCircle) {
-    const displayName = user.name || user.email.split('@')[0];
+    const displayName = user.name || (user.email ? user.email.split('@')[0] : 'User');
     userNameLabel.textContent = displayName;
     userAvatarCircle.textContent = displayName.charAt(0).toUpperCase();
     userProfileBadge.style.display = 'inline-flex';
@@ -450,7 +504,7 @@ async function handleSignIn(email, password) {
         signInSubmitBtn.innerHTML = `<span class="auth-btn-glow"></span><span>🚀 Sign In to TEXO</span>`;
       }
       // Sync user history into History option without populating main chat
-      await syncHistoryWithServer(data.user.email);
+      await syncHistoryWithServer(data.user.email).catch(() => {});
       currentChatId = Date.now();
       conversationHistory = [];
       appendWelcomeCard();
@@ -461,7 +515,14 @@ async function handleSignIn(email, password) {
       signInSubmitBtn.disabled = false;
       signInSubmitBtn.innerHTML = `<span class="auth-btn-glow"></span><span>🚀 Sign In to TEXO</span>`;
     }
-    setAuthAlert(err.message || 'Login failed. Please check credentials.', 'error');
+    const errMsg = err.message || 'Login failed. Please check credentials.';
+    const actionsHtml = `
+      <div style="display:flex; gap:8px; margin-top:8px;">
+        <button type="button" class="auth-inline-action-btn" onclick="forceResetAndEnter()">🔑 Reset Password &amp; Enter</button>
+        <button type="button" class="auth-inline-action-btn guest" onclick="enterDirectlyAsGuest()">👤 Enter as Guest</button>
+      </div>
+    `;
+    setAuthAlert(errMsg, 'error', actionsHtml);
   }
 }
 
@@ -572,20 +633,19 @@ if (quickDemoBtn) {
 }
 
 if (guestAccessBtn) {
-  guestAccessBtn.addEventListener('click', async () => {
-    const guest = {
-      name: 'Guest User',
-      email: 'guest@apex.ai',
-      role: 'GENERAL',
-      industry: (industrySelect ? industrySelect.value : 'textile')
-    };
-    setStoredUser(guest);
-    updateUIForLoggedInUser(guest);
-    hideAuthModal();
-    await syncHistoryWithServer(guest.email).catch(() => {});
-    currentChatId = Date.now();
-    conversationHistory = [];
-    appendWelcomeCard(industrySelect ? industrySelect.value : 'textile');
+  guestAccessBtn.addEventListener('click', enterDirectlyAsGuest);
+}
+
+const authCloseBtn = document.getElementById('authCloseBtn');
+if (authCloseBtn) {
+  authCloseBtn.addEventListener('click', enterDirectlyAsGuest);
+}
+
+if (authOverlay) {
+  authOverlay.addEventListener('click', (e) => {
+    if (e.target === authOverlay) {
+      enterDirectlyAsGuest();
+    }
   });
 }
 
@@ -618,12 +678,13 @@ setTimeout(() => {
   initParticles();
   // Check auth state upon splash dismiss
   const stored = getStoredUser();
-  if (stored && stored.name && stored.name !== 'Guest User' && stored.email && !stored.email.startsWith('guest')) {
-    updateUIForLoggedInUser(stored);
+  const isGuest = localStorage.getItem('texo_is_guest');
+  if ((stored && stored.name && stored.email) || isGuest === 'true') {
+    if (stored) updateUIForLoggedInUser(stored);
     hideAuthModal();
-    syncHistoryWithServer(stored.email).catch(() => {});
+    if (stored && stored.email) syncHistoryWithServer(stored.email).catch(() => {});
   } else {
-    // New visitor / device: Prompt with the Sign In & Create Account modal
+    // New visitor: show access gate with instant 1-click option
     showAuthModal();
     switchAuthTab('login');
   }
@@ -4875,12 +4936,13 @@ bindStarterQuestionButtons();
     setStatus('error');
   }
 
-  // Restore user session if existing registered account, otherwise display Access Portal
+  // Restore user session if existing account or guest
   let user = getStoredUser();
-  if (user && user.name && user.name !== 'Guest User' && user.email && !user.email.startsWith('guest')) {
-    updateUIForLoggedInUser(user);
+  const isGuest = localStorage.getItem('texo_is_guest');
+  if ((user && user.name && user.email) || isGuest === 'true') {
+    if (user) updateUIForLoggedInUser(user);
     hideAuthModal();
-    await syncHistoryWithServer(user.email);
+    if (user && user.email) await syncHistoryWithServer(user.email).catch(() => {});
   } else {
     // New device or visitor without account: show Sign In / Register popup
     showAuthModal();

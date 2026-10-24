@@ -2521,6 +2521,72 @@ pre:has(code.language-json\:action) {
   background: linear-gradient(90deg, var(--mint-neon), var(--cyan-neon), var(--purple-neon));
 }
 
+.auth-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #94A3B8;
+  font-size: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+.auth-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: scale(1.08);
+}
+
+.auth-instant-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, rgba(0, 245, 160, 0.12), rgba(0, 217, 245, 0.08));
+  border: 1px solid rgba(0, 245, 160, 0.3);
+  border-radius: 12px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.auth-instant-banner:hover {
+  background: linear-gradient(135deg, rgba(0, 245, 160, 0.2), rgba(0, 217, 245, 0.15));
+  border-color: var(--mint-neon, #00F5A0);
+  box-shadow: 0 0 16px rgba(0, 245, 160, 0.25);
+  transform: translateY(-1px);
+}
+.auth-instant-banner .instant-icon {
+  font-size: 20px;
+  color: #00F5A0;
+}
+.auth-instant-banner .instant-txt {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.auth-instant-banner .instant-txt strong {
+  font-size: 13px;
+  color: #F8FAFC;
+}
+.auth-instant-banner .instant-txt span {
+  font-size: 11px;
+  color: #94A3B8;
+}
+.auth-instant-banner .instant-arrow {
+  font-size: 12px;
+  font-weight: 700;
+  color: #00F5A0;
+}
+
 .auth-header {
   text-align: center;
   margin-bottom: 20px;
@@ -2630,6 +2696,31 @@ pre:has(code.language-json\:action) {
   background: rgba(0, 245, 160, 0.15);
   border: 1px solid rgba(0, 245, 160, 0.45);
   color: var(--mint-neon);
+}
+
+.auth-inline-action-btn {
+  padding: 5px 10px;
+  background: rgba(139, 92, 246, 0.25);
+  border: 1px solid rgba(139, 92, 246, 0.5);
+  color: #DDD6FE;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.auth-inline-action-btn:hover {
+  background: rgba(139, 92, 246, 0.45);
+  color: #FFFFFF;
+}
+.auth-inline-action-btn.guest {
+  background: rgba(0, 245, 160, 0.2);
+  border-color: rgba(0, 245, 160, 0.45);
+  color: var(--mint-neon, #00F5A0);
+}
+.auth-inline-action-btn.guest:hover {
+  background: var(--mint-neon, #00F5A0);
+  color: #030712;
 }
 
 .auth-form {

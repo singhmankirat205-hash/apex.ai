@@ -122,7 +122,8 @@ def register_user(
 
 def authenticate_user(email: str, password: str) -> tuple[bool, str, dict[str, Any] | None]:
     """
-    Validates user credentials.
+    Validates user credentials. If the user account does not exist yet,
+    automatically creates and verifies the account so the user can enter immediately.
     Returns (success, message, user_profile).
     """
     email = (email or "").strip().lower()
@@ -139,14 +140,27 @@ def authenticate_user(email: str, password: str) -> tuple[bool, str, dict[str, A
             break
 
     if not target_user:
-        return False, "Invalid email or password. Please check your credentials or create an account.", None
+        # Automatic seamless registration on first sign-in
+        if len(password) >= 4:
+            clean_name = email.split("@")[0].replace(".", " ").replace("_", " ").title()
+            success, msg, profile = register_user(
+                name=clean_name or "TEXO User",
+                email=email,
+                password=password,
+                role="GENERAL",
+                industry="general"
+            )
+            if success:
+                logger.info("Auto-registered new user on first sign-in: %s", email)
+                return True, "Welcome to TEXO! Your account has been verified and activated.", profile
+        return False, "Password must be at least 4 characters long to enter.", None
 
     salt = target_user.get("salt", "")
     expected_hash = target_user.get("password_hash", "")
     computed_hash = _hash_password(password, salt)
 
     if not secrets.compare_digest(expected_hash, computed_hash):
-        return False, "Invalid email or password. Please try again.", None
+        return False, "Password does not match existing account. Click 'Reset Password & Enter' below or use Instant Guest Access.", None
 
     profile = {
         "id": target_user.get("id"),
@@ -157,6 +171,43 @@ def authenticate_user(email: str, password: str) -> tuple[bool, str, dict[str, A
         "token": f"apex_tok_{secrets.token_hex(18)}"
     }
     return True, "Authentication successful.", profile
+
+
+def reset_password_and_login(email: str, password: str) -> tuple[bool, str, dict[str, Any] | None]:
+    """
+    Updates or resets password for an existing account and returns authenticated profile.
+    """
+    email = (email or "").strip().lower()
+    password = (password or "").strip()
+    if not email or len(password) < 4:
+        return False, "Password must be at least 4 characters.", None
+
+    with _lock:
+        users = _load_all_users()
+        target = None
+        for u in users:
+            if u.get("email", "").lower() == email:
+                target = u
+                break
+
+        if not target:
+            clean_name = email.split("@")[0].replace(".", " ").replace("_", " ").title()
+            return register_user(clean_name or "TEXO User", email, password)
+
+        new_salt = secrets.token_hex(16)
+        target["salt"] = new_salt
+        target["password_hash"] = _hash_password(password, new_salt)
+        _save_all_users(users)
+
+        profile = {
+            "id": target.get("id"),
+            "name": target.get("name", "User"),
+            "email": target.get("email"),
+            "role": target.get("role", "GENERAL"),
+            "industry": target.get("industry", "general"),
+            "token": f"apex_tok_{secrets.token_hex(18)}"
+        }
+        return True, "Password updated successfully. Welcome back to TEXO!", profile
 
 def get_user_profile(email: str) -> dict[str, Any] | None:
     """Fetches user public profile by email."""
