@@ -8,11 +8,11 @@ Launches APEX in its own dedicated, native desktop app window:
 - Standalone window controls (Minimize, Maximize, Close)
 """
 from __future__ import annotations
+import http.client
 import os
 import subprocess
 import sys
 import time
-import urllib.request
 from dotenv import load_dotenv
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -20,25 +20,48 @@ os.chdir(BASE_DIR)
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 
-import http.client
+def kill_stale_port_5000():
+    """Kill any stale or outdated process holding port 5000."""
+    try:
+        cmd = 'powershell -NoProfile -Command "Get-NetTCPConnection -LocalPort 5000 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }"'
+        subprocess.run(cmd, shell=True, capture_output=True, timeout=5)
+        time.sleep(0.5)
+    except Exception:
+        pass
 
 
 def is_server_ready() -> bool:
     try:
-        conn = http.client.HTTPConnection("127.0.0.1", 5000, timeout=0.6)
+        conn = http.client.HTTPConnection("127.0.0.1", 5000, timeout=0.8)
         conn.request("GET", "/api/health")
         resp = conn.getresponse()
         status = resp.status
         conn.close()
-        return status == 200
+        if status != 200:
+            return False
+
+        # Verify /api/tts is also registered on this instance (confirm updated build)
+        conn2 = http.client.HTTPConnection("127.0.0.1", 5000, timeout=0.8)
+        conn2.request("POST", "/api/tts", body=b'{"text":"ping","voice":"aura"}', headers={"Content-Type": "application/json"})
+        resp2 = conn2.getresponse()
+        tts_status = resp2.status
+        conn2.close()
+        # If /api/tts returns 404, the running server is outdated and needs restart
+        if tts_status == 404:
+            return False
+
+        return True
     except Exception:
         return False
 
 
 def start_server_if_needed():
-    """Ensure the APEX server is running as an independent, detached background process."""
+    """Ensure the latest APEX server is running as an independent, detached background process."""
     if is_server_ready():
         return
+
+    # Clear any stale or zombie process on port 5000 before starting fresh
+    kill_stale_port_5000()
 
     python_exe = os.path.join(BASE_DIR, ".venv", "Scripts", "python.exe")
     if not os.path.exists(python_exe):
@@ -80,7 +103,7 @@ def start_server_if_needed():
             close_fds=True,
         )
 
-    for _ in range(30):
+    for _ in range(40):
         time.sleep(0.3)
         if is_server_ready():
             break
@@ -110,6 +133,7 @@ def launch_edge_app_mode() -> bool:
         f"--user-data-dir={profile_dir}",
         "--disable-extensions",
         "--disable-features=TranslateUI",
+        "--autoplay-policy=no-user-gesture-required",
     ]
     subprocess.run(args)
     return True
@@ -134,7 +158,7 @@ def launch_pywebview() -> bool:
         )
         webview.start(debug=False)
         return True
-    except Exception as e:
+    except Exception:
         return False
 
 
