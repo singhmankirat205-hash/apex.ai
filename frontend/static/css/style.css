@@ -4526,11 +4526,18 @@ pre:has(code.language-json\:action) {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.18s ease;
+  user-select: none;
 }
 .voice-preview-btn:hover {
   background: var(--mint-neon, #00F5A0);
   color: #030712;
   border-color: var(--mint-neon, #00F5A0);
+}
+.voice-preview-btn.playing {
+  background: rgba(239, 68, 68, 0.22) !important;
+  color: #FCA5A5 !important;
+  border-color: #EF4444 !important;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.45);
 }
 
 .voice-settings-row {

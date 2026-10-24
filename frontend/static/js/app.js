@@ -876,35 +876,52 @@ function playDone() {
 
 // ── TTS & AUDIO PLAYBACK ENGINE (START / STOP / TOGGLE) ─────────────────────────
 let activeAudioBtn = null;
+let activePreviewBtn = null;
+let activePreviewVoiceId = null;
 let currentUtterance = null;
 let cachedVoices = [];
+let speechHeartbeatTimer = null;
 
 function loadVoices() {
   if (typeof window === 'undefined' || !window.speechSynthesis) return [];
-  cachedVoices = window.speechSynthesis.getVoices() || [];
-  return cachedVoices;
+  const list = window.speechSynthesis.getVoices();
+  if (list && list.length > 0) {
+    cachedVoices = list;
+  }
+  return (cachedVoices && cachedVoices.length > 0) ? cachedVoices : (list || []);
 }
 
 if (typeof window !== 'undefined' && window.speechSynthesis) {
   loadVoices();
-  if (speechSynthesis.onvoiceschanged !== undefined) {
-    speechSynthesis.onvoiceschanged = loadVoices;
-  }
+  window.speechSynthesis.onvoiceschanged = () => {
+    loadVoices();
+  };
 }
 
 function stopAudio() {
   try {
-    if (window.speechSynthesis) {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
       window.speechSynthesis.cancel();
       window.speechSynthesis.resume();
     }
   } catch (_) {}
+  if (speechHeartbeatTimer) {
+    clearInterval(speechHeartbeatTimer);
+    speechHeartbeatTimer = null;
+  }
   if (activeAudioBtn) {
     activeAudioBtn.classList.remove('speaking');
     activeAudioBtn.innerHTML = `<span class="btn-icon">🔊</span> Listen`;
     activeAudioBtn.title = 'Read this answer aloud';
     activeAudioBtn = null;
   }
+  if (activePreviewBtn) {
+    activePreviewBtn.classList.remove('playing');
+    activePreviewBtn.innerHTML = '▶ Preview';
+    activePreviewBtn = null;
+    activePreviewVoiceId = null;
+  }
+  window.__activeUtterance = null;
   currentUtterance = null;
 }
 
@@ -990,7 +1007,12 @@ function detectTextLanguage(text) {
 }
 
 function findBestNaturalVoice(persona, bcp47Lang) {
-  const voices = loadVoices();
+  let voices = loadVoices();
+  if (!voices || !voices.length) {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      voices = window.speechSynthesis.getVoices() || [];
+    }
+  }
   if (!voices || !voices.length) return null;
 
   const targetLang = (bcp47Lang || 'en-US').toLowerCase();
@@ -1058,6 +1080,116 @@ function findBestNaturalVoice(persona, bcp47Lang) {
   return fallback || voices[0];
 }
 
+function prepareUtteranceVoiceAndLang(utt, persona, detectedLang) {
+  const chosenVoice = findBestNaturalVoice(persona, detectedLang);
+  if (chosenVoice) {
+    utt.voice = chosenVoice;
+    // Voice language matching:
+    // If voice language shares the same language family prefix (e.g. 'es-ES' and 'es-MX', or 'en-US' and 'en-GB'),
+    // utt.lang stays as detectedLang for proper region pronunciation.
+    // If voice is a fallback from a completely different language (e.g. detected is Hindi 'hi-IN' but voice is English 'en-US'),
+    // utt.lang MUST match chosenVoice.lang ('en-US')! Otherwise Chromium throws 'language-unavailable'.
+    const vPrefix = (chosenVoice.lang || '').split('-')[0].toLowerCase();
+    const dPrefix = (detectedLang || '').split('-')[0].toLowerCase();
+    if (vPrefix && dPrefix && vPrefix === dPrefix) {
+      utt.lang = detectedLang;
+    } else if (chosenVoice.lang) {
+      utt.lang = chosenVoice.lang;
+    } else {
+      utt.lang = detectedLang || 'en-US';
+    }
+  } else {
+    utt.lang = detectedLang || 'en-US';
+  }
+}
+
+function safeSpeakUtterance(utt) {
+  if (typeof window === 'undefined' || !window.speechSynthesis) return;
+
+  // Unpause if stuck
+  try {
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+    }
+  } catch (_) {}
+
+  // Clear existing heartbeat
+  if (speechHeartbeatTimer) {
+    clearInterval(speechHeartbeatTimer);
+    speechHeartbeatTimer = null;
+  }
+
+  // Anchor to window and currentUtterance to prevent Chrome V8 garbage collection mid-speech
+  window.__activeUtterance = utt;
+  currentUtterance = utt;
+
+  const originalStart = utt.onstart;
+  const originalEnd = utt.onend;
+  const originalError = utt.onerror;
+
+  utt.onstart = (evt) => {
+    if (speechHeartbeatTimer) clearInterval(speechHeartbeatTimer);
+    speechHeartbeatTimer = setInterval(() => {
+      if (!window.speechSynthesis || !window.speechSynthesis.speaking) {
+        if (speechHeartbeatTimer) {
+          clearInterval(speechHeartbeatTimer);
+          speechHeartbeatTimer = null;
+        }
+      } else {
+        try {
+          window.speechSynthesis.pause();
+          window.speechSynthesis.resume();
+        } catch (_) {}
+      }
+    }, 8000);
+
+    if (originalStart) originalStart.call(utt, evt);
+  };
+
+  const cleanup = () => {
+    if (speechHeartbeatTimer) {
+      clearInterval(speechHeartbeatTimer);
+      speechHeartbeatTimer = null;
+    }
+    if (window.__activeUtterance === utt) {
+      window.__activeUtterance = null;
+    }
+    if (currentUtterance === utt) {
+      currentUtterance = null;
+    }
+  };
+
+  utt.onend = (evt) => {
+    cleanup();
+    if (originalEnd) originalEnd.call(utt, evt);
+  };
+
+  utt.onerror = (evt) => {
+    cleanup();
+    if (originalError) originalError.call(utt, evt);
+  };
+
+  const executeSpeak = () => {
+    try {
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+      window.speechSynthesis.speak(utt);
+    } catch (err) {
+      console.warn('speechSynthesis.speak failed:', err);
+      cleanup();
+    }
+  };
+
+  // If currently speaking or pending, cancel first, then wait 50ms for Chromium audio IPC to flush
+  if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+    try { window.speechSynthesis.cancel(); } catch (_) {}
+    setTimeout(executeSpeak, 50);
+  } else {
+    executeSpeak();
+  }
+}
+
 function speakText(text, triggerBtn = null) {
   if (!('speechSynthesis' in window)) {
     console.warn('SpeechSynthesis not supported.');
@@ -1065,11 +1197,13 @@ function speakText(text, triggerBtn = null) {
   }
 
   try {
-    if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
-      const isSameBtn = (triggerBtn && triggerBtn === activeAudioBtn);
+    if (triggerBtn && triggerBtn === activeAudioBtn && (window.speechSynthesis.speaking || window.speechSynthesis.pending)) {
       stopAudio();
-      if (isSameBtn) return;
+      return;
     }
+
+    // Stop existing audio before starting new readout
+    stopAudio();
 
     // Clean text: strip markdown code blocks, URLs, latex, tables, and emojis for fluid human cadence
     let clean = (text || '')
@@ -1086,24 +1220,27 @@ function speakText(text, triggerBtn = null) {
     if (!clean) return;
     if (clean.length > 3500) clean = clean.slice(0, 3500) + '...';
 
-    window.speechSynthesis.resume();
-
     // Automatically detect answer language
     const detectedLang = detectTextLanguage(clean);
     const persona = getActivePersona();
 
     const utt = new SpeechSynthesisUtterance(clean);
-    currentUtterance = utt;
-    utt.lang = detectedLang;
 
-    // Apply pitch and speed calibrated for natural male or female presence
     const genderPitchModifier = (persona.gender === 'male') ? 0.92 : 1.08;
     utt.rate = (persona.rate || 1.0) * (selectedVoiceSpeed || 1.0);
     utt.pitch = (persona.pitch || genderPitchModifier);
     utt.volume = 1.0;
 
-    const chosenVoice = findBestNaturalVoice(persona, detectedLang);
-    if (chosenVoice) utt.voice = chosenVoice;
+    prepareUtteranceVoiceAndLang(utt, persona, detectedLang);
+
+    const resetTriggerBtn = () => {
+      if (triggerBtn) {
+        triggerBtn.classList.remove('speaking');
+        triggerBtn.innerHTML = `<span class="btn-icon">🔊</span> Listen`;
+        triggerBtn.title = 'Read this answer aloud';
+        if (activeAudioBtn === triggerBtn) activeAudioBtn = null;
+      }
+    };
 
     utt.onstart = () => {
       if (triggerBtn) {
@@ -1111,42 +1248,35 @@ function speakText(text, triggerBtn = null) {
         triggerBtn.classList.add('speaking');
         const genderIcon = (persona.gender === 'female') ? '👩' : '👨';
         triggerBtn.innerHTML = `<span class="btn-icon">⏹️</span> Stop (${persona.name} ${genderIcon})`;
-        triggerBtn.title = `Reading aloud with ${persona.name} (${persona.gender}) in ${detectedLang}. Tap to stop.`;
+        triggerBtn.title = `Reading aloud with ${persona.name} (${persona.gender}) in ${utt.lang || detectedLang}. Tap to stop.`;
       }
     };
 
     utt.onend = () => {
-      if (triggerBtn) {
-        triggerBtn.classList.remove('speaking');
-        triggerBtn.innerHTML = `<span class="btn-icon">🔊</span> Listen`;
-        triggerBtn.title = 'Read this answer aloud';
-        if (activeAudioBtn === triggerBtn) activeAudioBtn = null;
-      }
-      currentUtterance = null;
+      resetTriggerBtn();
     };
 
+    let retried = false;
     utt.onerror = (e) => {
-      console.warn('SpeechSynthesis error:', e);
-      if (triggerBtn) {
-        triggerBtn.classList.remove('speaking');
-        triggerBtn.innerHTML = `<span class="btn-icon">🔊</span> Listen`;
-        if (activeAudioBtn === triggerBtn) activeAudioBtn = null;
+      console.warn('SpeechSynthesis error:', e ? e.error : e);
+      if (!retried && e && (e.error === 'language-unavailable' || e.error === 'voice-unavailable' || e.error === 'invalid-argument')) {
+        retried = true;
+        console.warn('Speech language unavailable, retrying with universal fallback voice');
+        const fallbackUtt = new SpeechSynthesisUtterance(clean);
+        fallbackUtt.lang = 'en-US';
+        fallbackUtt.rate = utt.rate;
+        fallbackUtt.pitch = utt.pitch;
+        fallbackUtt.volume = 1.0;
+        fallbackUtt.onstart = utt.onstart;
+        fallbackUtt.onend = utt.onend;
+        fallbackUtt.onerror = () => resetTriggerBtn();
+        safeSpeakUtterance(fallbackUtt);
+        return;
       }
-      currentUtterance = null;
+      resetTriggerBtn();
     };
 
-    // Heartbeat to prevent browser 15s TTS cutoff bug
-    const heartbeat = setInterval(() => {
-      if (!window.speechSynthesis.speaking) {
-        clearInterval(heartbeat);
-      } else {
-        window.speechSynthesis.pause();
-        window.speechSynthesis.resume();
-      }
-    }, 9000);
-
-    speechSynthesis.cancel();
-    speechSynthesis.speak(utt);
+    safeSpeakUtterance(utt);
   } catch (err) {
     console.warn('TTS audio readout warning:', err);
   }
@@ -1162,7 +1292,7 @@ window.openVoiceModal = function() {
 window.closeVoiceModal = function() {
   const modal = document.getElementById('voiceModal');
   if (modal) modal.style.display = 'none';
-  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  stopAudio();
 };
 
 window.selectVoicePersona = function(voiceId) {
@@ -1200,26 +1330,78 @@ window.updateVoiceSpeed = function(speedVal) {
 };
 
 window.previewVoice = function(voiceId, e) {
-  if (e) e.stopPropagation();
+  if (e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
   const persona = AI_VOICE_PERSONAS[voiceId];
   if (!persona || !window.speechSynthesis) return;
 
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.resume();
+  const btn = (e && (e.currentTarget || e.target)) ? (e.currentTarget || e.target) : document.querySelector(`.voice-card[data-voice-id="${voiceId}"] .voice-preview-btn`);
 
-  const utt = new SpeechSynthesisUtterance(persona.sample);
+  // If this voice preview is currently speaking, clicking stops it
+  if (activePreviewVoiceId === voiceId && window.speechSynthesis.speaking) {
+    stopAudio();
+    return;
+  }
+
+  // Stop any other audio before starting preview
+  stopAudio();
+
   const sampleLang = detectTextLanguage(persona.sample);
-  utt.lang = sampleLang;
+  const utt = new SpeechSynthesisUtterance(persona.sample);
 
   const genderPitchModifier = (persona.gender === 'male') ? 0.92 : 1.08;
   utt.rate = (persona.rate || 1.0) * (selectedVoiceSpeed || 1.0);
   utt.pitch = (persona.pitch || genderPitchModifier);
   utt.volume = 1.0;
 
-  const chosen = findBestNaturalVoice(persona, sampleLang);
-  if (chosen) utt.voice = chosen;
+  prepareUtteranceVoiceAndLang(utt, persona, sampleLang);
 
-  window.speechSynthesis.speak(utt);
+  const resetBtn = () => {
+    if (btn) {
+      btn.classList.remove('playing');
+      btn.innerHTML = '▶ Preview';
+    }
+    if (activePreviewBtn === btn) {
+      activePreviewBtn = null;
+      activePreviewVoiceId = null;
+    }
+  };
+
+  utt.onstart = () => {
+    activePreviewBtn = btn;
+    activePreviewVoiceId = voiceId;
+    if (btn) {
+      btn.classList.add('playing');
+      btn.innerHTML = '⏹️ Stop';
+    }
+  };
+
+  utt.onend = () => {
+    resetBtn();
+  };
+
+  let retried = false;
+  utt.onerror = (evt) => {
+    console.warn(`Preview error for ${voiceId}:`, evt ? evt.error : evt);
+    if (!retried && evt && (evt.error === 'language-unavailable' || evt.error === 'voice-unavailable' || evt.error === 'invalid-argument')) {
+      retried = true;
+      const fb = new SpeechSynthesisUtterance(persona.sample);
+      fb.lang = 'en-US';
+      fb.rate = utt.rate;
+      fb.pitch = utt.pitch;
+      fb.volume = 1.0;
+      fb.onstart = utt.onstart;
+      fb.onend = utt.onend;
+      fb.onerror = () => resetBtn();
+      safeSpeakUtterance(fb);
+      return;
+    }
+    resetBtn();
+  };
+
+  safeSpeakUtterance(utt);
 };
 
 function updateVoiceModalUI() {
@@ -4063,7 +4245,7 @@ newChatBtn.addEventListener('click', async () => {
   clearFilePreview();
   setStatus('ready');
   playClick();
-  if (window.speechSynthesis) speechSynthesis.cancel();
+  stopAudio();
   renderHistory();
 });
 
