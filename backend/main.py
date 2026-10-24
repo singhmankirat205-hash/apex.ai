@@ -7,9 +7,9 @@ import logging
 import os
 from typing import Any
 
-from fastapi import FastAPI, File, HTTPException, Request, UploadFile
+from fastapi import FastAPI, File, HTTPException, Query, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, StreamingResponse
+from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field
@@ -248,6 +248,31 @@ async def generate_video_endpoint(req: VideoGenerateRequest):
     except Exception as e:
         logger.error("Video generation error: %s", e)
         raise HTTPException(status_code=500, detail=f"Video generation failed: {str(e)}")
+
+
+
+@app.get("/api/tts")
+async def tts_endpoint(text: str = Query(..., description="Text to speak aloud"), lang: str = Query("en", description="BCP-47 language code"), voice: str = Query("aura", description="Persona voice ID")):
+    """
+    Universal Neural Text-to-Speech stream supporting any language.
+    Streams pristine MP3 audio playable on iOS, Android, macOS, Windows, and Linux.
+    """
+    try:
+        from backend.tts_engine import synthesize_speech_audio
+        audio_bytes = synthesize_speech_audio(text, lang=lang, persona_id=voice)
+        if not audio_bytes:
+            raise HTTPException(status_code=400, detail="Unable to synthesize audio.")
+        return Response(
+            content=audio_bytes,
+            media_type="audio/mpeg",
+            headers={
+                "Cache-Control": "public, max-age=86400",
+                "Accept-Ranges": "bytes"
+            }
+        )
+    except Exception as e:
+        logger.error("TTS endpoint error: %s", e)
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/robots.txt", response_class=FileResponse)

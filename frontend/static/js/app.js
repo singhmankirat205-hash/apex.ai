@@ -879,6 +879,7 @@ let activeAudioBtn = null;
 let activePreviewBtn = null;
 let activePreviewVoiceId = null;
 let currentUtterance = null;
+let currentAudioPlayer = null;
 let cachedVoices = [];
 let speechHeartbeatTimer = null;
 
@@ -899,6 +900,16 @@ if (typeof window !== 'undefined' && window.speechSynthesis) {
 }
 
 function stopAudio() {
+  // 1. Stop HTML5 Neural MP3 audio stream if active
+  if (currentAudioPlayer) {
+    try {
+      currentAudioPlayer.pause();
+      currentAudioPlayer.currentTime = 0;
+      currentAudioPlayer.src = '';
+    } catch (_) {}
+    currentAudioPlayer = null;
+  }
+  // 2. Stop browser local speech synthesis if active
   try {
     if (typeof window !== 'undefined' && window.speechSynthesis) {
       window.speechSynthesis.cancel();
@@ -1190,48 +1201,95 @@ function safeSpeakUtterance(utt) {
   }
 }
 
-function speakText(text, triggerBtn = null) {
+function playLocalWebSpeech(clean, detectedLang, persona, onStart, onEnd, onError) {
   if (!('speechSynthesis' in window)) {
-    console.warn('SpeechSynthesis not supported.');
+    if (onError) onError();
     return;
   }
-
   try {
-    if (triggerBtn && triggerBtn === activeAudioBtn && (window.speechSynthesis.speaking || window.speechSynthesis.pending)) {
-      stopAudio();
-      return;
-    }
-
-    // Stop existing audio before starting new readout
-    stopAudio();
-
-    // Clean text: strip markdown code blocks, URLs, latex, tables, and emojis for fluid human cadence
-    let clean = (text || '')
-      .replace(/```[\s\S]*?```/g, ' [Code block omitted] ')
-      .replace(/`([^`]+)`/g, '$1')
-      .replace(/\[IMAGE_BASE64\]:\S+/g, '')
-      .replace(/https?:\/\/\S+/g, '')
-      .replace(/[*#_~]/g, '')
-      .replace(/\|[\s\S]*?\|/g, '') // omit raw table pipes
-      .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
-      .replace(/\s+/g, ' ')
-      .trim();
-
-    if (!clean) return;
-    if (clean.length > 3500) clean = clean.slice(0, 3500) + '...';
-
-    // Automatically detect answer language
-    const detectedLang = detectTextLanguage(clean);
-    const persona = getActivePersona();
-
     const utt = new SpeechSynthesisUtterance(clean);
-
     const genderPitchModifier = (persona.gender === 'male') ? 0.92 : 1.08;
     utt.rate = (persona.rate || 1.0) * (selectedVoiceSpeed || 1.0);
     utt.pitch = (persona.pitch || genderPitchModifier);
     utt.volume = 1.0;
 
     prepareUtteranceVoiceAndLang(utt, persona, detectedLang);
+
+    utt.onstart = () => { if (onStart) onStart(); };
+    utt.onend = () => { if (onEnd) onEnd(); };
+    utt.onerror = (evt) => {
+      console.warn('Web Speech fallback error:', evt);
+      if (onError) onError(evt);
+    };
+
+    safeSpeakUtterance(utt);
+  } catch (err) {
+    console.warn('Local speech synthesis error:', err);
+    if (onError) onError(err);
+  }
+}
+
+function playUniversalSpeechAudio(text, lang, persona, onStart, onEnd, onError) {
+  stopAudio();
+
+  const clean = (text || '')
+    .replace(/```[\s\S]*?```/g, ' [Code block omitted] ')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\[IMAGE_BASE64\]:\S+/g, '')
+    .replace(/https?:\/\/\S+/g, '')
+    .replace(/[*#_~]/g, '')
+    .replace(/\|[\s\S]*?\|/g, '')
+    .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (!clean) return;
+
+  const audioUrl = `/api/tts?text=${encodeURIComponent(clean)}&lang=${encodeURIComponent(lang || 'en')}&voice=${encodeURIComponent(persona ? persona.id : 'aura')}`;
+
+  const audio = new Audio(audioUrl);
+  currentAudioPlayer = audio;
+  audio.playbackRate = selectedVoiceSpeed || 1.0;
+
+  let started = false;
+  audio.onplay = () => {
+    started = true;
+    if (onStart) onStart();
+  };
+
+  audio.onended = () => {
+    if (currentAudioPlayer === audio) currentAudioPlayer = null;
+    if (onEnd) onEnd();
+  };
+
+  audio.onerror = (e) => {
+    console.warn('Network audio playback failed, falling back to Web Speech API:', e);
+    if (currentAudioPlayer === audio) currentAudioPlayer = null;
+    playLocalWebSpeech(clean, lang, persona, onStart, onEnd, onError);
+  };
+
+  const playPromise = audio.play();
+  if (playPromise !== undefined) {
+    playPromise.catch((err) => {
+      console.warn('Audio play rejection, trying Web Speech fallback:', err);
+      if (!started) {
+        if (currentAudioPlayer === audio) currentAudioPlayer = null;
+        playLocalWebSpeech(clean, lang, persona, onStart, onEnd, onError);
+      }
+    });
+  }
+}
+
+function speakText(text, triggerBtn = null) {
+  try {
+    const isCurrentlySpeaking = (currentAudioPlayer && !currentAudioPlayer.paused) || (window.speechSynthesis && window.speechSynthesis.speaking);
+    if (triggerBtn && triggerBtn === activeAudioBtn && isCurrentlySpeaking) {
+      stopAudio();
+      return;
+    }
+
+    const persona = getActivePersona();
+    const detectedLang = detectTextLanguage(text);
 
     const resetTriggerBtn = () => {
       if (triggerBtn) {
@@ -1242,41 +1300,29 @@ function speakText(text, triggerBtn = null) {
       }
     };
 
-    utt.onstart = () => {
-      if (triggerBtn) {
-        activeAudioBtn = triggerBtn;
-        triggerBtn.classList.add('speaking');
-        const genderIcon = (persona.gender === 'female') ? '👩' : '👨';
-        triggerBtn.innerHTML = `<span class="btn-icon">⏹️</span> Stop (${persona.name} ${genderIcon})`;
-        triggerBtn.title = `Reading aloud with ${persona.name} (${persona.gender}) in ${utt.lang || detectedLang}. Tap to stop.`;
+    playUniversalSpeechAudio(
+      text,
+      detectedLang,
+      persona,
+      () => {
+        // onStart
+        if (triggerBtn) {
+          activeAudioBtn = triggerBtn;
+          triggerBtn.classList.add('speaking');
+          const genderIcon = (persona.gender === 'female') ? '👩' : '👨';
+          triggerBtn.innerHTML = `<span class="btn-icon">⏹️</span> Stop (${persona.name} ${genderIcon})`;
+          triggerBtn.title = `Reading aloud with ${persona.name} (${persona.gender}) in ${detectedLang}. Tap to stop.`;
+        }
+      },
+      () => {
+        // onEnd
+        resetTriggerBtn();
+      },
+      () => {
+        // onError
+        resetTriggerBtn();
       }
-    };
-
-    utt.onend = () => {
-      resetTriggerBtn();
-    };
-
-    let retried = false;
-    utt.onerror = (e) => {
-      console.warn('SpeechSynthesis error:', e ? e.error : e);
-      if (!retried && e && (e.error === 'language-unavailable' || e.error === 'voice-unavailable' || e.error === 'invalid-argument')) {
-        retried = true;
-        console.warn('Speech language unavailable, retrying with universal fallback voice');
-        const fallbackUtt = new SpeechSynthesisUtterance(clean);
-        fallbackUtt.lang = 'en-US';
-        fallbackUtt.rate = utt.rate;
-        fallbackUtt.pitch = utt.pitch;
-        fallbackUtt.volume = 1.0;
-        fallbackUtt.onstart = utt.onstart;
-        fallbackUtt.onend = utt.onend;
-        fallbackUtt.onerror = () => resetTriggerBtn();
-        safeSpeakUtterance(fallbackUtt);
-        return;
-      }
-      resetTriggerBtn();
-    };
-
-    safeSpeakUtterance(utt);
+    );
   } catch (err) {
     console.warn('TTS audio readout warning:', err);
   }
@@ -1335,28 +1381,17 @@ window.previewVoice = function(voiceId, e) {
     e.preventDefault();
   }
   const persona = AI_VOICE_PERSONAS[voiceId];
-  if (!persona || !window.speechSynthesis) return;
+  if (!persona) return;
 
   const btn = (e && (e.currentTarget || e.target)) ? (e.currentTarget || e.target) : document.querySelector(`.voice-card[data-voice-id="${voiceId}"] .voice-preview-btn`);
 
-  // If this voice preview is currently speaking, clicking stops it
-  if (activePreviewVoiceId === voiceId && window.speechSynthesis.speaking) {
+  const isCurrentlySpeaking = (currentAudioPlayer && !currentAudioPlayer.paused) || (window.speechSynthesis && window.speechSynthesis.speaking);
+  if (activePreviewVoiceId === voiceId && isCurrentlySpeaking) {
     stopAudio();
     return;
   }
 
-  // Stop any other audio before starting preview
-  stopAudio();
-
   const sampleLang = detectTextLanguage(persona.sample);
-  const utt = new SpeechSynthesisUtterance(persona.sample);
-
-  const genderPitchModifier = (persona.gender === 'male') ? 0.92 : 1.08;
-  utt.rate = (persona.rate || 1.0) * (selectedVoiceSpeed || 1.0);
-  utt.pitch = (persona.pitch || genderPitchModifier);
-  utt.volume = 1.0;
-
-  prepareUtteranceVoiceAndLang(utt, persona, sampleLang);
 
   const resetBtn = () => {
     if (btn) {
@@ -1369,39 +1404,28 @@ window.previewVoice = function(voiceId, e) {
     }
   };
 
-  utt.onstart = () => {
-    activePreviewBtn = btn;
-    activePreviewVoiceId = voiceId;
-    if (btn) {
-      btn.classList.add('playing');
-      btn.innerHTML = '⏹️ Stop';
+  playUniversalSpeechAudio(
+    persona.sample,
+    sampleLang,
+    persona,
+    () => {
+      // onStart
+      activePreviewBtn = btn;
+      activePreviewVoiceId = voiceId;
+      if (btn) {
+        btn.classList.add('playing');
+        btn.innerHTML = '⏹️ Stop';
+      }
+    },
+    () => {
+      // onEnd
+      resetBtn();
+    },
+    () => {
+      // onError
+      resetBtn();
     }
-  };
-
-  utt.onend = () => {
-    resetBtn();
-  };
-
-  let retried = false;
-  utt.onerror = (evt) => {
-    console.warn(`Preview error for ${voiceId}:`, evt ? evt.error : evt);
-    if (!retried && evt && (evt.error === 'language-unavailable' || evt.error === 'voice-unavailable' || evt.error === 'invalid-argument')) {
-      retried = true;
-      const fb = new SpeechSynthesisUtterance(persona.sample);
-      fb.lang = 'en-US';
-      fb.rate = utt.rate;
-      fb.pitch = utt.pitch;
-      fb.volume = 1.0;
-      fb.onstart = utt.onstart;
-      fb.onend = utt.onend;
-      fb.onerror = () => resetBtn();
-      safeSpeakUtterance(fb);
-      return;
-    }
-    resetBtn();
-  };
-
-  safeSpeakUtterance(utt);
+  );
 };
 
 function updateVoiceModalUI() {
