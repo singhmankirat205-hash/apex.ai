@@ -59,6 +59,69 @@ let isListening     = false;
 let recognition     = null;
 let currentChatId   = Date.now();
 let ttsEnabled      = false;
+let selectedVoiceId = localStorage.getItem('texo_selected_voice') || 'aura';
+let selectedVoiceSpeed = parseFloat(localStorage.getItem('texo_voice_speed') || '1.0');
+let currentListeningLang = 'auto';
+let currentAttachedLocalUrl = null;
+let currentAttachedFile = null;
+
+const AI_VOICE_PERSONAS = {
+  aura: {
+    id: 'aura',
+    name: 'Aura',
+    gender: 'female',
+    tag: 'Warm & Executive',
+    avatar: '🌟',
+    rate: 1.02,
+    pitch: 1.05,
+    sample: "Hello! I am Aura, your natural AI voice for TEXO. I deliver warm, articulate, and crystal-clear insights.",
+    voiceKeywords: ['jenny', 'aria', 'samantha', 'natural', 'google us english', 'female', 'zira', 'karen']
+  },
+  orion: {
+    id: 'orion',
+    name: 'Orion',
+    gender: 'male',
+    tag: 'Executive Authority',
+    avatar: '🎙️',
+    rate: 0.98,
+    pitch: 0.92,
+    sample: "Greetings. I am Orion, engineered for deep, authoritative executive communication and industrial analysis.",
+    voiceKeywords: ['guy', 'christopher', 'natural', 'google uk english male', 'alex', 'david', 'male', 'george']
+  },
+  nova: {
+    id: 'nova',
+    name: 'Nova',
+    gender: 'female',
+    tag: 'Studio Dynamic',
+    avatar: '💫',
+    rate: 1.06,
+    pitch: 1.10,
+    sample: "Hi there! I am Nova, dynamic and engaging, built to explain complex concepts with energy and flair.",
+    voiceKeywords: ['sonia', 'victoria', 'google uk english female', 'natural', 'female']
+  },
+  echo: {
+    id: 'echo',
+    name: 'Echo',
+    gender: 'male',
+    tag: 'Precision Tech',
+    avatar: '⚡',
+    rate: 1.0,
+    pitch: 1.0,
+    sample: "Welcome. Echo online. Calibrated for technical accuracy, operational protocols, and crisp calculation.",
+    voiceKeywords: ['ryan', 'daniel', 'google us english', 'natural', 'male']
+  },
+  athena: {
+    id: 'athena',
+    name: 'Athena',
+    gender: 'neutral',
+    tag: 'Native Polyglot',
+    avatar: '🌍',
+    rate: 1.0,
+    pitch: 1.0,
+    sample: "Namaste! Bonjour! Hola! I am Athena, auto-adapting to the native cadence of any world language you choose.",
+    voiceKeywords: ['natural', 'google', 'swara', 'madhur']
+  }
+};
 
 const HISTORY_KEY = 'apex_history';
 const LANG_BCP47  = {
@@ -705,39 +768,72 @@ if (ttsToggle) {
   });
 }
 
-function speakText(text, triggerBtn = null) {
-  try {
-    if (typeof window === 'undefined' || !window.speechSynthesis) {
-      console.warn('SpeechSynthesis not supported on this browser.');
-      return;
-    }
+// ── REALISTIC AI VOICE STUDIO & NATURAL AUDIO ENGINE ─────────────────────────
+function getActivePersona() {
+  return AI_VOICE_PERSONAS[selectedVoiceId] || AI_VOICE_PERSONAS.aura;
+}
 
-    // Toggle logic: If already speaking from this button or anywhere, stop it
+function findBestNaturalVoice(persona, bcp47Lang) {
+  const voices = loadVoices();
+  if (!voices || !voices.length) return null;
+
+  const targetLang = (bcp47Lang || 'en-US').toLowerCase();
+  const langPrefix = targetLang.split('-')[0];
+
+  // 1. If persona is athena or non-English language requested, prioritize native language voices
+  if (persona.id === 'athena' || !targetLang.startsWith('en')) {
+    const nativeMatch = voices.find(v => v.lang.toLowerCase() === targetLang && (v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Google'))) ||
+                        voices.find(v => v.lang.toLowerCase() === targetLang) ||
+                        voices.find(v => v.lang.toLowerCase().startsWith(langPrefix));
+    if (nativeMatch) return nativeMatch;
+  }
+
+  // 2. Filter voices by language matching
+  const langVoices = voices.filter(v => v.lang.toLowerCase() === targetLang || v.lang.toLowerCase().startsWith(langPrefix));
+  const candidatePool = langVoices.length ? langVoices : voices;
+
+  // 3. Search candidatePool for persona keywords (Natural, Online, Jenny, Guy, etc.)
+  for (const kw of persona.voiceKeywords) {
+    const kwLower = kw.toLowerCase();
+    const found = candidatePool.find(v => v.name.toLowerCase().includes(kwLower));
+    if (found) return found;
+  }
+
+  // 4. Prefer any 'Natural' or 'Online' or 'Google' voice
+  const naturalFallback = candidatePool.find(v => v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Google'));
+  if (naturalFallback) return naturalFallback;
+
+  return candidatePool[0] || voices[0];
+}
+
+function speakText(text, triggerBtn = null) {
+  if (!('speechSynthesis' in window)) {
+    console.warn('SpeechSynthesis not supported.');
+    return;
+  }
+
+  try {
     if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
       const isSameBtn = (triggerBtn && triggerBtn === activeAudioBtn);
       stopAudio();
-      if (isSameBtn) {
-        return; // User clicked the active button to stop
-      }
+      if (isSameBtn) return;
     }
 
-    if (!text) return;
-
-    // Clean markdown, links, LaTeX, and code fences so speech sounds natural & intelligible
-    let clean = text
+    // Clean text: strip markdown code blocks, URLs, latex, tables, and emojis for fluid human cadence
+    let clean = (text || '')
       .replace(/```[\s\S]*?```/g, ' [Code block omitted] ')
       .replace(/`([^`]+)`/g, '$1')
       .replace(/\[IMAGE_BASE64\]:\S+/g, '')
       .replace(/https?:\/\/\S+/g, '')
       .replace(/[*#_~]/g, '')
       .replace(/\|[\s\S]*?\|/g, '') // omit raw table pipes
+      .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
       .replace(/\s+/g, ' ')
       .trim();
 
     if (!clean) return;
-    if (clean.length > 2500) clean = clean.slice(0, 2500) + '...';
+    if (clean.length > 3000) clean = clean.slice(0, 3000) + '...';
 
-    // Resume speech synthesis queue if paused (common Chrome bug)
     window.speechSynthesis.resume();
 
     const utt = new SpeechSynthesisUtterance(clean);
@@ -745,26 +841,20 @@ function speakText(text, triggerBtn = null) {
 
     const bcp47 = LANG_BCP47[currentLang] || 'en-US';
     utt.lang = bcp47;
-    utt.rate = 1.0;
-    utt.pitch = 1.0;
-    utt.volume = 1.0; // Maximum loudness
 
-    // Pick highest quality natural human voice
-    let voices = loadVoices();
-    if (voices && voices.length) {
-      const langPrefix = bcp47.split('-')[0].toLowerCase();
-      const matched = voices.find(v => v.lang.toLowerCase() === bcp47.toLowerCase()) ||
-                      voices.find(v => v.lang.toLowerCase().startsWith(langPrefix)) ||
-                      voices.find(v => v.lang.toLowerCase().includes('en')) ||
-                      voices[0];
-      if (matched) utt.voice = matched;
-    }
+    const persona = getActivePersona();
+    utt.rate = (persona.rate || 1.0) * (selectedVoiceSpeed || 1.0);
+    utt.pitch = persona.pitch || 1.0;
+    utt.volume = 1.0;
+
+    const chosenVoice = findBestNaturalVoice(persona, bcp47);
+    if (chosenVoice) utt.voice = chosenVoice;
 
     utt.onstart = () => {
       if (triggerBtn) {
         activeAudioBtn = triggerBtn;
         triggerBtn.classList.add('speaking');
-        triggerBtn.innerHTML = `<span class="btn-icon">⏹️</span> Stop Audio`;
+        triggerBtn.innerHTML = `<span class="btn-icon">⏹️</span> Stop (${persona.name})`;
         triggerBtn.title = 'Stop reading aloud';
       }
     };
@@ -789,7 +879,6 @@ function speakText(text, triggerBtn = null) {
       currentUtterance = null;
     };
 
-    // Chrome long-speech heartbeat safeguard (prevents Chrome cutting off speech after 15s)
     const heartbeat = setInterval(() => {
       if (!window.speechSynthesis.speaking) {
         clearInterval(heartbeat);
@@ -806,43 +895,204 @@ function speakText(text, triggerBtn = null) {
   }
 }
 
-// ── Mic ───────────────────────────────────────────────────────────────────────
+// ── Voice Studio Modal Controls ──────────────────────────────────────────────
+window.openVoiceModal = function() {
+  const modal = document.getElementById('voiceModal');
+  if (modal) modal.style.display = 'flex';
+  updateVoiceModalUI();
+};
+
+window.closeVoiceModal = function() {
+  const modal = document.getElementById('voiceModal');
+  if (modal) modal.style.display = 'none';
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+};
+
+window.selectVoicePersona = function(voiceId) {
+  if (!AI_VOICE_PERSONAS[voiceId]) return;
+  selectedVoiceId = voiceId;
+  localStorage.setItem('texo_selected_voice', voiceId);
+  updateVoiceModalUI();
+  updateVoiceHeaderLabel();
+  playClick();
+};
+
+window.updateVoiceSpeed = function(speedVal) {
+  selectedVoiceSpeed = parseFloat(speedVal);
+  localStorage.setItem('texo_voice_speed', speedVal);
+  const label = document.getElementById('voiceSpeedVal');
+  if (label) label.textContent = `${parseFloat(speedVal).toFixed(2)}x`;
+};
+
+window.previewVoice = function(voiceId, e) {
+  if (e) e.stopPropagation();
+  const persona = AI_VOICE_PERSONAS[voiceId];
+  if (!persona || !window.speechSynthesis) return;
+
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.resume();
+
+  const utt = new SpeechSynthesisUtterance(persona.sample);
+  const bcp47 = LANG_BCP47[currentLang] || 'en-US';
+  utt.lang = bcp47;
+  utt.rate = (persona.rate || 1.0) * (selectedVoiceSpeed || 1.0);
+  utt.pitch = persona.pitch || 1.0;
+  utt.volume = 1.0;
+
+  const chosen = findBestNaturalVoice(persona, bcp47);
+  if (chosen) utt.voice = chosen;
+
+  window.speechSynthesis.speak(utt);
+};
+
+function updateVoiceModalUI() {
+  const cards = document.querySelectorAll('.voice-card');
+  cards.forEach(card => {
+    card.classList.toggle('active', card.dataset.voiceId === selectedVoiceId);
+  });
+  const speedInput = document.getElementById('voiceSpeedRange');
+  if (speedInput) speedInput.value = selectedVoiceSpeed;
+  const speedLabel = document.getElementById('voiceSpeedVal');
+  if (speedLabel) speedLabel.textContent = `${selectedVoiceSpeed.toFixed(2)}x`;
+}
+
+function updateVoiceHeaderLabel() {
+  const label = document.getElementById('currentVoiceLabel');
+  const persona = getActivePersona();
+  if (label && persona) {
+    label.textContent = `${persona.name} ✨`;
+  }
+}
+
+const voicePickerBtn = document.getElementById('voicePickerBtn');
+if (voicePickerBtn) {
+  voicePickerBtn.addEventListener('click', openVoiceModal);
+}
+
+// ── ANY-LANGUAGE SPEECH RECOGNITION (LISTENING) ───────────────────────────────
 function initSpeech() {
-  if (!('webkitSpeechRecognition' in window||'SpeechRecognition' in window)) return;
-  const SR = window.SpeechRecognition||window.webkitSpeechRecognition;
+  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) return;
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   recognition = new SR();
   recognition.continuous = false;
   recognition.interimResults = true;
 
-  recognition.onstart = ()=>{ isListening=true; micBtn.classList.add('mic-active'); micBtn.textContent='🔴'; setStatus('listening'); };
-  recognition.onresult = e=>{
-    let final='',interim='';
-    for (let i=e.resultIndex;i<e.results.length;i++) {
-      if (e.results[i].isFinal) final+=e.results[i][0].transcript;
-      else interim+=e.results[i][0].transcript;
+  recognition.onstart = () => {
+    isListening = true;
+    micBtn.classList.add('mic-active');
+    micBtn.textContent = '🔴';
+    setStatus('listening');
+    showMicListeningHud(true);
+  };
+
+  recognition.onresult = (e) => {
+    let final = '', interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) final += e.results[i][0].transcript;
+      else interim += e.results[i][0].transcript;
     }
-    messageInput.value=final||interim; autoResize();
+    messageInput.value = final || interim;
+    autoResize();
   };
-  recognition.onend = ()=>{
-    isListening=false; micBtn.classList.remove('mic-active'); micBtn.textContent='🎤'; setStatus('ready');
-    if (messageInput.value.trim()&&!isStreaming) setTimeout(()=>triggerSend(),400);
+
+  recognition.onend = () => {
+    isListening = false;
+    micBtn.classList.remove('mic-active');
+    micBtn.textContent = '🎤';
+    setStatus('ready');
+    showMicListeningHud(false);
+    if (messageInput.value.trim() && !isStreaming) {
+      setTimeout(() => triggerSend(), 350);
+    }
   };
-  recognition.onerror = e=>{
-    isListening=false; micBtn.classList.remove('mic-active'); micBtn.textContent='🎤'; setStatus('ready');
-    if (e.error!=='no-speech') appendSystemMsg(`Mic error: ${e.error}. Allow mic in browser.`);
+
+  recognition.onerror = (e) => {
+    isListening = false;
+    micBtn.classList.remove('mic-active');
+    micBtn.textContent = '🎤';
+    setStatus('ready');
+    showMicListeningHud(false);
+    if (e.error !== 'no-speech') {
+      appendSystemMsg(`Microphone note: ${e.error}. Please ensure mic permission is granted.`);
+    }
   };
 }
 
-micBtn.addEventListener('click',()=>{
-  if (!recognition) { appendSystemMsg('Voice not supported. Please use Chrome or Edge.'); return; }
-  if (isListening) { recognition.stop(); return; }
-  recognition.lang = LANG_BCP47[currentLang]||'en-IN';
-  try { recognition.start(); playClick(); } catch(_){}
+function showMicListeningHud(active) {
+  let hud = document.getElementById('micListeningHud');
+  if (active) {
+    if (!hud) {
+      hud = document.createElement('div');
+      hud.id = 'micListeningHud';
+      hud.className = 'mic-listening-hud';
+      const inputWrapper = document.querySelector('.input-wrapper');
+      if (inputWrapper) inputWrapper.insertBefore(hud, inputWrapper.firstChild);
+    }
+    const currentLangDisplay = getListeningLanguageName();
+    hud.innerHTML = `<span class="listening-pulse"></span> 🎙️ Listening in <strong>${escapeHtml(currentLangDisplay)}</strong> — Speak now…`;
+    hud.style.display = 'flex';
+  } else if (hud) {
+    hud.style.display = 'none';
+  }
+}
+
+function getListeningLanguageName() {
+  if (currentListeningLang !== 'auto' && LANG_NAMES[currentListeningLang]) {
+    return LANG_NAMES[currentListeningLang];
+  }
+  if (currentLang !== 'auto' && LANG_NAMES[currentLang]) {
+    return LANG_NAMES[currentLang];
+  }
+  return navigator.language || 'Auto / Any';
+}
+
+function updateListeningLanguage(langCode) {
+  currentListeningLang = langCode || 'auto';
+  const label = document.getElementById('micLangLabel');
+  if (label) {
+    const shortName = LANG_NAMES[currentListeningLang] ? LANG_NAMES[currentListeningLang].split(' ')[0] : 'Auto';
+    label.textContent = shortName;
+  }
+  if (recognition) {
+    recognition.lang = LANG_BCP47[currentListeningLang] || LANG_BCP47[currentLang] || (navigator.language || 'en-US');
+  }
+}
+
+const micLangPill = document.getElementById('micLangPill');
+if (micLangPill) {
+  micLangPill.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const langs = ['auto', 'en', 'hi', 'pa', 'es', 'fr', 'de', 'ar', 'zh', 'ja'];
+    const curIdx = langs.indexOf(currentListeningLang);
+    const nextLang = langs[(curIdx + 1) % langs.length];
+    updateListeningLanguage(nextLang);
+    playClick();
+  });
+}
+
+micBtn.addEventListener('click', () => {
+  if (!recognition) {
+    appendSystemMsg('Voice input not supported on this browser. Please use Chrome, Edge, or Safari.');
+    return;
+  }
+  if (isListening) {
+    recognition.stop();
+    return;
+  }
+  const effectiveLang = (currentListeningLang !== 'auto' ? LANG_BCP47[currentListeningLang] : null) ||
+                        (currentLang !== 'auto' ? LANG_BCP47[currentLang] : null) ||
+                        (navigator.language || 'en-US');
+  recognition.lang = effectiveLang;
+  try {
+    recognition.start();
+    playClick();
+  } catch (_) {}
 });
 
-// ══════════════════════════════════════════════════════════════════════════════
-// LANGUAGE (Universal World Languages & Seamless Auto-Mirroring)
-// ══════════════════════════════════════════════════════════════════════════════
+window.triggerMicVoiceListening = function() {
+  if (micBtn) micBtn.click();
+};
+
 const worldLangSelect = document.getElementById('worldLangSelect');
 
 function setAppLanguage(langCode) {
@@ -1521,10 +1771,53 @@ fileUpload.addEventListener('change', async e => {
   const file = e.target.files[0];
   if (!file) return;
 
+  currentAttachedFile = file;
+  const localUrl = URL.createObjectURL(file);
+  currentAttachedLocalUrl = localUrl;
+
+  const filePreviewRow = document.getElementById('filePreviewRow');
+  const filePreviewName = document.getElementById('filePreviewName');
+  const previewBadge = document.getElementById('previewBadge');
+  const previewStatus = document.getElementById('previewStatus');
+  const imagePreviewThumb = document.getElementById('imagePreviewThumb');
+  const videoPreviewThumb = document.getElementById('videoPreviewThumb');
+  const filePreviewIcon = document.getElementById('filePreviewIcon');
+
   filePreviewRow.style.display = 'flex';
-  filePreviewIcon.textContent = '⏳';
-  filePreviewName.textContent = `Analyzing ${file.name}…`;
-  imagePreviewThumb.style.display = 'none';
+  const fileSizeKb = Math.round(file.size / 1024);
+
+  // Instant local visual preview for images
+  if (file.type.startsWith('image/')) {
+    if (imagePreviewThumb) {
+      imagePreviewThumb.src = localUrl;
+      imagePreviewThumb.style.display = 'block';
+    }
+    if (videoPreviewThumb) videoPreviewThumb.style.display = 'none';
+    if (filePreviewIcon) filePreviewIcon.style.display = 'none';
+    if (previewBadge) previewBadge.textContent = '📷 Attached Photo';
+    if (filePreviewName) filePreviewName.textContent = `${file.name} (${fileSizeKb} KB)`;
+    if (previewStatus) previewStatus.textContent = 'Photo ready to send with your inquiry';
+  } else if (file.type.startsWith('video/')) {
+    if (videoPreviewThumb) {
+      videoPreviewThumb.src = localUrl;
+      videoPreviewThumb.style.display = 'block';
+    }
+    if (imagePreviewThumb) imagePreviewThumb.style.display = 'none';
+    if (filePreviewIcon) filePreviewIcon.style.display = 'none';
+    if (previewBadge) previewBadge.textContent = '🎥 Attached Video';
+    if (filePreviewName) filePreviewName.textContent = `${file.name} (${fileSizeKb} KB)`;
+    if (previewStatus) previewStatus.textContent = 'Video ready to send with your inquiry';
+  } else {
+    if (imagePreviewThumb) imagePreviewThumb.style.display = 'none';
+    if (videoPreviewThumb) videoPreviewThumb.style.display = 'none';
+    if (filePreviewIcon) {
+      filePreviewIcon.style.display = 'block';
+      filePreviewIcon.textContent = file.name.endsWith('.pdf') ? '📄' : (file.name.endsWith('.pptx') ? '📊' : (file.name.endsWith('.xlsx') ? '📈' : '📎'));
+    }
+    if (previewBadge) previewBadge.textContent = '📑 Attached File';
+    if (filePreviewName) filePreviewName.textContent = `${file.name} (${fileSizeKb} KB)`;
+    if (previewStatus) previewStatus.textContent = 'Analyzing document structure…';
+  }
 
   const formData = new FormData();
   formData.append('file', file);
@@ -1538,46 +1831,75 @@ fileUpload.addEventListener('change', async e => {
     const data = await res.json();
     pendingAttachment = data;
 
-    const icons = {
-      pdf: '📄',
-      pptx: '📊',
-      ppt: '📊',
-      excel: '📊',
-      csv: '📈',
-      docx: '📝',
-      doc: '📝',
-      image: '🖼️',
-      video: '🎥',
-      audio: '🎙️',
-      text: '📄'
-    };
-    filePreviewIcon.textContent = icons[data.file_type] || '📎';
-    filePreviewName.textContent = data.display_summary || file.name;
-
-    if (data.image_base64) {
-      imagePreviewThumb.src = `data:image/jpeg;base64,${data.image_base64}`;
-      imagePreviewThumb.style.display = 'inline-block';
-    } else {
-      imagePreviewThumb.style.display = 'none';
-    }
-
+    if (previewStatus) previewStatus.textContent = 'Ready to send with your message';
     playClick();
   } catch (err) {
-    filePreviewIcon.textContent = '⚠️';
-    filePreviewName.textContent = `Error reading ${file.name}`;
-    setTimeout(clearFilePreview, 3000);
+    if (previewStatus) previewStatus.textContent = `Upload note: ${file.name} loaded locally`;
   }
 });
 
-removeFileBtn.addEventListener('click', clearFilePreview);
+const removeFileBtn = document.getElementById('removeFileBtn');
+if (removeFileBtn) {
+  removeFileBtn.addEventListener('click', clearFilePreview);
+}
 
 function clearFilePreview() {
   pendingAttachment = null;
+  currentAttachedFile = null;
+  currentAttachedLocalUrl = null;
   fileUpload.value = '';
-  filePreviewRow.style.display = 'none';
-  imagePreviewThumb.src = '';
-  imagePreviewThumb.style.display = 'none';
+
+  const filePreviewRow = document.getElementById('filePreviewRow');
+  const imagePreviewThumb = document.getElementById('imagePreviewThumb');
+  const videoPreviewThumb = document.getElementById('videoPreviewThumb');
+
+  if (filePreviewRow) filePreviewRow.style.display = 'none';
+  if (imagePreviewThumb) {
+    imagePreviewThumb.src = '';
+    imagePreviewThumb.style.display = 'none';
+  }
+  if (videoPreviewThumb) {
+    videoPreviewThumb.src = '';
+    videoPreviewThumb.style.display = 'none';
+  }
 }
+
+// ── Lightbox Viewer for Images & Videos ────────────────────────────────────────
+window.openMediaLightbox = function(mediaSrc, caption) {
+  const lightbox = document.getElementById('mediaLightbox');
+  const imgEl = document.getElementById('lightboxImg');
+  const videoEl = document.getElementById('lightboxVideo');
+  const captionEl = document.getElementById('lightboxCaption');
+  if (!lightbox) return;
+
+  const isVideo = mediaSrc.includes('video') || mediaSrc.endsWith('.mp4') || mediaSrc.endsWith('.webm') || mediaSrc.endsWith('.mov');
+  if (isVideo) {
+    if (imgEl) imgEl.style.display = 'none';
+    if (videoEl) {
+      videoEl.src = mediaSrc;
+      videoEl.style.display = 'block';
+      videoEl.play().catch(() => {});
+    }
+  } else {
+    if (videoEl) {
+      videoEl.style.display = 'none';
+      videoEl.pause();
+    }
+    if (imgEl) {
+      imgEl.src = mediaSrc;
+      imgEl.style.display = 'block';
+    }
+  }
+  if (captionEl) captionEl.textContent = caption || 'TEXO High-Resolution Media Inspector';
+  lightbox.style.display = 'flex';
+};
+
+window.closeMediaLightbox = function() {
+  const lightbox = document.getElementById('mediaLightbox');
+  const videoEl = document.getElementById('lightboxVideo');
+  if (videoEl) videoEl.pause();
+  if (lightbox) lightbox.style.display = 'none';
+};
 
 // ══════════════════════════════════════════════════════════════════════════════
 // SEND MESSAGE
@@ -2362,12 +2684,18 @@ async function sendMessage(text) {
   let imgB64 = null;
   let attachedSummary = null;
 
-  if (pendingAttachment) {
-    attachedSummary = pendingAttachment.display_summary || pendingAttachment.filename;
-    if (pendingAttachment.image_base64) {
+  let attachedFileType = null;
+  let attachedMediaUrl = null;
+
+  if (pendingAttachment || currentAttachedFile) {
+    attachedSummary = (pendingAttachment && (pendingAttachment.display_summary || pendingAttachment.filename)) || (currentAttachedFile && currentAttachedFile.name) || 'Attachment';
+    attachedFileType = (pendingAttachment && pendingAttachment.file_type) || (currentAttachedFile && currentAttachedFile.type.split('/')[0]) || 'file';
+    attachedMediaUrl = currentAttachedLocalUrl || (pendingAttachment && pendingAttachment.image_base64 ? `data:image/jpeg;base64,${pendingAttachment.image_base64}` : null);
+
+    if (pendingAttachment && pendingAttachment.image_base64) {
       imgB64 = pendingAttachment.image_base64;
     }
-    if (pendingAttachment.text_content) {
+    if (pendingAttachment && pendingAttachment.text_content) {
       fullPayloadText = `${pendingAttachment.text_content}\n\n[USER INQUIRY / TASK]:\n${text || 'Please thoroughly analyze and explain this file, break down all critical data, calculate key metrics, and provide prioritized technical recommendations.'}`;
     }
     if (!userDisplay) {
@@ -2375,12 +2703,16 @@ async function sendMessage(text) {
     }
   }
 
+  const savedMediaUrl = attachedMediaUrl;
+  const savedFileType = attachedFileType;
+  const savedSummary = attachedSummary;
+
   clearFilePreview();
 
   // Append to history
   const storedContent = fullPayloadText + (imgB64 ? '\n\n[IMAGE_BASE64]:' + imgB64 : '');
   conversationHistory.push({ role: 'user', content: storedContent });
-  appendMessage('user', userDisplay, imgB64, attachedSummary);
+  appendMessage('user', userDisplay, imgB64, savedSummary, savedFileType, savedMediaUrl);
   setStatus('thinking'); isStreaming=true; sendBtn.disabled=true;
 
   // Build sanitized messages payload
@@ -2536,24 +2868,54 @@ async function sendMessage(text) {
 // ══════════════════════════════════════════════════════════════════════════════
 // RENDER HELPERS
 // ══════════════════════════════════════════════════════════════════════════════
-function appendMessage(role, text, imageBase64=null, attachedSummary=null) {
-  const wrap=document.createElement('div'); wrap.className=`message ${role}`;
-  const avatar=document.createElement('div'); avatar.className='avatar';
-  avatar.textContent=role==='assistant'?'A':'U';
-  const col=document.createElement('div'); col.className='message-col';
+function appendMessage(role, text, imageBase64=null, attachedSummary=null, attachedFileType=null, mediaUrl=null) {
+  const wrap = document.createElement('div');
+  wrap.className = `message ${role}`;
+  const avatar = document.createElement('div');
+  avatar.className = 'avatar';
+  avatar.textContent = role === 'assistant' ? 'T' : 'U';
+  const col = document.createElement('div');
+  col.className = 'message-col';
 
-  if (attachedSummary) {
-    const badge = document.createElement('div');
-    badge.className = 'file-attached-badge';
-    badge.innerHTML = `📎 Attached: <strong>${attachedSummary}</strong>`;
-    col.appendChild(badge);
+  // If user attached a photo or video, display an interactive media card right in the message bubble
+  if (role === 'user' && (mediaUrl || imageBase64 || attachedSummary)) {
+    const mediaCard = document.createElement('div');
+    mediaCard.className = 'user-attached-media-card';
+
+    const isVideo = attachedFileType === 'video' || (mediaUrl && (mediaUrl.includes('video') || mediaUrl.endsWith('.mp4') || mediaUrl.endsWith('.mov') || mediaUrl.endsWith('.webm')));
+    const isImage = attachedFileType === 'image' || Boolean(imageBase64) || (mediaUrl && !isVideo);
+    const imgSrc = imageBase64 ? `data:image/jpeg;base64,${imageBase64}` : mediaUrl;
+    const displayName = attachedSummary || (isImage ? 'Photo.jpg' : (isVideo ? 'Video.mp4' : 'Attachment'));
+
+    if (isVideo && mediaUrl) {
+      mediaCard.innerHTML = `
+        <div class="msg-media-header">
+          <span class="media-tag">🎥 Attached Video</span>
+          <span class="media-fname">${escapeHtml(displayName)}</span>
+        </div>
+        <video src="${mediaUrl}" controls class="user-bubble-video" preload="metadata"></video>`;
+      col.appendChild(mediaCard);
+    } else if (isImage && imgSrc) {
+      mediaCard.innerHTML = `
+        <div class="msg-media-header">
+          <span class="media-tag">📷 Attached Photo</span>
+          <span class="media-fname">${escapeHtml(displayName)}</span>
+        </div>
+        <div class="msg-media-img-wrap" onclick="openMediaLightbox('${imgSrc}', '${escapeHtml(displayName)}')">
+          <img src="${imgSrc}" class="user-bubble-image" alt="Attached photo" />
+          <div class="img-hover-overlay"><span>🔍 View Full Photo</span></div>
+        </div>`;
+      col.appendChild(mediaCard);
+    } else if (attachedSummary) {
+      const badge = document.createElement('div');
+      badge.className = 'file-attached-badge';
+      badge.innerHTML = `📎 Attached: <strong>${escapeHtml(attachedSummary)}</strong>`;
+      col.appendChild(badge);
+    }
   }
 
-  const bubble=document.createElement('div'); bubble.className='bubble';
-  if (imageBase64) {
-    const img=document.createElement('img'); img.src='data:image/jpeg;base64,'+imageBase64;
-    img.className='msg-image'; col.appendChild(img);
-  }
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
   if (role === 'assistant' && window.marked) {
     bubble.innerHTML = marked.parse(prepareFinalMarkdown(text));
   } else {
@@ -2637,7 +2999,7 @@ function appendWelcomeCard(indKey) {
     : (INDUSTRY_DATA['textile'] && INDUSTRY_DATA['textile'].starterQuestions) || [];
 
   const card = document.createElement('div');
-  card.className = 'welcome-card';
+  card.className = 'welcome-card structured-welcome-card';
   card.id = 'welcomeCard';
 
   const questionsHtml = questions.map(q => `
@@ -2663,21 +3025,100 @@ function appendWelcomeCard(indKey) {
   ` : '';
 
   card.innerHTML = `
-    <div class="welcome-logo-wrap celebration-interactive" title="Tap for celebration fireworks! 🎆🎉" style="cursor:pointer;">
-      <img src="/static/apex_logo.jpg" alt="TEXO" class="welcome-logo-img"/>
-      <div class="welcome-glow"></div>
+    <!-- Hero Header -->
+    <div class="welcome-hero-section">
+      <div class="welcome-top-badge">
+        <span class="badge-pulse-glow"></span>
+        <span class="badge-txt">⚡ TEXO UNIVERSAL INTELLIGENCE 2.0 • ENTERPRISE CORE</span>
+      </div>
+      
+      <div class="welcome-logo-wrap celebration-interactive" title="Tap for celebration fireworks! 🎆🎉" style="cursor:pointer;">
+        <img src="/static/apex_logo.jpg" alt="TEXO" class="welcome-logo-img"/>
+        <div class="welcome-glow"></div>
+      </div>
+      
+      <h1 class="welcome-h1 celebration-interactive" id="welcomeH1" title="Tap for celebration fireworks! 🎆🎉" style="cursor:pointer; user-select:none;">
+        TEXO <span class="celebration-spark-badge" title="Tap for celebration fireworks!">🎆</span>
+      </h1>
+
+      ${welcomeBannerHtml}
+
+      <p class="welcome-tagline">
+        Next-generation autonomous intelligence workspace. Ask anything across global data, technical analysis, operations, or enterprise document generation with real-time neural voice.
+      </p>
     </div>
-    <h1 class="welcome-h1 celebration-interactive" id="welcomeH1" title="Tap for celebration fireworks! 🎆🎉" style="cursor:pointer; user-select:none;">TEXO <span class="celebration-spark-badge" title="Tap for celebration fireworks!">🎆</span></h1>
-    ${welcomeBannerHtml}
-    <p class="welcome-tagline">You didn't stumble here by chance — you arrived because you need answers that actually matter. Ask anything. I'll give you clarity, precision, and insight that moves you forward.</p>
-    <div class="welcome-features welcome-questions" id="welcomeQuestions">
-      ${questionsHtml}
+
+    <!-- Structured Capability Pillars (4 Interactive Cards) -->
+    <div class="welcome-pillars-grid">
+      <div class="welcome-pillar-card" onclick="quickFillPrompt('Generate an interactive defect distribution chart comparing Broken Pick, Oil Stain, Slub and Mispick with Pareto analysis')">
+        <div class="pillar-icon-wrap">📊</div>
+        <div class="pillar-content">
+          <h4 class="pillar-title">Visual Charts &amp; Analytics</h4>
+          <p class="pillar-desc">Interactive Cyber-HUD charts, Pareto defect distributions &amp; real-time telemetry.</p>
+        </div>
+        <span class="pillar-action">Try Chart →</span>
+      </div>
+
+      <div class="welcome-pillar-card" onclick="quickFillPrompt('Create a 5-slide Claude-style executive presentation on Sustainable Textile Manufacturing and Circular Economy')">
+        <div class="pillar-icon-wrap">📑</div>
+        <div class="pillar-content">
+          <h4 class="pillar-title">Claude PPT &amp; Excel Workbooks</h4>
+          <p class="pillar-desc">Executive PowerPoint decks, automated Excel sheets &amp; ASTM inspection reports.</p>
+        </div>
+        <span class="pillar-action">Try PPT →</span>
+      </div>
+
+      <div class="welcome-pillar-card" onclick="triggerMicVoiceListening()">
+        <div class="pillar-icon-wrap">🎙️</div>
+        <div class="pillar-content">
+          <h4 class="pillar-title">Multilingual Voice AI</h4>
+          <p class="pillar-desc">Listen in any world language with ultra-realistic human neural voice personas.</p>
+        </div>
+        <span class="pillar-action">Speak Now →</span>
+      </div>
+
+      <div class="welcome-pillar-card" onclick="quickFillPrompt('Perform ASTM D5430 4-point fabric defect audit calculation for 120m roll with 15 penalty points')">
+        <div class="pillar-icon-wrap">🧵</div>
+        <div class="pillar-content">
+          <h4 class="pillar-title">Industrial Intelligence &amp; ERP</h4>
+          <p class="pillar-desc">ASTM D5430 audits, loom optimization, batch tracking &amp; cross-session memory.</p>
+        </div>
+        <span class="pillar-action">Audit Fabric →</span>
+      </div>
     </div>
-    <div class="welcome-cta">Type a question below — or tap one of the 4 starter questions above to begin immediately</div>`;
+
+    <!-- Suggested Prompts Section -->
+    <div class="welcome-prompts-section">
+      <div class="prompts-section-header">
+        <span class="prompts-header-icon">⚡</span>
+        <span class="prompts-header-title">Suggested Quick Actions</span>
+        <span class="prompts-header-sub">Tap any query to start instantly</span>
+      </div>
+      <div class="welcome-features welcome-questions" id="welcomeQuestions">
+        ${questionsHtml}
+      </div>
+    </div>
+
+    <!-- Trust Telemetry Footer -->
+    <div class="welcome-trust-bar">
+      <div class="trust-item"><span class="trust-dot"></span> 🧠 Continuous Enterprise Memory</div>
+      <div class="trust-item"><span class="trust-dot"></span> 🌐 Any-Language Listening</div>
+      <div class="trust-item"><span class="trust-dot"></span> 🎙️ Ultra-Real Neural Voice</div>
+      <div class="trust-item"><span class="trust-dot"></span> ⚡ Zero-Code Visual Charts</div>
+    </div>`;
 
   messagesArea.appendChild(card);
   bindStarterQuestionButtons(card);
 }
+
+window.quickFillPrompt = function(promptText) {
+  if (messageInput) {
+    messageInput.value = promptText;
+    autoResize();
+    messageInput.focus();
+    triggerSend();
+  }
+};
 
 // ══════════════════════════════════════════════════════════════════════════════
 // CLIPBOARD COPY & INTERACTIVE MESSAGE ENHANCEMENTS

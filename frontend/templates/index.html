@@ -363,7 +363,11 @@
       </div>
       <div class="status-dot" id="statusDot"></div>
       <span class="status-label" id="statusLabel">Ready</span>
-      <button class="tts-toggle" id="ttsToggle" title="Voice readout">🔊</button>
+      <button class="tts-toggle" id="ttsToggle" title="Voice readout on/off">🔊 Voice</button>
+      <button class="voice-picker-btn" id="voicePickerBtn" title="Choose Realistic AI Voice Persona">
+        <span class="voice-icon">🎙️</span>
+        <span class="voice-label" id="currentVoiceLabel">Voice: Aura ✨</span>
+      </button>
       <button class="history-toggle-btn" id="historyToggle" title="Chat History">🕐</button>
       <button class="share-btn" id="shareBtn" title="Share TEXO with Others">🔗 Share</button>
       <button class="creative-studio-btn" id="creativeStudioBtn" title="Launch Radical Textile Creative Studio & Haptic Lab">🧵 Studio Lab</button>
@@ -377,60 +381,113 @@
 
   <!-- Messages (Scrolling Part on the Right) -->
   <div class="messages-area" id="messagesArea">
-    <div class="welcome-card" id="welcomeCard">
-      <div class="welcome-logo-wrap celebration-interactive" title="Tap for celebration fireworks! 🎆🎉" style="cursor:pointer;">
-        <img src="/static/apex_logo.jpg" alt="TEXO" class="welcome-logo-img"/>
-        <div class="welcome-glow"></div>
+    <div class="welcome-card structured-welcome-card" id="welcomeCard">
+      <!-- Hero Header -->
+      <div class="welcome-hero-section">
+        <div class="welcome-top-badge">
+          <span class="badge-pulse-glow"></span>
+          <span class="badge-txt">⚡ TEXO UNIVERSAL INTELLIGENCE 2.0 • ENTERPRISE CORE</span>
+        </div>
+        
+        <div class="welcome-logo-wrap celebration-interactive" title="Tap for celebration fireworks! 🎆🎉" style="cursor:pointer;">
+          <img src="/static/apex_logo.jpg" alt="TEXO" class="welcome-logo-img"/>
+          <div class="welcome-glow"></div>
+        </div>
+        
+        <h1 class="welcome-h1 celebration-interactive" id="welcomeH1" title="Tap for celebration fireworks! 🎆🎉" style="cursor:pointer; user-select:none;">
+          TEXO <span class="celebration-spark-badge" title="Tap for celebration fireworks!">🎆</span>
+        </h1>
+
+        <p class="welcome-tagline">
+          Next-generation autonomous intelligence workspace. Ask anything across global data, technical analysis, operations, or enterprise document generation with real-time neural voice.
+        </p>
       </div>
-      <h1 class="welcome-h1 celebration-interactive" id="welcomeH1" title="Tap for celebration fireworks! 🎆🎉" style="cursor:pointer; user-select:none;">
-        TEXO <span class="celebration-spark-badge" title="Tap for celebration fireworks!">🎆</span>
-      </h1>
-      <p class="welcome-tagline">You didn't stumble here by chance — you arrived because you need answers that actually matter. Ask anything. I'll give you clarity, precision, and insight that moves you forward.</p>
-      <div class="welcome-features welcome-questions" id="welcomeQuestions">
-        <button class="feature starter-question-btn" type="button" data-prompt="Where is my fabric roll order? Track Order #ORD-8492 with container status and port arrival ETA" title="Click to ask this question immediately">
-          <span class="feature-icon">📦</span>
-          <div class="starter-text-wrap">
-            <span class="starter-title">Where is my fabric roll order?</span>
-            <span class="starter-subtitle">Track Order #ORD-8492 with container status and port arrival ETA</span>
+
+      <!-- Structured Capability Pillars (4 Interactive Cards) -->
+      <div class="welcome-pillars-grid">
+        <div class="welcome-pillar-card" onclick="quickFillPrompt('Generate an interactive defect distribution chart comparing Broken Pick, Oil Stain, Slub and Mispick with Pareto analysis')">
+          <div class="pillar-icon-wrap">📊</div>
+          <div class="pillar-content">
+            <h4 class="pillar-title">Visual Charts &amp; Analytics</h4>
+            <p class="pillar-desc">Interactive Cyber-HUD charts, Pareto defect distributions &amp; real-time telemetry.</p>
           </div>
-        </button>
-        <button class="feature starter-question-btn" type="button" data-prompt="Experience haptic fabric emulation (Silk Chiffon vs 425 GSM Denim) and simulate real-time drape physics" title="Click to ask this question immediately">
-          <span class="feature-icon">📳</span>
-          <div class="starter-text-wrap">
-            <span class="starter-title">Haptic &amp; Drape Physics</span>
-            <span class="starter-subtitle">Tactile touch emulation &amp; real-time cloth drape simulation</span>
+          <span class="pillar-action">Try Chart →</span>
+        </div>
+
+        <div class="welcome-pillar-card" onclick="quickFillPrompt('Create a 5-slide Claude-style executive presentation on Sustainable Textile Manufacturing and Circular Economy')">
+          <div class="pillar-icon-wrap">📑</div>
+          <div class="pillar-content">
+            <h4 class="pillar-title">Claude PPT &amp; Excel Workbooks</h4>
+            <p class="pillar-desc">Executive PowerPoint decks, automated Excel sheets &amp; ASTM inspection reports.</p>
           </div>
-        </button>
-        <button class="feature starter-question-btn" type="button" data-prompt="Translate acoustic sound waves and jazz harmonics into a mathematical Jacquard weave draft matrix" title="Click to ask this question immediately">
-          <span class="feature-icon">🎵</span>
-          <div class="starter-text-wrap">
-            <span class="starter-title">Acoustic Weave Synthesizer</span>
-            <span class="starter-subtitle">Translate music tempo &amp; pitch into electronic loom Jacquard patterns</span>
+          <span class="pillar-action">Try PPT →</span>
+        </div>
+
+        <div class="welcome-pillar-card" onclick="triggerMicVoiceListening()">
+          <div class="pillar-icon-wrap">🎙️</div>
+          <div class="pillar-content">
+            <h4 class="pillar-title">Multilingual Voice AI</h4>
+            <p class="pillar-desc">Listen in any world language with ultra-realistic human neural voice personas.</p>
           </div>
-        </button>
-        <button class="feature starter-question-btn" type="button" data-prompt="Simulate 2 years of atmospheric UV fade, humidity patina, and honeycomb wear on raw indigo denim" title="Click to ask this question immediately">
-          <span class="feature-icon">⏳</span>
-          <div class="starter-text-wrap">
-            <span class="starter-title">Chrono-Dye Aging Time-Travel</span>
-            <span class="starter-subtitle">Atmospheric degradation, whiskers, and bio-textile living response</span>
+          <span class="pillar-action">Speak Now →</span>
+        </div>
+
+        <div class="welcome-pillar-card" onclick="quickFillPrompt('Perform ASTM D5430 4-point fabric defect audit calculation for 120m roll with 15 penalty points')">
+          <div class="pillar-icon-wrap">🧵</div>
+          <div class="pillar-content">
+            <h4 class="pillar-title">Industrial Intelligence &amp; ERP</h4>
+            <p class="pillar-desc">ASTM D5430 audits, loom optimization, batch tracking &amp; cross-session memory.</p>
           </div>
-        </button>
-        <button class="feature starter-question-btn" type="button" data-prompt="Generate step-by-step kinetic folding guidance to create a jacket from a single uncut rectangle with 0% scrap" title="Click to ask this question immediately">
-          <span class="feature-icon">📐</span>
-          <div class="starter-text-wrap">
-            <span class="starter-title">Zero-Waste Kinetic Origami</span>
-            <span class="starter-subtitle">Transform 1 uncut rectangle into 3D garment with 0% cut scrap</span>
-          </div>
-        </button>
-        <button class="feature starter-question-btn" type="button" data-prompt="Run real-time loomside computer vision defect audit on running fabric with ASTM 4-point penalty scoring" title="Click to ask this question immediately">
-          <span class="feature-icon">🔍</span>
-          <div class="starter-text-wrap">
-            <span class="starter-title">Loomside Vision &amp; Quality</span>
-            <span class="starter-subtitle">Warp skip &amp; weft float detection with ASTM 4-point yield scoring</span>
-          </div>
-        </button>
+          <span class="pillar-action">Audit Fabric →</span>
+        </div>
       </div>
-      <div class="welcome-cta">💡 Click any question above to begin immediately — or type your inquiry below</div>
+
+      <!-- Suggested Prompts Section -->
+      <div class="welcome-prompts-section">
+        <div class="prompts-section-header">
+          <span class="prompts-header-icon">⚡</span>
+          <span class="prompts-header-title">Suggested Quick Actions</span>
+          <span class="prompts-header-sub">Tap any query to start instantly</span>
+        </div>
+        <div class="welcome-features welcome-questions" id="welcomeQuestions">
+          <button class="feature starter-question-btn" type="button" data-prompt="Where is my fabric roll order? Track Order #ORD-8492 with container status and port arrival ETA" title="Click to ask this question immediately">
+            <span class="feature-icon">📦</span>
+            <div class="starter-text-wrap">
+              <span class="starter-title">Where is my fabric roll order?</span>
+              <span class="starter-subtitle">Track Order #ORD-8492 with container status and port arrival ETA</span>
+            </div>
+          </button>
+          <button class="feature starter-question-btn" type="button" data-prompt="Experience haptic fabric emulation (Silk Chiffon vs 425 GSM Denim) and simulate real-time drape physics" title="Click to ask this question immediately">
+            <span class="feature-icon">📳</span>
+            <div class="starter-text-wrap">
+              <span class="starter-title">Haptic &amp; Drape Physics</span>
+              <span class="starter-subtitle">Tactile touch emulation &amp; real-time cloth drape simulation</span>
+            </div>
+          </button>
+          <button class="feature starter-question-btn" type="button" data-prompt="Generate a 5-slide Claude-style executive PPT deck with bullet points on sustainable textile dyeing" title="Click to ask this question immediately">
+            <span class="feature-icon">📑</span>
+            <div class="starter-text-wrap">
+              <span class="starter-title">Claude-Style PPT Slide Deck</span>
+              <span class="starter-subtitle">Structured executive presentation slides with key takeaways</span>
+            </div>
+          </button>
+          <button class="feature starter-question-btn" type="button" data-prompt="Run real-time loomside computer vision defect audit on running fabric with ASTM 4-point penalty scoring" title="Click to ask this question immediately">
+            <span class="feature-icon">🔍</span>
+            <div class="starter-text-wrap">
+              <span class="starter-title">Loomside Vision &amp; Quality</span>
+              <span class="starter-subtitle">Warp skip &amp; weft float detection with ASTM 4-point yield scoring</span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Trust Telemetry Footer -->
+      <div class="welcome-trust-bar">
+        <div class="trust-item"><span class="trust-dot"></span> 🧠 Continuous Enterprise Memory</div>
+        <div class="trust-item"><span class="trust-dot"></span> 🌐 Any-Language Listening</div>
+        <div class="trust-item"><span class="trust-dot"></span> 🎙️ Ultra-Real Neural Voice</div>
+        <div class="trust-item"><span class="trust-dot"></span> ⚡ Zero-Code Visual Charts</div>
+      </div>
     </div>
   </div>
 
@@ -444,21 +501,36 @@
   <!-- Input -->
   <div class="input-area">
     <div class="input-row">
-      <button class="mic-btn" id="micBtn" title="Speak">🎤</button>
+      <button class="mic-btn" id="micBtn" title="Speech to Text: Speak in Any Language">🎤</button>
+      <div class="mic-lang-wrap">
+        <button class="mic-lang-pill" id="micLangPill" type="button" title="Listening Language (Tap to change)">
+          <span class="mic-lang-icon">🌐</span>
+          <span id="micLangLabel">Auto</span>
+        </button>
+      </div>
       <button class="mic-btn" id="quickVideoBtn" title="Generate AI Video / Cinematic Motion Clip">🎬</button>
-      <label class="attach-btn" for="fileUpload" title="Attach any file: PowerPoint (.pptx), PDF, Excel, Word, CSV, Images, Media">📎
-        <input type="file" id="fileUpload" accept=".pptx,.ppt,.pdf,.xlsx,.xls,.csv,.docx,.doc,.txt,.json,.jpg,.jpeg,.png,.webp,.mp4,.mp3,*/*" style="display:none"/>
+      <label class="attach-btn" for="fileUpload" title="Attach Photo, Video, PowerPoint (.pptx), PDF, Excel, Word, CSV">📎
+        <input type="file" id="fileUpload" accept=".pptx,.ppt,.pdf,.xlsx,.xls,.csv,.docx,.doc,.txt,.json,.jpg,.jpeg,.png,.webp,.mp4,.mov,.webm,.mp3,*/*" style="display:none"/>
       </label>
       <div class="input-wrapper">
         <textarea id="messageInput" rows="1"
           placeholder="Ask anything… defect, calculation, process question, or execute action"
           autocomplete="off"></textarea>
         <div class="image-preview-row" id="filePreviewRow" style="display:none">
-          <div class="file-preview-chip">
-            <span id="filePreviewIcon">📄</span>
-            <span id="filePreviewName" class="file-preview-name">Document.pdf</span>
-            <img id="imagePreviewThumb" alt="preview" style="display:none"/>
-            <button id="removeFileBtn" title="Remove attached file">✕</button>
+          <div class="file-preview-card" id="filePreviewCard">
+            <div class="preview-media-thumb" id="previewMediaThumb">
+              <img id="imagePreviewThumb" alt="Photo Preview" style="display:none"/>
+              <video id="videoPreviewThumb" style="display:none" muted playsinline></video>
+              <span id="filePreviewIcon" class="file-preview-generic-icon">📄</span>
+            </div>
+            <div class="preview-info-col">
+              <div class="preview-name-row">
+                <span class="preview-badge" id="previewBadge">📎 Attached</span>
+                <span id="filePreviewName" class="file-preview-name">Document.pdf</span>
+              </div>
+              <span class="preview-status" id="previewStatus">Ready to send with your message</span>
+            </div>
+            <button id="removeFileBtn" class="remove-file-btn" type="button" title="Remove attached file">✕</button>
           </div>
         </div>
       </div>
@@ -940,6 +1012,94 @@
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+
+<!-- ── REALISTIC AI VOICE STUDIO MODAL ────────────────────────────────────── -->
+<div id="voiceModal" class="voice-modal" style="display:none">
+  <div class="voice-modal-backdrop" onclick="closeVoiceModal()"></div>
+  <div class="voice-modal-content">
+    <div class="voice-modal-header">
+      <div class="voice-modal-title">
+        <span class="voice-header-icon">🎙️</span>
+        <h3>Realistic AI Voice Studio</h3>
+      </div>
+      <button class="voice-modal-close" onclick="closeVoiceModal()">✕</button>
+    </div>
+    <p class="voice-modal-sub">Choose your preferred human-like neural AI voice persona for reading answers aloud.</p>
+    
+    <div class="voice-cards-grid" id="voiceCardsGrid">
+      <div class="voice-card active" data-voice-id="aura" onclick="selectVoicePersona('aura')">
+        <div class="voice-card-header">
+          <span class="voice-avatar">🌟</span>
+          <div class="voice-info">
+            <div class="voice-name">Aura <span class="voice-tag popular">Recommended</span></div>
+            <div class="voice-desc">Natural Female • Warm, articulate &amp; executive</div>
+          </div>
+        </div>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('aura', event)">▶ Preview</button>
+      </div>
+
+      <div class="voice-card" data-voice-id="orion" onclick="selectVoicePersona('orion')">
+        <div class="voice-card-header">
+          <span class="voice-avatar">🎙️</span>
+          <div class="voice-info">
+            <div class="voice-name">Orion <span class="voice-tag deep">Executive Male</span></div>
+            <div class="voice-desc">Deep, authoritative &amp; confident industrial voice</div>
+          </div>
+        </div>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('orion', event)">▶ Preview</button>
+      </div>
+
+      <div class="voice-card" data-voice-id="nova" onclick="selectVoicePersona('nova')">
+        <div class="voice-card-header">
+          <span class="voice-avatar">💫</span>
+          <div class="voice-info">
+            <div class="voice-name">Nova <span class="voice-tag dynamic">Studio Dynamic</span></div>
+            <div class="voice-desc">Energetic, engaging &amp; clear studio voice</div>
+          </div>
+        </div>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('nova', event)">▶ Preview</button>
+      </div>
+
+      <div class="voice-card" data-voice-id="echo" onclick="selectVoicePersona('echo')">
+        <div class="voice-card-header">
+          <span class="voice-avatar">⚡</span>
+          <div class="voice-info">
+            <div class="voice-name">Echo <span class="voice-tag crisp">Precision Tech</span></div>
+            <div class="voice-desc">Crisp, analytical &amp; technical precision voice</div>
+          </div>
+        </div>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('echo', event)">▶ Preview</button>
+      </div>
+
+      <div class="voice-card" data-voice-id="athena" onclick="selectVoicePersona('athena')">
+        <div class="voice-card-header">
+          <span class="voice-avatar">🌍</span>
+          <div class="voice-info">
+            <div class="voice-name">Athena <span class="voice-tag global">Native Polyglot</span></div>
+            <div class="voice-desc">Auto-adapts to native accent of any world language spoken</div>
+          </div>
+        </div>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('athena', event)">▶ Preview</button>
+      </div>
+    </div>
+
+    <div class="voice-settings-row">
+      <label for="voiceSpeedRange">Speech Speed: <strong id="voiceSpeedVal">1.0x</strong></label>
+      <input type="range" id="voiceSpeedRange" min="0.75" max="1.35" step="0.05" value="1.0" oninput="updateVoiceSpeed(this.value)"/>
+    </div>
+  </div>
+</div>
+
+<!-- ── MEDIA LIGHTBOX VIEWER (Full Screen Photo & Video Inspector) ─────────── -->
+<div id="mediaLightbox" class="media-lightbox" style="display:none" onclick="closeMediaLightbox()">
+  <div class="lightbox-content" onclick="event.stopPropagation()">
+    <button class="lightbox-close-btn" type="button" onclick="closeMediaLightbox()">✕</button>
+    <img id="lightboxImg" src="" alt="Enlarged photo preview" style="display:none"/>
+    <video id="lightboxVideo" src="" controls style="display:none"></video>
+    <div class="lightbox-caption" id="lightboxCaption"></div>
   </div>
 </div>
 
