@@ -73,7 +73,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Syne:wght@700;800;900&family=Orbitron:wght@600;700;900&family=Space+Grotesk:wght@600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/static/css/style.css?v=5.0.0"/>
+  <link rel="stylesheet" href="/static/css/style.css?v=5.3.0"/>
 </head>
 <body>
 
@@ -1023,66 +1023,248 @@
     <div class="voice-modal-header">
       <div class="voice-modal-title">
         <span class="voice-header-icon">🎙️</span>
-        <h3>Realistic AI Voice Studio</h3>
+        <div>
+          <h3>Realistic AI Voice Studio</h3>
+          <span class="voice-header-sub">Universal Multilingual Neural Speech</span>
+        </div>
       </div>
       <button class="voice-modal-close" onclick="closeVoiceModal()">✕</button>
     </div>
-    <p class="voice-modal-sub">Choose your preferred human-like neural AI voice persona for reading answers aloud.</p>
+    
+    <p class="voice-modal-sub">Listen to answers in any world language with authentic male and female AI voice personas.</p>
+
+    <!-- Language & Polyglot Guarantee Banner -->
+    <div class="voice-lang-guarantee">
+      <span class="guarantee-icon">🌍</span>
+      <div class="guarantee-text">
+        <strong>Any-Language Auto-Detection:</strong> Speaks fluently in Hindi, Punjabi, Spanish, French, German, Arabic, Japanese, Mandarin, and 50+ languages with native accents.
+      </div>
+    </div>
+
+    <!-- Gender Selector Tabs -->
+    <div class="voice-gender-tabs">
+      <button class="voice-tab-btn active" data-gender-filter="all" onclick="filterVoiceGender('all')">
+        ✨ All Voices (<span id="voiceCountAll">14</span>)
+      </button>
+      <button class="voice-tab-btn" data-gender-filter="female" onclick="filterVoiceGender('female')">
+        👩 Female Voices (<span id="voiceCountFemale">7</span>)
+      </button>
+      <button class="voice-tab-btn" data-gender-filter="male" onclick="filterVoiceGender('male')">
+        👨 Male Voices (<span id="voiceCountMale">7</span>)
+      </button>
+    </div>
     
     <div class="voice-cards-grid" id="voiceCardsGrid">
-      <div class="voice-card active" data-voice-id="aura" onclick="selectVoicePersona('aura')">
+      <!-- ── FEMALE AI VOICES ── -->
+      <div class="voice-card active" data-voice-id="aura" data-gender="female" onclick="selectVoicePersona('aura')">
         <div class="voice-card-header">
           <span class="voice-avatar">🌟</span>
           <div class="voice-info">
-            <div class="voice-name">Aura <span class="voice-tag popular">Recommended</span></div>
-            <div class="voice-desc">Natural Female • Warm, articulate &amp; executive</div>
+            <div class="voice-name">
+              Aura 
+              <span class="voice-gender-badge female">👩 Female</span>
+              <span class="voice-tag popular">Recommended</span>
+            </div>
+            <div class="voice-desc">Warm, articulate &amp; executive studio tone</div>
           </div>
         </div>
         <button class="voice-preview-btn" type="button" onclick="previewVoice('aura', event)">▶ Preview</button>
       </div>
 
-      <div class="voice-card" data-voice-id="orion" onclick="selectVoicePersona('orion')">
+      <div class="voice-card" data-voice-id="nova" data-gender="female" onclick="selectVoicePersona('nova')">
+        <div class="voice-card-header">
+          <span class="voice-avatar">💫</span>
+          <div class="voice-info">
+            <div class="voice-name">
+              Nova 
+              <span class="voice-gender-badge female">👩 Female</span>
+              <span class="voice-tag dynamic">Dynamic Studio</span>
+            </div>
+            <div class="voice-desc">Energetic, engaging &amp; expressive voice</div>
+          </div>
+        </div>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('nova', event)">▶ Preview</button>
+      </div>
+
+      <div class="voice-card" data-voice-id="serena" data-gender="female" onclick="selectVoicePersona('serena')">
+        <div class="voice-card-header">
+          <span class="voice-avatar">🌸</span>
+          <div class="voice-info">
+            <div class="voice-name">
+              Serena 
+              <span class="voice-gender-badge female">👩 Female</span>
+              <span class="voice-tag calm">Calm &amp; Gentle</span>
+            </div>
+            <div class="voice-desc">Soft, empathetic &amp; natural conversational cadence</div>
+          </div>
+        </div>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('serena', event)">▶ Preview</button>
+      </div>
+
+      <div class="voice-card" data-voice-id="swara" data-gender="female" onclick="selectVoicePersona('swara')">
+        <div class="voice-card-header">
+          <span class="voice-avatar">🇮🇳</span>
+          <div class="voice-info">
+            <div class="voice-name">
+              Swara 
+              <span class="voice-gender-badge female">👩 Female</span>
+              <span class="voice-tag indic">Hindi / Indic</span>
+            </div>
+            <div class="voice-desc">Native Indian cadence for Hindi, Punjabi &amp; Indian English</div>
+          </div>
+        </div>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('swara', event)">▶ Preview</button>
+      </div>
+
+      <div class="voice-card" data-voice-id="elena" data-gender="female" onclick="selectVoicePersona('elena')">
+        <div class="voice-card-header">
+          <span class="voice-avatar">💃</span>
+          <div class="voice-info">
+            <div class="voice-name">
+              Elena 
+              <span class="voice-gender-badge female">👩 Female</span>
+              <span class="voice-tag romance">Spanish / Latin</span>
+            </div>
+            <div class="voice-desc">Warm, melodic cadence for Spanish, Portuguese &amp; Italian</div>
+          </div>
+        </div>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('elena', event)">▶ Preview</button>
+      </div>
+
+      <div class="voice-card" data-voice-id="amelie" data-gender="female" onclick="selectVoicePersona('amelie')">
+        <div class="voice-card-header">
+          <span class="voice-avatar">🗼</span>
+          <div class="voice-info">
+            <div class="voice-name">
+              Amélie 
+              <span class="voice-gender-badge female">👩 Female</span>
+              <span class="voice-tag continental">French / European</span>
+            </div>
+            <div class="voice-desc">Polished European cadence for French, German &amp; Global</div>
+          </div>
+        </div>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('amelie', event)">▶ Preview</button>
+      </div>
+
+      <div class="voice-card" data-voice-id="athena" data-gender="female" onclick="selectVoicePersona('athena')">
+        <div class="voice-card-header">
+          <span class="voice-avatar">🌍</span>
+          <div class="voice-info">
+            <div class="voice-name">
+              Athena 
+              <span class="voice-gender-badge female">👩 Female</span>
+              <span class="voice-tag global">Universal Polyglot</span>
+            </div>
+            <div class="voice-desc">Auto-adapts female voice to any detected world language</div>
+          </div>
+        </div>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('athena', event)">▶ Preview</button>
+      </div>
+
+      <!-- ── MALE AI VOICES ── -->
+      <div class="voice-card" data-voice-id="orion" data-gender="male" onclick="selectVoicePersona('orion')">
         <div class="voice-card-header">
           <span class="voice-avatar">🎙️</span>
           <div class="voice-info">
-            <div class="voice-name">Orion <span class="voice-tag deep">Executive Male</span></div>
+            <div class="voice-name">
+              Orion 
+              <span class="voice-gender-badge male">👨 Male</span>
+              <span class="voice-tag deep">Executive Authority</span>
+            </div>
             <div class="voice-desc">Deep, authoritative &amp; confident industrial voice</div>
           </div>
         </div>
         <button class="voice-preview-btn" type="button" onclick="previewVoice('orion', event)">▶ Preview</button>
       </div>
 
-      <div class="voice-card" data-voice-id="nova" onclick="selectVoicePersona('nova')">
-        <div class="voice-card-header">
-          <span class="voice-avatar">💫</span>
-          <div class="voice-info">
-            <div class="voice-name">Nova <span class="voice-tag dynamic">Studio Dynamic</span></div>
-            <div class="voice-desc">Energetic, engaging &amp; clear studio voice</div>
-          </div>
-        </div>
-        <button class="voice-preview-btn" type="button" onclick="previewVoice('nova', event)">▶ Preview</button>
-      </div>
-
-      <div class="voice-card" data-voice-id="echo" onclick="selectVoicePersona('echo')">
+      <div class="voice-card" data-voice-id="echo" data-gender="male" onclick="selectVoicePersona('echo')">
         <div class="voice-card-header">
           <span class="voice-avatar">⚡</span>
           <div class="voice-info">
-            <div class="voice-name">Echo <span class="voice-tag crisp">Precision Tech</span></div>
+            <div class="voice-name">
+              Echo 
+              <span class="voice-gender-badge male">👨 Male</span>
+              <span class="voice-tag crisp">Precision Tech</span>
+            </div>
             <div class="voice-desc">Crisp, analytical &amp; technical precision voice</div>
           </div>
         </div>
         <button class="voice-preview-btn" type="button" onclick="previewVoice('echo', event)">▶ Preview</button>
       </div>
 
-      <div class="voice-card" data-voice-id="athena" onclick="selectVoicePersona('athena')">
+      <div class="voice-card" data-voice-id="marcus" data-gender="male" onclick="selectVoicePersona('marcus')">
         <div class="voice-card-header">
-          <span class="voice-avatar">🌍</span>
+          <span class="voice-avatar">🏛️</span>
           <div class="voice-info">
-            <div class="voice-name">Athena <span class="voice-tag global">Native Polyglot</span></div>
-            <div class="voice-desc">Auto-adapts to native accent of any world language spoken</div>
+            <div class="voice-name">
+              Marcus 
+              <span class="voice-gender-badge male">👨 Male</span>
+              <span class="voice-tag baritone">Deep Baritone</span>
+            </div>
+            <div class="voice-desc">Rich, cinematic baritone for executive reports &amp; summaries</div>
           </div>
         </div>
-        <button class="voice-preview-btn" type="button" onclick="previewVoice('athena', event)">▶ Preview</button>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('marcus', event)">▶ Preview</button>
+      </div>
+
+      <div class="voice-card" data-voice-id="aarav" data-gender="male" onclick="selectVoicePersona('aarav')">
+        <div class="voice-card-header">
+          <span class="voice-avatar">🇮🇳</span>
+          <div class="voice-info">
+            <div class="voice-name">
+              Aarav 
+              <span class="voice-gender-badge male">👨 Male</span>
+              <span class="voice-tag indic">Hindi / Indic</span>
+            </div>
+            <div class="voice-desc">Native Indian male cadence for Hindi, Punjabi &amp; Indian English</div>
+          </div>
+        </div>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('aarav', event)">▶ Preview</button>
+      </div>
+
+      <div class="voice-card" data-voice-id="mateo" data-gender="male" onclick="selectVoicePersona('mateo')">
+        <div class="voice-card-header">
+          <span class="voice-avatar">🎸</span>
+          <div class="voice-info">
+            <div class="voice-name">
+              Mateo 
+              <span class="voice-gender-badge male">👨 Male</span>
+              <span class="voice-tag romance">Spanish / Latin</span>
+            </div>
+            <div class="voice-desc">Charismatic Latin male cadence for Spanish, Portuguese &amp; Italian</div>
+          </div>
+        </div>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('mateo', event)">▶ Preview</button>
+      </div>
+
+      <div class="voice-card" data-voice-id="henri" data-gender="male" onclick="selectVoicePersona('henri')">
+        <div class="voice-card-header">
+          <span class="voice-avatar">🎩</span>
+          <div class="voice-info">
+            <div class="voice-name">
+              Henri 
+              <span class="voice-gender-badge male">👨 Male</span>
+              <span class="voice-tag continental">French / European</span>
+            </div>
+            <div class="voice-desc">Distinguished European male tone for French, German &amp; Continental</div>
+          </div>
+        </div>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('henri', event)">▶ Preview</button>
+      </div>
+
+      <div class="voice-card" data-voice-id="atlas" data-gender="male" onclick="selectVoicePersona('atlas')">
+        <div class="voice-card-header">
+          <span class="voice-avatar">🌐</span>
+          <div class="voice-info">
+            <div class="voice-name">
+              Atlas 
+              <span class="voice-gender-badge male">👨 Male</span>
+              <span class="voice-tag global">Universal Polyglot</span>
+            </div>
+            <div class="voice-desc">Auto-adapts male voice to any detected world language</div>
+          </div>
+        </div>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('atlas', event)">▶ Preview</button>
       </div>
     </div>
 
@@ -1105,6 +1287,6 @@
 
 <script src="/static/js/chart.min.js"></script>
 <script src="/static/js/marked.min.js"></script>
-<script src="/static/js/app.js?v=5.2.0"></script>
+<script src="/static/js/app.js?v=5.3.0"></script>
 </body>
 </html>

@@ -4199,12 +4199,12 @@ pre:has(code.language-json\:action) {
 .voice-modal-content {
   position: relative;
   width: 100%;
-  max-width: 520px;
+  max-width: 580px;
   background: #0B132B;
   border: 1px solid rgba(139, 92, 246, 0.4);
   border-radius: 20px;
   padding: 24px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(139, 92, 246, 0.2);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(139, 92, 246, 0.25);
   animation: modalScaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -4217,7 +4217,7 @@ pre:has(code.language-json\:action) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .voice-modal-title {
@@ -4228,9 +4228,19 @@ pre:has(code.language-json\:action) {
 
 .voice-modal-title h3 {
   margin: 0;
-  font-size: 18px;
+  font-size: 19px;
   color: #FFFFFF;
   font-family: var(--font-heading);
+}
+
+.voice-header-sub {
+  display: block;
+  font-size: 11px;
+  color: var(--mint-neon, #00F5A0);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-top: 2px;
 }
 
 .voice-modal-close {
@@ -4245,19 +4255,88 @@ pre:has(code.language-json\:action) {
 .voice-modal-close:hover { color: #FFF; background: rgba(255, 255, 255, 0.1); }
 
 .voice-modal-sub {
-  margin: 0 0 18px 0;
+  margin: 0 0 14px 0;
   font-size: 13px;
   color: #94A3B8;
+  line-height: 1.45;
+}
+
+/* ── Voice Language Guarantee Banner ── */
+.voice-lang-guarantee {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(16, 185, 129, 0.1));
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+}
+.voice-lang-guarantee .guarantee-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.voice-lang-guarantee .guarantee-text {
+  font-size: 12px;
+  color: #E2E8F0;
+  line-height: 1.4;
+}
+.voice-lang-guarantee .guarantee-text strong {
+  color: #38BDF8;
+}
+
+/* ── Voice Gender Filter Tabs ── */
+.voice-gender-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  background: rgba(15, 23, 42, 0.7);
+  padding: 4px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.voice-tab-btn {
+  flex: 1;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: #94A3B8;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.voice-tab-btn:hover {
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.06);
+}
+.voice-tab-btn.active {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(59, 130, 246, 0.35));
+  color: #FFFFFF;
+  border: 1px solid rgba(139, 92, 246, 0.5);
+  box-shadow: 0 2px 10px rgba(139, 92, 246, 0.25);
 }
 
 .voice-cards-grid {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-height: 340px;
+  max-height: 380px;
   overflow-y: auto;
-  padding-right: 4px;
+  padding-right: 6px;
   margin-bottom: 18px;
+}
+.voice-cards-grid::-webkit-scrollbar {
+  width: 6px;
+}
+.voice-cards-grid::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.3);
+  border-radius: 999px;
 }
 
 .voice-card {
@@ -4299,7 +4378,26 @@ pre:has(code.language-json\:action) {
   color: #F8FAFC;
   display: flex;
   align-items: center;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.voice-gender-badge {
+  font-size: 10px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.voice-gender-badge.female {
+  background: rgba(236, 72, 153, 0.18);
+  color: #F472B6;
+  border: 1px solid rgba(236, 72, 153, 0.4);
+}
+.voice-gender-badge.male {
+  background: rgba(59, 130, 246, 0.18);
+  color: #60A5FA;
+  border: 1px solid rgba(59, 130, 246, 0.4);
 }
 
 .voice-tag {
@@ -4315,6 +4413,11 @@ pre:has(code.language-json\:action) {
 .voice-tag.dynamic { background: rgba(236, 72, 153, 0.15); color: #F472B6; border: 1px solid rgba(236, 72, 153, 0.3); }
 .voice-tag.crisp { background: rgba(245, 158, 11, 0.15); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.3); }
 .voice-tag.global { background: rgba(168, 85, 247, 0.15); color: #C084FC; border: 1px solid rgba(168, 85, 247, 0.3); }
+.voice-tag.calm { background: rgba(34, 197, 94, 0.15); color: #4ADE80; border: 1px solid rgba(34, 197, 94, 0.3); }
+.voice-tag.indic { background: rgba(249, 115, 22, 0.15); color: #FB923C; border: 1px solid rgba(249, 115, 22, 0.3); }
+.voice-tag.romance { background: rgba(244, 63, 94, 0.15); color: #FB7185; border: 1px solid rgba(244, 63, 94, 0.3); }
+.voice-tag.continental { background: rgba(14, 165, 233, 0.15); color: #38BDF8; border: 1px solid rgba(14, 165, 233, 0.3); }
+.voice-tag.baritone { background: rgba(139, 92, 246, 0.15); color: #A78BFA; border: 1px solid rgba(139, 92, 246, 0.3); }
 
 .voice-desc {
   font-size: 11.5px;

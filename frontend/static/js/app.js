@@ -66,17 +66,86 @@ let currentAttachedLocalUrl = null;
 let currentAttachedFile = null;
 
 const AI_VOICE_PERSONAS = {
+  // ── FEMALE AI VOICES ──
   aura: {
     id: 'aura',
     name: 'Aura',
     gender: 'female',
-    tag: 'Warm & Executive',
+    tag: 'Warm Executive',
     avatar: '🌟',
     rate: 1.02,
-    pitch: 1.05,
-    sample: "Hello! I am Aura, your natural AI voice for TEXO. I deliver warm, articulate, and crystal-clear insights.",
-    voiceKeywords: ['jenny', 'aria', 'samantha', 'natural', 'google us english', 'female', 'zira', 'karen']
+    pitch: 1.06,
+    sample: "Hello! I am Aura, your executive AI voice. I deliver warm, articulate, and crystal-clear insights across any topic.",
+    voiceKeywords: ['jenny', 'aria', 'samantha', 'natural', 'google us english', 'female', 'zira', 'karen', 'victoria']
   },
+  nova: {
+    id: 'nova',
+    name: 'Nova',
+    gender: 'female',
+    tag: 'Dynamic Studio',
+    avatar: '💫',
+    rate: 1.06,
+    pitch: 1.12,
+    sample: "Hi there! I am Nova, vibrant and energetic, built to explain complex concepts with engaging clarity.",
+    voiceKeywords: ['sonia', 'victoria', 'google uk english female', 'natural', 'female', 'ava', 'allison']
+  },
+  serena: {
+    id: 'serena',
+    name: 'Serena',
+    gender: 'female',
+    tag: 'Calm & Gentle',
+    avatar: '🌸',
+    rate: 0.96,
+    pitch: 1.02,
+    sample: "Greetings. I am Serena. My voice is gentle, empathetic, and crafted for calm, focused analytical clarity.",
+    voiceKeywords: ['samantha', 'serena', 'natural', 'female', 'susan', 'clara', 'zira']
+  },
+  swara: {
+    id: 'swara',
+    name: 'Swara',
+    gender: 'female',
+    tag: 'Hindi / Indic',
+    avatar: '🇮🇳',
+    rate: 1.0,
+    pitch: 1.08,
+    sample: "नमस्ते! I am Swara. I provide authentic Indian pronunciation for Hindi, Punjabi, and Indian subcontinent queries.",
+    voiceKeywords: ['swara', 'heera', 'kalpana', 'geeta', 'sunita', 'india', 'hi-in', 'pa-in', 'female', 'natural']
+  },
+  elena: {
+    id: 'elena',
+    name: 'Elena',
+    gender: 'female',
+    tag: 'Spanish / Latin',
+    avatar: '💃',
+    rate: 1.02,
+    pitch: 1.08,
+    sample: "¡Hola! Soy Elena. I bring smooth Latin and Romance cadence for Spanish, Portuguese, and global communications.",
+    voiceKeywords: ['monica', 'paulina', 'elena', 'laura', 'lucia', 'es-es', 'es-mx', 'female', 'natural']
+  },
+  amelie: {
+    id: 'amelie',
+    name: 'Amélie',
+    gender: 'female',
+    tag: 'French / Continental',
+    avatar: '🗼',
+    rate: 1.0,
+    pitch: 1.06,
+    sample: "Bonjour! I am Amélie, calibrated for refined European pronunciation in French, German, and continental languages.",
+    voiceKeywords: ['amelie', 'hortense', 'celine', 'julie', 'katja', 'fr-fr', 'de-de', 'female', 'natural']
+  },
+  athena: {
+    id: 'athena',
+    name: 'Athena',
+    gender: 'female',
+    tag: 'Universal Polyglot',
+    avatar: '🌍',
+    rate: 1.02,
+    pitch: 1.06,
+    sample: "Welcome! I am Athena. I automatically detect and adapt my female voice to any world language spoken.",
+    voiceKeywords: ['female', 'natural', 'google', 'online', 'swara', 'jenny']
+  },
+
+  // ── MALE AI VOICES ──
   orion: {
     id: 'orion',
     name: 'Orion',
@@ -84,20 +153,9 @@ const AI_VOICE_PERSONAS = {
     tag: 'Executive Authority',
     avatar: '🎙️',
     rate: 0.98,
-    pitch: 0.92,
+    pitch: 0.90,
     sample: "Greetings. I am Orion, engineered for deep, authoritative executive communication and industrial analysis.",
     voiceKeywords: ['guy', 'christopher', 'natural', 'google uk english male', 'alex', 'david', 'male', 'george']
-  },
-  nova: {
-    id: 'nova',
-    name: 'Nova',
-    gender: 'female',
-    tag: 'Studio Dynamic',
-    avatar: '💫',
-    rate: 1.06,
-    pitch: 1.10,
-    sample: "Hi there! I am Nova, dynamic and engaging, built to explain complex concepts with energy and flair.",
-    voiceKeywords: ['sonia', 'victoria', 'google uk english female', 'natural', 'female']
   },
   echo: {
     id: 'echo',
@@ -105,21 +163,65 @@ const AI_VOICE_PERSONAS = {
     gender: 'male',
     tag: 'Precision Tech',
     avatar: '⚡',
-    rate: 1.0,
-    pitch: 1.0,
-    sample: "Welcome. Echo online. Calibrated for technical accuracy, operational protocols, and crisp calculation.",
-    voiceKeywords: ['ryan', 'daniel', 'google us english', 'natural', 'male']
+    rate: 1.02,
+    pitch: 0.98,
+    sample: "Echo online. Calibrated for technical accuracy, operational protocols, and crisp calculation.",
+    voiceKeywords: ['ryan', 'daniel', 'google us english', 'natural', 'male', 'tom', 'oliver']
   },
-  athena: {
-    id: 'athena',
-    name: 'Athena',
-    gender: 'neutral',
-    tag: 'Native Polyglot',
-    avatar: '🌍',
+  marcus: {
+    id: 'marcus',
+    name: 'Marcus',
+    gender: 'male',
+    tag: 'Deep Baritone',
+    avatar: '🏛️',
+    rate: 0.94,
+    pitch: 0.85,
+    sample: "Welcome. I am Marcus. A resonant, deep baritone voice suited for comprehensive executive briefings.",
+    voiceKeywords: ['david', 'george', 'mark', 'richard', 'deep', 'male', 'natural', 'bernard']
+  },
+  aarav: {
+    id: 'aarav',
+    name: 'Aarav',
+    gender: 'male',
+    tag: 'Hindi / Indic',
+    avatar: '🇮🇳',
+    rate: 0.98,
+    pitch: 0.94,
+    sample: "नमस्ते! I am Aarav. Designed for natural Hindi, Punjabi, and Indian subcontinent cadence and phrasing.",
+    voiceKeywords: ['madhur', 'aarav', 'hemant', 'neerja', 'india', 'hi-in', 'pa-in', 'male', 'natural']
+  },
+  mateo: {
+    id: 'mateo',
+    name: 'Mateo',
+    gender: 'male',
+    tag: 'Spanish / Latin',
+    avatar: '🎸',
     rate: 1.0,
-    pitch: 1.0,
-    sample: "Namaste! Bonjour! Hola! I am Athena, auto-adapting to the native cadence of any world language you choose.",
-    voiceKeywords: ['natural', 'google', 'swara', 'madhur']
+    pitch: 0.92,
+    sample: "¡Saludos! Soy Mateo. Delivering charismatic Spanish, Portuguese, and global male communications.",
+    voiceKeywords: ['jorge', 'pablo', 'mateo', 'diego', 'es-es', 'es-mx', 'male', 'natural']
+  },
+  henri: {
+    id: 'henri',
+    name: 'Henri',
+    gender: 'male',
+    tag: 'French / Continental',
+    avatar: '🎩',
+    rate: 0.98,
+    pitch: 0.92,
+    sample: "Bonjour. I am Henri, crafted for distinguished European male delivery across French and continental languages.",
+    voiceKeywords: ['henri', 'paul', 'nicolas', 'stefan', 'hans', 'fr-fr', 'de-de', 'male', 'natural']
+  },
+  atlas: {
+    id: 'atlas',
+    name: 'Atlas',
+    gender: 'male',
+    tag: 'Universal Polyglot',
+    avatar: '🌐',
+    rate: 0.98,
+    pitch: 0.92,
+    sample: "Welcome. I am Atlas. I dynamically adapt my male voice to any world language spoken.",
+    voiceKeywords: ['male', 'natural', 'google', 'online', 'guy', 'david']
   }
 };
 
@@ -768,9 +870,62 @@ if (ttsToggle) {
   });
 }
 
-// ── REALISTIC AI VOICE STUDIO & NATURAL AUDIO ENGINE ─────────────────────────
+// ── REALISTIC AI VOICE STUDIO & ANY-LANGUAGE NEURAL SPEECH ENGINE ─────────
 function getActivePersona() {
   return AI_VOICE_PERSONAS[selectedVoiceId] || AI_VOICE_PERSONAS.aura;
+}
+
+// Intelligent automatic language detector for text answers
+function detectTextLanguage(text) {
+  if (!text) return (LANG_BCP47[currentLang] || 'en-US');
+
+  // If user explicitly selected a non-auto language in the header/settings, respect it
+  if (currentLang && currentLang !== 'auto' && LANG_BCP47[currentLang]) {
+    return LANG_BCP47[currentLang];
+  }
+
+  const sample = text.slice(0, 1000);
+
+  // 1. Script-based Unicode checks (100% precision)
+  if (/[\u0A00-\u0A7F]/.test(sample)) return 'pa-IN'; // Gurmukhi / Punjabi
+  if (/[\u0900-\u097F]/.test(sample)) return 'hi-IN'; // Devanagari / Hindi
+  if (/[\u0980-\u09FF]/.test(sample)) return 'bn-IN'; // Bengali
+  if (/[\u0B80-\u0BFF]/.test(sample)) return 'ta-IN'; // Tamil
+  if (/[\u0C00-\u0C7F]/.test(sample)) return 'te-IN'; // Telugu
+  if (/[\u0A80-\u0AFF]/.test(sample)) return 'gu-IN'; // Gujarati
+  if (/[\u0600-\u06FF\u0750-\u077F]/.test(sample)) return 'ar-SA'; // Arabic / Urdu
+  if (/[\u3040-\u309F\u30A0-\u30FF]/.test(sample)) return 'ja-JP'; // Japanese Hiragana/Katakana
+  if (/[\uAC00-\uD7AF\u1100-\u11FF]/.test(sample)) return 'ko-KR'; // Korean Hangul
+  if (/[\u4E00-\u9FFF]/.test(sample)) return 'zh-CN'; // Chinese Hanzi
+  if (/[\u0400-\u04FF]/.test(sample)) return 'ru-RU'; // Cyrillic / Russian
+
+  // 2. Vocabulary & specific accent checks for Latin-script languages
+  // Spanish
+  if (/[¿¡ñáéíóú]/i.test(sample) || /\b(el|la|los|las|un|una|es|son|por|para|con|este|esta|cómo|gracias|buenos|días|del|al)\b/i.test(sample)) {
+    return 'es-ES';
+  }
+  // French
+  if (/[œàâçéèêëîïôûùüÿ]/i.test(sample) || /\b(le|la|les|un|une|des|est|sont|pour|avec|dans|ce|cette|merci|bonjour|vous|nous)\b/i.test(sample)) {
+    return 'fr-FR';
+  }
+  // German
+  if (/[äöüß]/i.test(sample) || /\b(der|die|das|ein|eine|ist|sind|und|oder|für|mit|nicht|danke|bitte)\b/i.test(sample)) {
+    return 'de-DE';
+  }
+  // Italian
+  if (/\b(il|la|lo|gli|le|un|uno|una|sono|con|per|grazie|ciao|buongiorno)\b/i.test(sample)) {
+    return 'it-IT';
+  }
+  // Portuguese
+  if (/[ãõ]/i.test(sample) || /\b(obrigado|obrigada|você|para|com|não|muito|olá)\b/i.test(sample)) {
+    return 'pt-BR';
+  }
+  // Turkish
+  if (/[ğüşöçıİ]/i.test(sample) || /\b(ve|bir|bu|ile|için|teşekkürler|merhaba)\b/i.test(sample)) {
+    return 'tr-TR';
+  }
+
+  return 'en-US';
 }
 
 function findBestNaturalVoice(persona, bcp47Lang) {
@@ -779,31 +934,67 @@ function findBestNaturalVoice(persona, bcp47Lang) {
 
   const targetLang = (bcp47Lang || 'en-US').toLowerCase();
   const langPrefix = targetLang.split('-')[0];
+  const targetGender = persona.gender || 'female';
 
-  // 1. If persona is athena or non-English language requested, prioritize native language voices
-  if (persona.id === 'athena' || !targetLang.startsWith('en')) {
-    const nativeMatch = voices.find(v => v.lang.toLowerCase() === targetLang && (v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Google'))) ||
-                        voices.find(v => v.lang.toLowerCase() === targetLang) ||
-                        voices.find(v => v.lang.toLowerCase().startsWith(langPrefix));
-    if (nativeMatch) return nativeMatch;
+  const isFemaleVoice = (v) => {
+    const n = v.name.toLowerCase();
+    const femaleKeywords = ['female', 'woman', 'zira', 'jenny', 'aria', 'samantha', 'victoria', 'sonia', 'swara', 'heera', 'sunita', 'monica', 'paulina', 'amelie', 'hortense', 'katja', 'hedda', 'yuna', 'kyoko', 'ting-ting', 'elena', 'serena', 'ava', 'allison', 'julie', 'celine', 'susan', 'clara'];
+    return femaleKeywords.some(kw => n.includes(kw));
+  };
+
+  const isMaleVoice = (v) => {
+    const n = v.name.toLowerCase();
+    const maleKeywords = ['male', 'man', 'guy', 'david', 'christopher', 'george', 'mark', 'richard', 'madhur', 'aarav', 'hemant', 'jorge', 'pablo', 'henri', 'paul', 'nicolas', 'stefan', 'hans', 'ryan', 'daniel', 'tom', 'oliver', 'bernard'];
+    return maleKeywords.some(kw => n.includes(kw));
+  };
+
+  // 1. Language candidates: exact lang match (e.g. 'hi-in' or 'es-es') or langPrefix match ('hi' or 'es')
+  let langCandidates = voices.filter(v => v.lang.toLowerCase() === targetLang);
+  if (!langCandidates.length) {
+    langCandidates = voices.filter(v => v.lang.toLowerCase().startsWith(langPrefix));
   }
 
-  // 2. Filter voices by language matching
-  const langVoices = voices.filter(v => v.lang.toLowerCase() === targetLang || v.lang.toLowerCase().startsWith(langPrefix));
-  const candidatePool = langVoices.length ? langVoices : voices;
+  if (langCandidates.length > 0) {
+    // 1a. Match persona voiceKeywords within target language
+    for (const kw of persona.voiceKeywords) {
+      const found = langCandidates.find(v => v.name.toLowerCase().includes(kw.toLowerCase()));
+      if (found) return found;
+    }
 
-  // 3. Search candidatePool for persona keywords (Natural, Online, Jenny, Guy, etc.)
+    // 1b. Match gender within target language
+    if (targetGender === 'female') {
+      const femaleCandidate = langCandidates.find(v => isFemaleVoice(v) && !isMaleVoice(v));
+      if (femaleCandidate) return femaleCandidate;
+    } else if (targetGender === 'male') {
+      const maleCandidate = langCandidates.find(v => isMaleVoice(v) && !isFemaleVoice(v));
+      if (maleCandidate) return maleCandidate;
+    }
+
+    // 1c. Natural / Online / Google fallback in target language
+    const naturalCandidate = langCandidates.find(v => v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Google'));
+    if (naturalCandidate) return naturalCandidate;
+
+    return langCandidates[0];
+  }
+
+  // 2. Global fallback across all voices
   for (const kw of persona.voiceKeywords) {
-    const kwLower = kw.toLowerCase();
-    const found = candidatePool.find(v => v.name.toLowerCase().includes(kwLower));
+    const found = voices.find(v => v.name.toLowerCase().includes(kw.toLowerCase()));
     if (found) return found;
   }
 
-  // 4. Prefer any 'Natural' or 'Online' or 'Google' voice
-  const naturalFallback = candidatePool.find(v => v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Google'));
-  if (naturalFallback) return naturalFallback;
+  if (targetGender === 'female') {
+    const femaleAny = voices.find(v => isFemaleVoice(v) && (v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Google'))) ||
+                      voices.find(v => isFemaleVoice(v));
+    if (femaleAny) return femaleAny;
+  } else if (targetGender === 'male') {
+    const maleAny = voices.find(v => isMaleVoice(v) && (v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Google'))) ||
+                    voices.find(v => isMaleVoice(v));
+    if (maleAny) return maleAny;
+  }
 
-  return candidatePool[0] || voices[0];
+  const fallback = voices.find(v => v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Google'));
+  return fallback || voices[0];
 }
 
 function speakText(text, triggerBtn = null) {
@@ -832,30 +1023,34 @@ function speakText(text, triggerBtn = null) {
       .trim();
 
     if (!clean) return;
-    if (clean.length > 3000) clean = clean.slice(0, 3000) + '...';
+    if (clean.length > 3500) clean = clean.slice(0, 3500) + '...';
 
     window.speechSynthesis.resume();
 
+    // Automatically detect answer language
+    const detectedLang = detectTextLanguage(clean);
+    const persona = getActivePersona();
+
     const utt = new SpeechSynthesisUtterance(clean);
     currentUtterance = utt;
+    utt.lang = detectedLang;
 
-    const bcp47 = LANG_BCP47[currentLang] || 'en-US';
-    utt.lang = bcp47;
-
-    const persona = getActivePersona();
+    // Apply pitch and speed calibrated for natural male or female presence
+    const genderPitchModifier = (persona.gender === 'male') ? 0.92 : 1.08;
     utt.rate = (persona.rate || 1.0) * (selectedVoiceSpeed || 1.0);
-    utt.pitch = persona.pitch || 1.0;
+    utt.pitch = (persona.pitch || genderPitchModifier);
     utt.volume = 1.0;
 
-    const chosenVoice = findBestNaturalVoice(persona, bcp47);
+    const chosenVoice = findBestNaturalVoice(persona, detectedLang);
     if (chosenVoice) utt.voice = chosenVoice;
 
     utt.onstart = () => {
       if (triggerBtn) {
         activeAudioBtn = triggerBtn;
         triggerBtn.classList.add('speaking');
-        triggerBtn.innerHTML = `<span class="btn-icon">⏹️</span> Stop (${persona.name})`;
-        triggerBtn.title = 'Stop reading aloud';
+        const genderIcon = (persona.gender === 'female') ? '👩' : '👨';
+        triggerBtn.innerHTML = `<span class="btn-icon">⏹️</span> Stop (${persona.name} ${genderIcon})`;
+        triggerBtn.title = `Reading aloud with ${persona.name} (${persona.gender}) in ${detectedLang}. Tap to stop.`;
       }
     };
 
@@ -879,6 +1074,7 @@ function speakText(text, triggerBtn = null) {
       currentUtterance = null;
     };
 
+    // Heartbeat to prevent browser 15s TTS cutoff bug
     const heartbeat = setInterval(() => {
       if (!window.speechSynthesis.speaking) {
         clearInterval(heartbeat);
@@ -886,7 +1082,7 @@ function speakText(text, triggerBtn = null) {
         window.speechSynthesis.pause();
         window.speechSynthesis.resume();
       }
-    }, 10000);
+    }, 9000);
 
     speechSynthesis.cancel();
     speechSynthesis.speak(utt);
@@ -917,6 +1113,24 @@ window.selectVoicePersona = function(voiceId) {
   playClick();
 };
 
+window.filterVoiceGender = function(filterGender) {
+  const buttons = document.querySelectorAll('.voice-tab-btn');
+  buttons.forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.genderFilter === filterGender);
+  });
+
+  const cards = document.querySelectorAll('.voice-card');
+  cards.forEach(card => {
+    const cardGender = card.dataset.gender;
+    if (filterGender === 'all' || cardGender === filterGender) {
+      card.style.display = 'flex';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+  playClick();
+};
+
 window.updateVoiceSpeed = function(speedVal) {
   selectedVoiceSpeed = parseFloat(speedVal);
   localStorage.setItem('texo_voice_speed', speedVal);
@@ -933,13 +1147,15 @@ window.previewVoice = function(voiceId, e) {
   window.speechSynthesis.resume();
 
   const utt = new SpeechSynthesisUtterance(persona.sample);
-  const bcp47 = LANG_BCP47[currentLang] || 'en-US';
-  utt.lang = bcp47;
+  const sampleLang = detectTextLanguage(persona.sample);
+  utt.lang = sampleLang;
+
+  const genderPitchModifier = (persona.gender === 'male') ? 0.92 : 1.08;
   utt.rate = (persona.rate || 1.0) * (selectedVoiceSpeed || 1.0);
-  utt.pitch = persona.pitch || 1.0;
+  utt.pitch = (persona.pitch || genderPitchModifier);
   utt.volume = 1.0;
 
-  const chosen = findBestNaturalVoice(persona, bcp47);
+  const chosen = findBestNaturalVoice(persona, sampleLang);
   if (chosen) utt.voice = chosen;
 
   window.speechSynthesis.speak(utt);
@@ -960,7 +1176,8 @@ function updateVoiceHeaderLabel() {
   const label = document.getElementById('currentVoiceLabel');
   const persona = getActivePersona();
   if (label && persona) {
-    label.textContent = `${persona.name} ✨`;
+    const genderIcon = (persona.gender === 'female') ? '👩' : '👨';
+    label.textContent = `${persona.name} ${genderIcon} ✨`;
   }
 }
 
@@ -968,6 +1185,7 @@ const voicePickerBtn = document.getElementById('voicePickerBtn');
 if (voicePickerBtn) {
   voicePickerBtn.addEventListener('click', openVoiceModal);
 }
+updateVoiceHeaderLabel();
 
 // ── ANY-LANGUAGE SPEECH RECOGNITION (LISTENING) ───────────────────────────────
 function initSpeech() {
