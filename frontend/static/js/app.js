@@ -1319,29 +1319,6 @@ if (typeof window !== 'undefined' && window.speechSynthesis) {
   };
 }
 
-function stopAudio() {
-  // 1. Stop HTML5 Neural MP3 audio stream if active
-  if (currentAudioPlayer) {
-    try {
-      currentAudioPlayer.pause();
-      currentAudioPlayer.currentTime = 0;
-      currentAudioPlayer.src = '';
-    } catch (_) {}
-    currentAudioPlayer = null;
-  }
-  if (currentBlobUrl) {
-    try { URL.revokeObjectURL(currentBlobUrl); } catch (_) {}
-    currentBlobUrl = null;
-  }
-  // 2. Stop browser local speech synthesis if active
-  try {
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.resume();
-    }
-  } catch (_) {}
-  if (speechHeartbeatTimer) {
-    clearInterval(speechHeartbeatTimer);
 const CYBER_SPEAKER_SVG = `
 <svg class="speaker-cyber-svg active" viewBox="0 0 24 24" fill="none" stroke="currentColor">
   <path class="speaker-body" d="M11 4.5L6 9H2.5C2.22 9 2 9.22 2 9.5v5c0 .28.22.5.5.5H6l5 4.5V4.5z" fill="currentColor"/>
@@ -1372,17 +1349,22 @@ const CYBER_PREVIEW_PLAY_SVG = `
 `;
 
 function stopAudio() {
-  try {
-    if (currentAudioPlayer) {
+  // 1. Stop HTML5 Neural MP3 audio stream if active
+  if (currentAudioPlayer) {
+    try {
       currentAudioPlayer.pause();
       currentAudioPlayer.currentTime = 0;
-      currentAudioPlayer = null;
-    }
-    if (currentBlobUrl) {
-      try { URL.revokeObjectURL(currentBlobUrl); } catch (_) {}
-      currentBlobUrl = null;
-    }
-    if (window.speechSynthesis) {
+      currentAudioPlayer.src = '';
+    } catch (_) {}
+    currentAudioPlayer = null;
+  }
+  if (currentBlobUrl) {
+    try { URL.revokeObjectURL(currentBlobUrl); } catch (_) {}
+    currentBlobUrl = null;
+  }
+  // 2. Stop browser local speech synthesis if active
+  try {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
       window.speechSynthesis.cancel();
       window.speechSynthesis.resume();
     }
