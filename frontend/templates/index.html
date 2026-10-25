@@ -74,7 +74,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Syne:wght@700;800;900&family=Orbitron:wght@600;700;900&family=Space+Grotesk:wght@600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/static/css/style.css?v=6.2.0"/>
+  <link rel="stylesheet" href="/static/css/style.css?v=6.3.0"/>
 </head>
 <body data-industry="textile">
 
@@ -424,6 +424,9 @@
         </span>
         <span class="voice-label" id="currentVoiceLabel">Voice: Aura ⚡</span>
       </button>
+      <button class="creative-studio-btn glass-feature-btn" id="liveCalcBtn" onclick="openLiveIndustryCalculator()" title="Launch Live Interactive Industry ROI &amp; Engineering Calculator">🧮 Live Calc</button>
+      <button class="creative-studio-btn glass-feature-btn" id="dualBrainToggleBtn" onclick="toggleDualBrainMode()" title="Toggle Dual-Brain Split View (Executive ROI vs. Shop-Floor Engineering)">⚔️ Dual-Brain: OFF</button>
+      <button class="creative-studio-btn glass-feature-btn" id="pinboardToggleBtn" onclick="openPinboardModal()" title="Open Smart Pinboard &amp; Saved Insights Vault">📌 Pinboard <span id="pinCountBadge" class="pin-count-badge">0</span></button>
       <button class="history-toggle-btn" id="historyToggle" title="Chat History">🕐</button>
       <button class="share-btn" id="shareBtn" title="Share TEXO with Others">🔗 Share</button>
       <button class="creative-studio-btn" id="creativeStudioBtn" title="Launch Radical Textile Creative Studio & Haptic Lab">🧵 Studio Lab</button>
@@ -1344,6 +1347,54 @@
   </div>
 </div>
 
+<!-- ── LIVE MULTI-INDUSTRY ROI & ENGINEERING CALCULATOR MODAL ────────────── -->
+<div id="liveCalcModal" class="voice-modal-overlay glass-chameleon-overlay" style="display:none" onclick="if(event.target===this)closeLiveIndustryCalculator()">
+  <div class="voice-modal-card glass-chameleon-modal" style="max-width:780px; width:94%;">
+    <div class="voice-modal-header">
+      <div>
+        <h3 class="voice-modal-title" id="liveCalcTitle">🧮 Live Industry Engineering &amp; ROI Simulator</h3>
+        <p class="voice-modal-sub" id="liveCalcSub">Adjust real-time sliders below to compute instant industrial telemetry, compliance grades &amp; unit economics</p>
+      </div>
+      <button class="voice-modal-close" type="button" onclick="closeLiveIndustryCalculator()">✕</button>
+    </div>
+
+    <!-- Industry Quick Selector Inside Calculator -->
+    <div class="calc-ind-switcher" id="calcIndSwitcher"></div>
+
+    <!-- Dynamic Sliders & Live Readout Grid -->
+    <div class="calc-workspace-grid">
+      <div class="calc-sliders-col" id="calcSlidersContainer"></div>
+      <div class="calc-results-col">
+        <div class="calc-status-banner" id="calcStatusBanner">✅ COMPLIANCE PASSED</div>
+        <div class="calc-kpi-grid" id="calcKpiGrid"></div>
+        <div class="calc-formula-box" id="calcFormulaBox"></div>
+        <button type="button" class="auth-submit-btn calc-send-btn" onclick="sendCalcResultToChat()">
+          <span class="auth-btn-glow"></span>
+          <span>🚀 Analyze These Exact Specs in TEXO Chat</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SMART GLASS PINBOARD & FLASHCARDS VAULT MODAL ─────────────────────── -->
+<div id="pinboardModal" class="voice-modal-overlay glass-chameleon-overlay" style="display:none" onclick="if(event.target===this)closePinboardModal()">
+  <div class="voice-modal-card glass-chameleon-modal" style="max-width:740px; width:94%;">
+    <div class="voice-modal-header">
+      <div>
+        <h3 class="voice-modal-title">📌 Smart Executive Pinboard &amp; Insights Vault</h3>
+        <p class="voice-modal-sub">Saved formulas, SOPs, and key takeaways from your conversations — exportable anytime</p>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button type="button" class="table-export-btn" onclick="exportPinboardMarkdown()">⬇️ Export Markdown</button>
+        <button type="button" class="table-export-btn" onclick="clearPinboardVault()">🗑️ Clear All</button>
+        <button class="voice-modal-close" type="button" onclick="closePinboardModal()">✕</button>
+      </div>
+    </div>
+    <div id="pinboardItemsList" class="pinboard-items-list"></div>
+  </div>
+</div>
+
 <!-- ── MEDIA LIGHTBOX VIEWER (Full Screen Photo & Video Inspector) ─────────── -->
 <div id="mediaLightbox" class="media-lightbox" style="display:none" onclick="closeMediaLightbox()">
   <div class="lightbox-content" onclick="event.stopPropagation()">
@@ -1378,6 +1429,6 @@
 </script>
 <script src="/static/js/chart.min.js"></script>
 <script src="/static/js/marked.min.js"></script>
-<script src="/static/js/app.js?v=6.2.0"></script>
+<script src="/static/js/app.js?v=6.3.0"></script>
 </body>
 </html>

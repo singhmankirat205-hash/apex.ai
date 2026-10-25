@@ -975,7 +975,7 @@ function applyIndustryBackgroundTheme(indKey) {
   activeIndustryBgKey = key;
   const theme = INDUSTRY_BG_THEMES[key];
 
-  // 1. Set data-industry on <body> and #industryBgStage for CSS transitions
+  // 1. Set data-industry on <body> and #industryBgStage for CSS liquid-glass & aurora transitions
   document.body.setAttribute('data-industry', key);
   const bgStage = document.getElementById('industryBgStage');
   if (bgStage) bgStage.setAttribute('data-industry', key);
@@ -1004,6 +1004,14 @@ function applyIndustryBackgroundTheme(indKey) {
   // 5. Recolor live canvas particles smoothly
   if (typeof window.__recolorIndustryParticles === 'function') {
     window.__recolorIndustryParticles(key);
+  }
+
+  // 6. Sync Live Industry Calculator if open
+  if (typeof window.renderLiveCalculatorForIndustry === 'function') {
+    const calcModal = document.getElementById('liveCalcModal');
+    if (calcModal && calcModal.style.display !== 'none') {
+      window.renderLiveCalculatorForIndustry(key);
+    }
   }
 }
 
@@ -1082,69 +1090,192 @@ function initParticles() {
   applyIndustryBackgroundTheme(startKey);
 
   function drawIndustryCanvasSignature(theme) {
-    frameTick += 0.015;
+    frameTick += 0.018;
     ctx.save();
     if (theme.mode === 'textile') {
-      // Undulating holographic warp & weft silk/yarn harmonic threads across screen
-      for (let w = 0; w < 3; w++) {
+      // VIVID 3D WOVEN SILK AURORA RIBBONS + LASER JACQUARD SHUTTLES
+      const silkColors = [
+        { stroke: 'rgba(0, 245, 212, 0.34)', fill: 'rgba(0, 245, 212, 0.06)' },
+        { stroke: 'rgba(244, 63, 94, 0.36)', fill: 'rgba(244, 63, 94, 0.06)' },
+        { stroke: 'rgba(251, 191, 36, 0.30)', fill: 'rgba(251, 191, 36, 0.05)' },
+        { stroke: 'rgba(129, 140, 248, 0.30)', fill: 'rgba(129, 140, 248, 0.05)' }
+      ];
+      for (let w = 0; w < 4; w++) {
         ctx.beginPath();
-        const baseY = H * (0.28 + w * 0.22);
-        for (let x = 0; x <= W; x += 28) {
-          const y = baseY + Math.sin(x * 0.006 + frameTick + w * 1.4) * 26 + Math.cos(x * 0.012 - frameTick) * 10;
+        const baseY = H * (0.20 + w * 0.19);
+        for (let x = 0; x <= W; x += 22) {
+          const y = baseY + Math.sin(x * 0.005 + frameTick * 1.2 + w * 1.3) * 44 + Math.cos(x * 0.011 - frameTick * 0.9) * 18;
           if (x === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         }
-        ctx.strokeStyle = w === 1 ? 'rgba(6, 182, 212, 0.11)' : 'rgba(0, 245, 160, 0.10)';
-        ctx.lineWidth = 1.2;
+        ctx.strokeStyle = silkColors[w].stroke;
+        ctx.lineWidth = 2.4;
         ctx.stroke();
+
+        // Flying Laser Loom Shuttles along each silk wave
+        const shuttleX = ((frameTick * 190 + w * 340) % (W + 160)) - 80;
+        const shuttleY = baseY + Math.sin(shuttleX * 0.005 + frameTick * 1.2 + w * 1.3) * 44 + Math.cos(shuttleX * 0.011 - frameTick * 0.9) * 18;
+        ctx.beginPath();
+        ctx.ellipse(shuttleX, shuttleY, 16, 4.5, 0, 0, Math.PI * 2);
+        ctx.fillStyle = w % 2 === 0 ? '#00F5D4' : '#F43F5E';
+        ctx.shadowBlur = 16;
+        ctx.shadowColor = w % 2 === 0 ? '#00F5D4' : '#F43F5E';
+        ctx.fill();
+        ctx.shadowBlur = 0;
       }
     } else if (theme.mode === 'food') {
-      // Rising golden effervescent fermentation micro-bubbles & thermal rings
-      for (let b = 0; b < 12; b++) {
-        const bx = ((b * 137 + Math.sin(frameTick + b) * 35) % (W || 1200));
-        const by = H - (((frameTick * 42 + b * 85) % (H || 900)));
-        const br = 3.5 + (b % 4) * 2.2;
+      // VIVID GOLDEN EFFERVESCENT CHAMPAGNE BUBBLES + HONEYCOMB RINGS + THERMAL WAVES
+      for (let w = 0; w < 2; w++) {
         ctx.beginPath();
-        ctx.arc(bx, by, br, 0, Math.PI * 2);
-        ctx.strokeStyle = b % 2 === 0 ? 'rgba(250, 204, 21, 0.20)' : 'rgba(249, 115, 22, 0.18)';
-        ctx.lineWidth = 1.1;
+        const baseY = H * (0.35 + w * 0.30);
+        for (let x = 0; x <= W; x += 24) {
+          const y = baseY + Math.sin(x * 0.004 + frameTick + w * 2) * 38;
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = w === 0 ? 'rgba(251, 191, 36, 0.25)' : 'rgba(16, 185, 129, 0.24)';
+        ctx.lineWidth = 2.2;
         ctx.stroke();
       }
+      for (let b = 0; b < 26; b++) {
+        const bx = ((b * 97 + Math.sin(frameTick * 0.9 + b) * 45) % (W || 1200));
+        const by = H - (((frameTick * 52 + b * 68) % ((H || 900) + 60))) + 30;
+        const br = 5 + (b % 5) * 4.2;
+        ctx.beginPath();
+        ctx.arc(bx, by, br, 0, Math.PI * 2);
+        ctx.fillStyle = b % 3 === 0 ? 'rgba(251, 191, 36, 0.14)' : (b % 2 === 0 ? 'rgba(249, 115, 22, 0.14)' : 'rgba(16, 185, 129, 0.14)');
+        ctx.fill();
+        ctx.strokeStyle = b % 3 === 0 ? 'rgba(251, 191, 36, 0.55)' : (b % 2 === 0 ? 'rgba(249, 115, 22, 0.50)' : 'rgba(16, 185, 129, 0.50)');
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+        // Specular bubble highlight
+        ctx.beginPath();
+        ctx.arc(bx - br * 0.3, by - br * 0.3, br * 0.22, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+        ctx.fill();
+      }
     } else if (theme.mode === 'pharma') {
-      // Double-helix sinusoidal bio-wave across center horizon
+      // VIVID FULL-SCREEN 3D ROTATING DOUBLE-HELIX DNA STRAND & BIO-NODES
+      const midY = H * 0.5;
+      const amp = Math.min(95, H * 0.14);
       ctx.beginPath();
-      for (let x = 0; x <= W; x += 24) {
-        const y1 = H * 0.5 + Math.sin(x * 0.008 + frameTick * 1.3) * 45;
+      for (let x = 0; x <= W; x += 18) {
+        const y1 = midY + Math.sin(x * 0.007 + frameTick * 1.5) * amp;
         if (x === 0) ctx.moveTo(x, y1);
         else ctx.lineTo(x, y1);
       }
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.11)';
-      ctx.lineWidth = 1.3;
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.38)';
+      ctx.lineWidth = 2.6;
       ctx.stroke();
-    } else if (theme.mode === 'auto') {
-      // High-speed aerodynamic wind-tunnel slipstream streaks
-      for (let s = 0; s < 5; s++) {
-        const sy = H * (0.2 + s * 0.15);
-        const sx = ((frameTick * 220 + s * 260) % (W + 300)) - 150;
-        const grad = ctx.createLinearGradient(sx - 120, sy, sx + 40, sy);
-        grad.addColorStop(0, 'rgba(239, 68, 68, 0)');
-        grad.addColorStop(1, s % 2 === 0 ? 'rgba(239, 68, 68, 0.22)' : 'rgba(59, 130, 246, 0.22)');
-        ctx.beginPath();
-        ctx.moveTo(sx - 120, sy);
-        ctx.lineTo(sx + 40, sy);
-        ctx.strokeStyle = grad;
-        ctx.lineWidth = 1.8;
-        ctx.stroke();
-      }
-    } else if (theme.mode === 'logistics') {
-      // Rotating radar sweep arc around center
-      const cx = W * 0.5, cy = H * 0.5;
-      const rad = Math.min(W, H) * 0.36;
+
       ctx.beginPath();
-      ctx.arc(cx, cy, rad, frameTick * 0.8, frameTick * 0.8 + 0.65);
-      ctx.strokeStyle = 'rgba(20, 184, 166, 0.16)';
+      for (let x = 0; x <= W; x += 18) {
+        const y2 = midY + Math.sin(x * 0.007 + frameTick * 1.5 + Math.PI) * amp;
+        if (x === 0) ctx.moveTo(x, y2);
+        else ctx.lineTo(x, y2);
+      }
+      ctx.strokeStyle = 'rgba(192, 132, 252, 0.38)';
+      ctx.lineWidth = 2.6;
+      ctx.stroke();
+
+      // Base-pair ladder rungs & glowing nucleotide spheres
+      for (let x = 40; x < W; x += 52) {
+        const y1 = midY + Math.sin(x * 0.007 + frameTick * 1.5) * amp;
+        const y2 = midY + Math.sin(x * 0.007 + frameTick * 1.5 + Math.PI) * amp;
+        ctx.beginPath();
+        ctx.moveTo(x, y1);
+        ctx.lineTo(x, y2);
+        ctx.strokeStyle = 'rgba(45, 212, 191, 0.28)';
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(x, y1, 3.8, 0, Math.PI * 2);
+        ctx.fillStyle = '#38BDF8';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x, y2, 3.8, 0, Math.PI * 2);
+        ctx.fillStyle = '#C084FC';
+        ctx.fill();
+      }
+    } else if (theme.mode === 'auto') {
+      // VIVID CYBER-TACHOMETER ROTOR + HIGH-VELOCITY NITROUS & CRIMSON WIND-TUNNEL STREAKS
+      const cx = W * 0.54, cy = H * 0.5;
+      const rOuter = Math.min(W, H) * 0.28;
+      ctx.beginPath();
+      ctx.arc(cx, cy, rOuter, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(59, 130, 246, 0.20)';
       ctx.lineWidth = 2;
       ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, rOuter * 0.82, -frameTick * 1.4, -frameTick * 1.4 + Math.PI * 0.85);
+      ctx.strokeStyle = 'rgba(239, 68, 68, 0.36)';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+
+      for (let s = 0; s < 9; s++) {
+        const sy = H * (0.12 + s * 0.095);
+        const sx = ((frameTick * 320 + s * 210) % (W + 400)) - 200;
+        const grad = ctx.createLinearGradient(sx - 180, sy, sx + 60, sy);
+        grad.addColorStop(0, 'rgba(239, 68, 68, 0)');
+        grad.addColorStop(1, s % 2 === 0 ? 'rgba(239, 68, 68, 0.48)' : 'rgba(59, 130, 246, 0.48)');
+        ctx.beginPath();
+        ctx.moveTo(sx - 180, sy);
+        ctx.lineTo(sx + 60, sy);
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 2.6;
+        ctx.stroke();
+      }
+    } else if (theme.mode === 'construction') {
+      // VIVID 3D ARCHITECTURAL SKYLINE WIREFRAME + ROTATING LIDAR THEODOLITE SCANNER
+      const cx = W * 0.54, cy = H * 0.5;
+      const rScan = Math.min(W, H) * 0.30;
+      ctx.beginPath();
+      ctx.arc(cx, cy, rScan, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.22)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Rotating LiDAR beam
+      const angle = frameTick * 0.9;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(angle) * rScan, cy + Math.sin(angle) * rScan);
+      ctx.strokeStyle = 'rgba(250, 204, 21, 0.45)';
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+    } else if (theme.mode === 'logistics') {
+      // VIVID ORBITAL RADAR SWEEP + GLOBAL FLIGHT CORRIDOR PARABOLIC ARCS
+      const cx = W * 0.54, cy = H * 0.5;
+      for (let r = 1; r <= 3; r++) {
+        ctx.beginPath();
+        ctx.arc(cx, cy, Math.min(W, H) * (0.12 * r), 0, Math.PI * 2);
+        ctx.strokeStyle = r % 2 === 0 ? 'rgba(16, 185, 129, 0.22)' : 'rgba(0, 240, 255, 0.22)';
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+      }
+      const rad = Math.min(W, H) * 0.36;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, rad, frameTick * 1.1, frameTick * 1.1 + 0.55);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(0, 240, 255, 0.08)';
+      ctx.fill();
+    } else {
+      // UNIVERSAL QUANTUM HARMONIC MATRIX WAVES
+      for (let w = 0; w < 3; w++) {
+        ctx.beginPath();
+        const baseY = H * (0.28 + w * 0.22);
+        for (let x = 0; x <= W; x += 24) {
+          const y = baseY + Math.sin(x * 0.005 + frameTick + w) * 34;
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = w === 0 ? 'rgba(0, 245, 160, 0.24)' : (w === 1 ? 'rgba(6, 182, 212, 0.24)' : 'rgba(168, 85, 247, 0.24)');
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
     }
     ctx.restore();
   }
@@ -4106,14 +4237,27 @@ function appendWelcomeCard(indKey) {
         <span class="pillar-action">Speak Now →</span>
       </div>
 
-      <div class="welcome-pillar-card" onclick="quickFillPrompt('Perform ASTM D5430 4-point fabric defect audit calculation for 120m roll with 15 penalty points')">
-        <div class="pillar-icon-wrap">🧵</div>
+      <div class="welcome-pillar-card" onclick="openLiveIndustryCalculator()">
+        <div class="pillar-icon-wrap">🧮</div>
         <div class="pillar-content">
-          <h4 class="pillar-title">Industrial Intelligence &amp; ERP</h4>
-          <p class="pillar-desc">ASTM D5430 audits, loom optimization, batch tracking &amp; cross-session memory.</p>
+          <h4 class="pillar-title">Live Industry Simulator &amp; ROI Calc</h4>
+          <p class="pillar-desc">Real-time interactive sliders for ASTM D5430, HTST HACCP, USP Dissolution, EV Cpk &amp; ACI 318.</p>
         </div>
-        <span class="pillar-action">Audit Fabric →</span>
+        <span class="pillar-action">Launch Simulator →</span>
       </div>
+    </div>
+
+    <!-- Unique Differentiator Quick Bar -->
+    <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin: 4px auto 18px auto;">
+      <button type="button" class="welcome-ind-pill active" onclick="openLiveIndustryCalculator()">
+        🧮 Open Live ${data.name.split('/')[0].trim()} Calculator
+      </button>
+      <button type="button" class="welcome-ind-pill" onclick="toggleDualBrainMode()">
+        ⚔️ Toggle Executive vs. Shop-Floor Split View
+      </button>
+      <button type="button" class="welcome-ind-pill" onclick="openPinboardModal()">
+        📌 Open Smart Pinboard Vault
+      </button>
     </div>
 
     <!-- Suggested Prompts Section -->
@@ -4434,13 +4578,54 @@ function addMessageActions(col, rawText, bubble) {
     await exportDocumentFromMessage('docx', rawText, bubble, wordBtn);
   });
 
+  // NEW DIFFERENTIATOR 1: Dual-Brain Split View (Executive ROI vs. Shop-Floor SOP)
+  const splitViewBtn = document.createElement('button');
+  splitViewBtn.className = 'msg-action-btn split-view-btn';
+  splitViewBtn.type = 'button';
+  splitViewBtn.title = 'Split answer into Executive ROI Brief vs. Shop-Floor Technical SOP';
+  splitViewBtn.innerHTML = `<span class="btn-icon">⚔️</span> Split Exec/Tech`;
+  splitViewBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    renderDualBrainSplitView(col, rawText, bubble, splitViewBtn);
+  });
+
+  // NEW DIFFERENTIATOR 2: Interactive 3D Flipping Flashcards Deck
+  const flashcardsBtn = document.createElement('button');
+  flashcardsBtn.className = 'msg-action-btn flashcards-btn';
+  flashcardsBtn.type = 'button';
+  flashcardsBtn.title = 'Convert key specs & takeaways into interactive 3D flipping flashcards';
+  flashcardsBtn.innerHTML = `<span class="btn-icon">🃏</span> 3D Flashcards`;
+  flashcardsBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    renderFlashcardsDeck(col, rawText, bubble, flashcardsBtn);
+  });
+
+  // NEW DIFFERENTIATOR 3: Pin to Smart Executive Pinboard Vault
+  const pinBtn = document.createElement('button');
+  pinBtn.className = 'msg-action-btn pin-msg-btn';
+  pinBtn.type = 'button';
+  pinBtn.title = 'Save this insight/formula to your Smart Pinboard Vault';
+  pinBtn.innerHTML = `<span class="btn-icon">📌</span> Pin`;
+  pinBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    pinMessageToBoard(rawText, bubble, pinBtn);
+  });
+
   actions.appendChild(copyBtn);
   actions.appendChild(listenBtn);
+  actions.appendChild(splitViewBtn);
+  actions.appendChild(flashcardsBtn);
+  actions.appendChild(pinBtn);
   actions.appendChild(videoBtn);
   actions.appendChild(pdfBtn);
   actions.appendChild(pptxBtn);
   actions.appendChild(xlsxBtn);
   actions.appendChild(wordBtn);
+
+  // Auto-render Dual-Brain Split View if global toggle is ON
+  if (window.__dualBrainModeActive) {
+    setTimeout(() => renderDualBrainSplitView(col, rawText, bubble, splitViewBtn, true), 120);
+  }
 
   const followUps = renderAutonomousFollowUps(rawText, col);
 
@@ -4453,6 +4638,592 @@ function addMessageActions(col, rawText, bubble) {
     col.appendChild(actions);
   }
 }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// 🚀 UNIQUE DIFFERENTIATOR FEATURES ENGINE
+// 1. Dual-Brain Executive vs. Engineer Split View
+// 2. Interactive 3D Flipping Flashcards Deck
+// 3. Smart Glass Pinboard Vault
+// 4. Live Multi-Industry Engineering & ROI Simulator
+// ══════════════════════════════════════════════════════════════════════════════
+
+window.__dualBrainModeActive = false;
+
+window.toggleDualBrainMode = function() {
+  window.__dualBrainModeActive = !window.__dualBrainModeActive;
+  const btn = document.getElementById('dualBrainToggleBtn');
+  if (btn) {
+    btn.classList.toggle('active', window.__dualBrainModeActive);
+    btn.innerHTML = window.__dualBrainModeActive ? '⚔️ Dual-Brain: ON' : '⚔️ Dual-Brain: OFF';
+  }
+  if (typeof playClick === 'function') playClick();
+  if (typeof showSentinelToast === 'function') {
+    showSentinelToast(
+      window.__dualBrainModeActive
+        ? '⚔️ Dual-Brain Mode ON: Responses now split into Executive ROI vs. Shop-Floor SOP!'
+        : '⚔️ Dual-Brain Mode OFF: Standard unified view restored.',
+      3200
+    );
+  }
+  // Also toggle split view on any existing assistant messages on screen
+  document.querySelectorAll('.message.assistant').forEach(msg => {
+    const col = msg.querySelector('.message-col');
+    const bubble = msg.querySelector('.bubble');
+    const splitBtn = msg.querySelector('.split-view-btn');
+    if (col && bubble) {
+      if (window.__dualBrainModeActive && !bubble.querySelector('.dual-brain-grid')) {
+        renderDualBrainSplitView(col, bubble.innerText, bubble, splitBtn, true);
+      } else if (!window.__dualBrainModeActive) {
+        const existing = bubble.querySelector('.dual-brain-grid');
+        if (existing) existing.remove();
+      }
+    }
+  });
+};
+
+function renderDualBrainSplitView(col, rawText, bubble, btn, forceOpen = false) {
+  if (!bubble) return;
+  const existing = bubble.querySelector('.dual-brain-grid');
+  if (existing && !forceOpen) {
+    existing.remove();
+    if (btn) btn.classList.remove('copied');
+    if (typeof playClick === 'function') playClick();
+    return;
+  }
+  if (existing) return;
+
+  const clean = getCleanTextToCopy(rawText, bubble);
+  const lines = clean.split('\n').map(l => l.replace(/^[\s*\-•\d.]+/, '').trim()).filter(l => l.length > 18);
+
+  const execPoints = [];
+  const techPoints = [];
+
+  lines.forEach((line, i) => {
+    const lower = line.toLowerCase();
+    if (lower.match(/cost|roi|margin|yield|compliance|risk|audit|quality|grade|pass|reject|saving|kpi|target|summary|impact|percent|%/)) {
+      if (execPoints.length < 4) execPoints.push(line.slice(0, 150));
+    } else if (lower.match(/temp|pressure|rpm|speed|formula|step|measure|check|astm|iso|usp|haccp|mm|cm|kg|mpa|psi|hz|volt|setting|adjust|valve/)) {
+      if (techPoints.length < 4) techPoints.push(line.slice(0, 150));
+    } else if (i % 2 === 0 && execPoints.length < 4) {
+      execPoints.push(line.slice(0, 150));
+    } else if (techPoints.length < 4) {
+      techPoints.push(line.slice(0, 150));
+    }
+  });
+
+  if (execPoints.length === 0) {
+    execPoints.push('Prioritize zero-defect first-pass yield and regulatory audit readiness across all production lots.');
+    execPoints.push('Enforce automated KPI telemetry tracking to reduce rework and unit cost variance by 18–25%.');
+  }
+  if (techPoints.length === 0) {
+    techPoints.push('Verify machine calibration tolerances, sensor setpoints, and standard operating limits before lot release.');
+    techPoints.push('Execute root-cause containment and log real-time parameter checks at 15-minute intervals.');
+  }
+
+  const grid = document.createElement('div');
+  grid.className = 'dual-brain-grid';
+  grid.innerHTML = `
+    <div class="dual-brain-pane exec-pane">
+      <div class="dual-pane-header">
+        <span>💼 Executive &amp; Financial ROI Brief</span>
+        <span>BOARD VIEW</span>
+      </div>
+      <ul class="dual-pane-list">
+        ${execPoints.map(p => `<li>${escapeHtml(p)}</li>`).join('')}
+      </ul>
+    </div>
+    <div class="dual-brain-pane tech-pane">
+      <div class="dual-pane-header">
+        <span>⚙️ Shop-Floor &amp; Engineering SOP</span>
+        <span>OPERATOR VIEW</span>
+      </div>
+      <ul class="dual-pane-list">
+        ${techPoints.map(p => `<li>${escapeHtml(p)}</li>`).join('')}
+      </ul>
+    </div>
+  `;
+
+  bubble.appendChild(grid);
+  if (btn) btn.classList.add('copied');
+  if (typeof playClick === 'function') playClick();
+}
+
+function renderFlashcardsDeck(col, rawText, bubble, btn) {
+  if (!bubble) return;
+  const existing = bubble.querySelector('.flashcards-deck-grid');
+  if (existing) {
+    existing.remove();
+    if (btn) btn.classList.remove('copied');
+    if (typeof playClick === 'function') playClick();
+    return;
+  }
+
+  const clean = getCleanTextToCopy(rawText, bubble);
+  const rawLines = clean.split('\n').map(l => l.trim()).filter(Boolean);
+  const cards = [];
+
+  for (let i = 0; i < rawLines.length && cards.length < 4; i++) {
+    const line = rawLines[i].replace(/^[\s#*•\-\d.]+/, '').replace(/\*\*/g, '').trim();
+    if (line.length >= 12 && line.length <= 90) {
+      const nextLine = (rawLines[i + 1] || 'Standard industrial tolerance & quality control checkpoint verified by TEXO AI.')
+        .replace(/^[\s#*•\-\d.]+/, '').replace(/\*\*/g, '').trim();
+      if (nextLine.length > 15) {
+        cards.push({ title: line, detail: nextLine.slice(0, 165) });
+        i++;
+      }
+    }
+  }
+
+  if (cards.length === 0) {
+    cards.push(
+      { title: 'Core Specification & Standard', detail: clean.slice(0, 150) || 'Verified industrial parameter & compliance benchmark.' },
+      { title: 'Critical Control Action', detail: clean.slice(150, 300) || 'Maintain strict process control and real-time sensor verification.' }
+    );
+  }
+
+  const deck = document.createElement('div');
+  deck.className = 'flashcards-deck-grid';
+  deck.innerHTML = cards.map((c, idx) => `
+    <div class="interactive-flashcard" onclick="this.classList.toggle('flipped')" title="Click to flip 3D Flashcard">
+      <div class="flashcard-inner">
+        <div class="flashcard-front">
+          <span class="fc-badge">⚡ KEY INSIGHT CARD #${idx + 1}</span>
+          <div class="fc-title">${escapeHtml(c.title)}</div>
+          <span class="fc-hint">🔄 Tap to flip for technical spec →</span>
+        </div>
+        <div class="flashcard-back">
+          <span class="fc-badge">✅ TECHNICAL SPECIFICATION</span>
+          <div class="fc-answer">${escapeHtml(c.detail)}</div>
+          <span class="fc-hint">🔄 Tap to flip back</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  bubble.appendChild(deck);
+  if (btn) btn.classList.add('copied');
+  if (typeof playClick === 'function') playClick();
+}
+
+const PINBOARD_STORAGE_KEY = 'texo_pinned_insights_v1';
+
+function getPinnedInsights() {
+  try {
+    return JSON.parse(localStorage.getItem(PINBOARD_STORAGE_KEY) || '[]');
+  } catch (_) {
+    return [];
+  }
+}
+
+function savePinnedInsights(items) {
+  try {
+    localStorage.setItem(PINBOARD_STORAGE_KEY, JSON.stringify(items));
+  } catch (_) {}
+  updatePinCountBadge();
+}
+
+function updatePinCountBadge() {
+  const badge = document.getElementById('pinCountBadge');
+  if (badge) {
+    badge.textContent = String(getPinnedInsights().length);
+  }
+}
+
+function pinMessageToBoard(rawText, bubble, btn) {
+  const clean = getCleanTextToCopy(rawText, bubble);
+  if (!clean) return;
+  const items = getPinnedInsights();
+  const indKey = activeIndustryBgKey || 'textile';
+  items.unshift({
+    id: Date.now(),
+    industry: indKey.toUpperCase(),
+    timestamp: new Date().toLocaleString(),
+    text: clean.slice(0, 900)
+  });
+  savePinnedInsights(items.slice(0, 30));
+  if (btn) {
+    btn.innerHTML = `<span class="btn-icon">✅</span> Pinned!`;
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.innerHTML = `<span class="btn-icon">📌</span> Pin`;
+    }, 2000);
+  }
+  if (typeof playDone === 'function') playDone();
+  if (typeof showSentinelToast === 'function') {
+    showSentinelToast('📌 Insight saved to your Smart Pinboard Vault!', 2800);
+  }
+}
+
+window.openPinboardModal = function() {
+  const modal = document.getElementById('pinboardModal');
+  if (!modal) return;
+  renderPinboardItems();
+  modal.style.display = 'flex';
+  if (typeof playClick === 'function') playClick();
+};
+
+window.closePinboardModal = function() {
+  const modal = document.getElementById('pinboardModal');
+  if (modal) modal.style.display = 'none';
+};
+
+function renderPinboardItems() {
+  const container = document.getElementById('pinboardItemsList');
+  if (!container) return;
+  updatePinCountBadge();
+  const items = getPinnedInsights();
+  if (items.length === 0) {
+    container.innerHTML = `
+      <div style="text-align:center; padding:32px 16px; color:#94A3B8;">
+        <div style="font-size:32px; margin-bottom:10px;">📌</div>
+        <strong>Your Smart Pinboard Vault is empty.</strong>
+        <p style="font-size:12.5px; margin-top:6px;">Click the <b>📌 Pin</b> button under any TEXO AI response to save critical formulas, SOPs, and executive tables here.</p>
+      </div>
+    `;
+    return;
+  }
+  container.innerHTML = items.map(item => `
+    <div class="pinboard-card">
+      <div class="pinboard-card-top">
+        <span>🏷️ SECTOR: ${escapeHtml(item.industry)} • ${escapeHtml(item.timestamp)}</span>
+        <button type="button" class="table-export-btn" onclick="removePinboardItem(${item.id})">✕ Remove</button>
+      </div>
+      <div class="pinboard-card-body">${escapeHtml(item.text)}</div>
+    </div>
+  `).join('');
+}
+
+window.removePinboardItem = function(id) {
+  const items = getPinnedInsights().filter(i => i.id !== id);
+  savePinnedInsights(items);
+  renderPinboardItems();
+};
+
+window.clearPinboardVault = function() {
+  savePinnedInsights([]);
+  renderPinboardItems();
+};
+
+window.exportPinboardMarkdown = function() {
+  const items = getPinnedInsights();
+  if (!items.length) return;
+  const md = `# TEXO Smart Executive Pinboard Export\n\n` + items.map((it, idx) =>
+    `## ${idx + 1}. [${it.industry}] — ${it.timestamp}\n\n${it.text}\n\n---\n`
+  ).join('\n');
+  const blob = new Blob([md], { type: 'text/markdown;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `TEXO_Pinboard_Insights_${Date.now()}.md`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+};
+
+// ── LIVE MULTI-INDUSTRY ENGINEERING & ROI SIMULATOR ─────────────────────────
+const LIVE_INDUSTRY_CALCULATORS = {
+  textile: {
+    title: '🧵 Textile ASTM D5430 4-Point Grade & GSM Yarn Simulator',
+    sub: 'Real-time fabric roll penalty grading, areal density (GSM), and roll weight calculator',
+    sliders: [
+      { id: 'rollLen', label: 'Roll Length (Meters)', min: 20, max: 500, step: 5, val: 120, unit: 'm' },
+      { id: 'fabWidth', label: 'Fabric Width (cm)', min: 90, max: 280, step: 2, val: 150, unit: 'cm' },
+      { id: 'defectPts', label: 'Total Penalty Points Counted', min: 0, max: 80, step: 1, val: 18, unit: 'pts' },
+      { id: 'epi', label: 'Warp Ends Per Inch (EPI)', min: 40, max: 180, step: 2, val: 110, unit: 'EPI' },
+      { id: 'ppi', label: 'Weft Picks Per Inch (PPI)', min: 30, max: 150, step: 2, val: 84, unit: 'PPI' }
+    ],
+    compute: (v) => {
+      const sqYards = (v.rollLen * (v.fabWidth / 100)) * 1.19599;
+      const ptsPer100 = (v.defectPts * 100) / Math.max(1, sqYards);
+      const gsm = Math.round(((v.epi / 30) + (v.ppi / 30)) * 23.5);
+      const rollKg = ((v.rollLen * (v.fabWidth / 100) * gsm) / 1000).toFixed(1);
+      const pass = ptsPer100 <= 28;
+      return {
+        status: pass ? `✅ ASTM D5430 GRADE A PASS (${ptsPer100.toFixed(1)} ≤ 28.0 pts/100yd²)` : `⚠️ ASTM D5430 REJECT / SECOND QUALITY (${ptsPer100.toFixed(1)} > 28.0 pts/100yd²)`,
+        statusClass: pass ? '' : 'fail',
+        kpis: [
+          { num: `${ptsPer100.toFixed(1)}`, label: 'Points / 100 Sq.Yd' },
+          { num: `${gsm} GSM`, label: 'Calculated Fabric GSM' },
+          { num: `${rollKg} kg`, label: 'Total Roll Weight' },
+          { num: pass ? '98.4%' : '82.0%', label: 'First-Quality Yield' }
+        ],
+        formula: `ASTM D5430 Formula: (Total Points [${v.defectPts}] × 100) ÷ Roll Area [${sqYards.toFixed(1)} yd²] = ${ptsPer100.toFixed(2)} pts/100 sq.yd.`,
+        prompt: `Analyze our textile roll inspection: Roll Length ${v.rollLen}m, Width ${v.fabWidth}cm, ${v.defectPts} penalty points (${ptsPer100.toFixed(1)} pts/100 sq.yd), construction ${v.epi} EPI × ${v.ppi} PPI (~${gsm} GSM, ${rollKg} kg). Provide corrective loom actions and ASTM D5430 quality report.`
+      };
+    }
+  },
+  food: {
+    title: '🥣 Food & Beverage HTST Pasteurization CCP & Brix Syrup Simulator',
+    sub: 'Thermal lethality (PU), pathogen log-reduction, and batch sugar formulation',
+    sliders: [
+      { id: 'tempC', label: 'Pasteurizer Holding Temp (°C)', min: 65, max: 88, step: 0.5, val: 73.5, unit: '°C' },
+      { id: 'holdSec', label: 'Holding Tube Time (Seconds)', min: 5, max: 60, step: 1, val: 16, unit: 'sec' },
+      { id: 'brix', label: 'Target Beverage Brix (°Bx)', min: 4, max: 22, step: 0.5, val: 11.5, unit: '°Bx' },
+      { id: 'batchL', label: 'Batch Tank Volume (Liters)', min: 200, max: 10000, step: 100, val: 2500, unit: 'L' }
+    ],
+    compute: (v) => {
+      const pass = v.tempC >= 72.0 && v.holdSec >= 15;
+      const logRed = ((v.tempC - 60) * 0.48 * (v.holdSec / 15)).toFixed(1);
+      const sugarKg = Math.round(v.batchL * (v.brix / 100) * 1.045);
+      return {
+        status: pass ? `✅ HACCP CCP-1 VERIFIED (${v.tempC}°C for ${v.holdSec}s ≥ 72°C/15s)` : `🚨 CRITICAL FLOW DIVERSION TRIGGERED (Below 72°C / 15s Pasteurization Limit)`,
+        statusClass: pass ? '' : 'fail',
+        kpis: [
+          { num: `${logRed}-Log`, label: 'Pathogen Kill Rate' },
+          { num: `${sugarKg} kg`, label: 'Sucrose Required' },
+          { num: `${v.brix} °Bx`, label: 'Refractometer Target' },
+          { num: pass ? '21 Days' : 'HOLD', label: 'Cold-Chain Shelf Life' }
+        ],
+        formula: `HTST Thermal Lethality: T=${v.tempC}°C, Hold=${v.holdSec}s → ${logRed}-Log CFU reduction (>5-Log FDA requirement). Sugar Mass = ${v.batchL}L × ${v.brix}% × SG.`,
+        prompt: `Evaluate our Food & Beverage batch: HTST Pasteurizer running at ${v.tempC}°C for ${v.holdSec} seconds (${logRed}-Log reduction), batch size ${v.batchL}L at ${v.brix} °Brix (${sugarKg} kg sugar). Generate a HACCP CCP verification & CIP sanitation plan.`
+      };
+    }
+  },
+  pharma: {
+    title: '💊 Biopharma USP <711> Dissolution & Cleanroom HVAC Cascade Simulator',
+    sub: 'Simulate tablet release kinetics, ISO cleanroom Air Changes Per Hour (ACH), and batch yield',
+    sliders: [
+      { id: 'dissQ', label: 'Mean Dissolution @ 30 min (%)', min: 65, max: 99, step: 1, val: 88, unit: '%' },
+      { id: 'hardness', label: 'Tablet Compression Hardness (kp)', min: 4, max: 20, step: 0.5, val: 10.5, unit: 'kp' },
+      { id: 'roomVol', label: 'Cleanroom Volume (m³)', min: 50, max: 600, step: 10, val: 180, unit: 'm³' },
+      { id: 'hepaFlow', label: 'HEPA Supply Airflow (m³/h)', min: 2000, max: 25000, step: 500, val: 9000, unit: 'm³/h' }
+    ],
+    compute: (v) => {
+      const ach = Math.round(v.hepaFlow / Math.max(1, v.roomVol));
+      const pass = v.dissQ >= 80 && ach >= 40;
+      const isoGrade = ach >= 60 ? 'Grade B / ISO 5' : (ach >= 40 ? 'Grade C / ISO 7' : 'Grade D / ISO 8');
+      return {
+        status: pass ? `✅ USP <711> STAGE S1 & cGMP CLEANROOM COMPLIANT` : `⚠️ OOS / HVAC ALERT: Verify Q+5% (≥80%) & Cleanroom ACH (≥40/hr)`,
+        statusClass: pass ? '' : 'warn',
+        kpis: [
+          { num: `${v.dissQ}%`, label: 'USP <711> Release (Q=75%)' },
+          { num: `${ach} ACH`, label: 'Air Changes / Hour' },
+          { num: isoGrade, label: 'Cleanroom Classification' },
+          { num: `${v.hardness} kp`, label: 'Tablet Crushing Force' }
+        ],
+        formula: `USP <711> Stage S1: Each unit ≥ Q+5% (80%). Cleanroom ACH = Airflow [${v.hepaFlow} m³/h] ÷ Volume [${v.roomVol} m³] = ${ach} ACH.`,
+        prompt: `Analyze our Biopharma batch & cleanroom telemetry: USP <711> dissolution ${v.dissQ}% at 30 min, tablet hardness ${v.hardness} kp, cleanroom volume ${v.roomVol} m³ with ${v.hepaFlow} m³/h HEPA flow (${ach} ACH, ${isoGrade}). Provide cGMP validation recommendations.`
+      };
+    }
+  },
+  auto: {
+    title: '🚗 Automotive IATF 16949 Process Capability (Cp/Cpk) & Torque Simulator',
+    sub: 'Calculate Six Sigma dimensional capability, defect PPM, and fastener clamping force',
+    sliders: [
+      { id: 'tolWidth', label: 'Total Tolerance Width USL-LSL (mm)', min: 0.05, max: 1.0, step: 0.05, val: 0.40, unit: 'mm' },
+      { id: 'sigma', label: 'Process Std Deviation σ (mm)', min: 0.01, max: 0.15, step: 0.005, val: 0.035, unit: 'mm' },
+      { id: 'shift', label: 'Mean Center Shift (mm)', min: 0, max: 0.12, step: 0.01, val: 0.02, unit: 'mm' },
+      { id: 'torque', label: 'Nutrunner Target Torque (Nm)', min: 20, max: 180, step: 5, val: 85, unit: 'Nm' }
+    ],
+    compute: (v) => {
+      const cp = v.tolWidth / (6 * v.sigma);
+      const cpk = ((v.tolWidth / 2) - v.shift) / (3 * v.sigma);
+      const pass = cpk >= 1.67;
+      const ppm = cpk >= 1.67 ? '< 1 PPM' : (cpk >= 1.33 ? '63 PPM' : '2,700+ PPM');
+      const preloadKn = (v.torque / (0.2 * 12)).toFixed(1);
+      return {
+        status: pass ? `✅ IATF 16949 PPAP APPROVED (Cpk ${cpk.toFixed(2)} ≥ 1.67)` : `⚠️ PROCESS CAPABILITY BELOW 1.67 BENCHMARK (Cpk = ${cpk.toFixed(2)})`,
+        statusClass: pass ? '' : 'warn',
+        kpis: [
+          { num: cpk.toFixed(2), label: 'Process Cpk Index' },
+          { num: cp.toFixed(2), label: 'Potential Cp Index' },
+          { num: ppm, label: 'Projected Defect Rate' },
+          { num: `${preloadKn} kN`, label: 'Clamp Preload (M12)' }
+        ],
+        formula: `Cp = (USL - LSL) / 6σ = ${cp.toFixed(2)} | Cpk = (Half-Tol - Shift) / 3σ = ${cpk.toFixed(2)}. Target IATF 16949 Cpk ≥ 1.67.`,
+        prompt: `Review our Automotive machining & assembly telemetry: Tolerance band ±${(v.tolWidth/2).toFixed(2)}mm, σ=${v.sigma}mm, mean shift ${v.shift}mm (Cp=${cp.toFixed(2)}, Cpk=${cpk.toFixed(2)}, ${ppm}), fastener torque ${v.torque} Nm (${preloadKn} kN preload). Provide AIAG-VDA FMEA & SPC control plan.`
+      };
+    }
+  },
+  construction: {
+    title: '🏗️ Civil & Structural ACI 318 Concrete Strength & Mix Volume Simulator',
+    sub: 'Compute 28-day cylinder compressive strength (MPa/PSI), pour volume, and cement bags',
+    sliders: [
+      { id: 'wcRatio', label: 'Water-Cement Ratio (W/C)', min: 0.32, max: 0.68, step: 0.02, val: 0.44, unit: '' },
+      { id: 'areaM2', label: 'Slab Pour Area (m²)', min: 20, max: 1000, step: 10, val: 240, unit: 'm²' },
+      { id: 'thickCm', label: 'Slab Thickness (cm)', min: 10, max: 50, step: 2, val: 20, unit: 'cm' },
+      { id: 'slumpMm', label: 'Target Cone Slump (mm)', min: 50, max: 180, step: 5, val: 105, unit: 'mm' }
+    ],
+    compute: (v) => {
+      const mpa28 = Math.round(96 / Math.pow(7, 1.5 * v.wcRatio));
+      const psi28 = Math.round(mpa28 * 145.038);
+      const volM3 = (v.areaM2 * (v.thickCm / 100)).toFixed(1);
+      const cementBags = Math.round(volM3 * 7.2);
+      const pass = v.wcRatio <= 0.50 && mpa28 >= 30;
+      return {
+        status: pass ? `✅ ACI 318 & ASTM C39 STRUCTURAL GRADE PASS (${mpa28} MPa / ${psi28} PSI)` : `⚠️ HIGH W/C RATIO WARNING: Strength ${mpa28} MPa (Reduce W/C ≤ 0.48)`,
+        statusClass: pass ? '' : 'warn',
+        kpis: [
+          { num: `${mpa28} MPa`, label: '28-Day Strength' },
+          { num: `${psi28} PSI`, label: 'Cylinder Break PSI' },
+          { num: `${volM3} m³`, label: 'Total Concrete Volume' },
+          { num: `${cementBags} Bags`, label: '50kgOPC Cement Bags' }
+        ],
+        formula: `Abrams' W/C Law: W/C=${v.wcRatio} → f'c ≈ ${mpa28} MPa (${psi28} PSI). Volume = ${v.areaM2}m² × ${v.thickCm/100}m = ${volM3} m³.`,
+        prompt: `Analyze our structural concrete pour: Slab ${v.areaM2} m² × ${v.thickCm} cm (${volM3} m³), Water-Cement ratio ${v.wcRatio} (projected 28-day strength ${mpa28} MPa / ${psi28} PSI), slump ${v.slumpMm} mm, requiring ~${cementBags} bags of 50kg cement. Provide ACI 318 curing & slump control guidelines.`
+      };
+    }
+  },
+  logistics: {
+    title: '🚚 Global Logistics OTIF Scorecard & Cold-Chain MKT Simulator',
+    sub: 'Calculate On-Time In-Full SLA performance, container utilization, and Mean Kinetic Temp',
+    sliders: [
+      { id: 'onTime', label: 'On-Time Delivery Rate (%)', min: 80, max: 100, step: 0.5, val: 97.5, unit: '%' },
+      { id: 'inFull', label: 'In-Full Order Fill Rate (%)', min: 80, max: 100, step: 0.5, val: 98.0, unit: '%' },
+      { id: 'reeferC', label: 'Baseline Reefer Temp (°C)', min: 2, max: 12, step: 0.5, val: 4.5, unit: '°C' },
+      { id: 'spikeC', label: 'Peak Excursion Temp (°C)', min: 5, max: 25, step: 1, val: 11, unit: '°C' }
+    ],
+    compute: (v) => {
+      const otif = ((v.onTime / 100) * (v.inFull / 100) * 100).toFixed(1);
+      const mkt = (v.reeferC * 0.78 + v.spikeC * 0.22).toFixed(1);
+      const pass = parseFloat(otif) >= 95.0 && parseFloat(mkt) <= 8.0;
+      return {
+        status: pass ? `✅ SLA & COLD-CHAIN COMPLIANT (OTIF ${otif}% • MKT ${mkt}°C)` : `⚠️ SUPPLY CHAIN SLA / TEMP EXCURSION ALERT (OTIF ${otif}% • MKT ${mkt}°C)`,
+        statusClass: pass ? '' : 'warn',
+        kpis: [
+          { num: `${otif}%`, label: 'Combined OTIF Score' },
+          { num: `${mkt} °C`, label: 'Mean Kinetic Temp' },
+          { num: parseFloat(mkt) <= 8 ? 'PASS' : 'QUARANTINE', label: 'Cold-Chain Disposition' },
+          { num: parseFloat(otif) >= 95 ? '$0' : '$4,250', label: 'Est. SLA Chargeback' }
+        ],
+        formula: `OTIF = On-Time [${v.onTime}%] × In-Full [${v.inFull}%] = ${otif}%. Cold-Chain MKT = ${mkt}°C (Max 8.0°C threshold).`,
+        prompt: `Evaluate our Supply Chain & Cold-Chain telemetry: On-Time ${v.onTime}%, In-Full ${v.inFull}% (Combined OTIF ${otif}%), Reefer baseline ${v.reeferC}°C with peak excursion to ${v.spikeC}°C (MKT = ${mkt}°C). Provide carrier CAPA and cold-chain disposition plan.`
+      };
+    }
+  },
+  general: {
+    title: '⚡ Universal Six Sigma Yield, Scrap Reduction & ROI Calculator',
+    sub: 'Model manufacturing yield recovery, annual scrap savings, and automation payback',
+    sliders: [
+      { id: 'vol', label: 'Monthly Production Volume (Units)', min: 5000, max: 250000, step: 5000, val: 50000, unit: '' },
+      { id: 'scrapPct', label: 'Current Defect / Scrap Rate (%)', min: 0.5, max: 18, step: 0.5, val: 4.5, unit: '%' },
+      { id: 'unitCost', label: 'Unit Manufacturing Cost ($)', min: 2, max: 150, step: 2, val: 24, unit: '$' },
+      { id: 'capex', label: 'Quality Automation Investment ($)', min: 10000, max: 300000, step: 5000, val: 65000, unit: '$' }
+    ],
+    compute: (v) => {
+      const monthlyLoss = v.vol * (v.scrapPct / 100) * v.unitCost;
+      const annualLoss = Math.round(monthlyLoss * 12);
+      const annualSavings = Math.round(annualLoss * 0.65);
+      const paybackMonths = (v.capex / Math.max(1, annualSavings / 12)).toFixed(1);
+      return {
+        status: `✅ SIX SIGMA DMAIC PROJECTED SAVINGS: $${annualSavings.toLocaleString()} / YEAR`,
+        statusClass: '',
+        kpis: [
+          { num: `$${annualSavings.toLocaleString()}`, label: 'Annual Scrap Savings (65%)' },
+          { num: `${paybackMonths} Mo`, label: 'CAPEX Payback Period' },
+          { num: `${(100 - v.scrapPct).toFixed(1)}%`, label: 'Current First-Pass Yield' },
+          { num: `$${annualLoss.toLocaleString()}`, label: 'Current Annual Scrap Loss' }
+        ],
+        formula: `Annual Scrap Loss = ${v.vol.toLocaleString()} units/mo × ${v.scrapPct}% × $${v.unitCost} × 12 = $${annualLoss.toLocaleString()}/yr. Payback = ${paybackMonths} months.`,
+        prompt: `Perform a Six Sigma DMAIC & financial ROI analysis: Monthly volume ${v.vol.toLocaleString()} units, current scrap rate ${v.scrapPct}%, unit cost $${v.unitCost} (annual scrap loss $${annualLoss.toLocaleString()}), and proposed $${v.capex.toLocaleString()} automation investment (${paybackMonths} months payback).`
+      };
+    }
+  }
+};
+
+let currentCalcPrompt = '';
+
+window.openLiveIndustryCalculator = function(indKey) {
+  const modal = document.getElementById('liveCalcModal');
+  if (!modal) return;
+  const key = indKey || activeIndustryBgKey || (typeof industrySelect !== 'undefined' && industrySelect ? industrySelect.value : 'textile');
+  window.renderLiveCalculatorForIndustry(key);
+  modal.style.display = 'flex';
+  if (typeof playClick === 'function') playClick();
+};
+
+window.closeLiveIndustryCalculator = function() {
+  const modal = document.getElementById('liveCalcModal');
+  if (modal) modal.style.display = 'none';
+};
+
+window.renderLiveCalculatorForIndustry = function(indKey) {
+  const key = LIVE_INDUSTRY_CALCULATORS[indKey] ? indKey : 'general';
+  const cfg = LIVE_INDUSTRY_CALCULATORS[key];
+
+  const titleEl = document.getElementById('liveCalcTitle');
+  const subEl = document.getElementById('liveCalcSub');
+  const switcherEl = document.getElementById('calcIndSwitcher');
+  const slidersEl = document.getElementById('calcSlidersContainer');
+
+  if (titleEl) titleEl.textContent = cfg.title;
+  if (subEl) subEl.textContent = cfg.sub;
+
+  if (switcherEl) {
+    const pills = [
+      { id: 'textile', label: '🧵 Textile' },
+      { id: 'food', label: '🥣 Food & Bev' },
+      { id: 'pharma', label: '💊 Pharma' },
+      { id: 'auto', label: '🚗 Automotive' },
+      { id: 'construction', label: '🏗️ Civil & BIM' },
+      { id: 'logistics', label: '🚚 Logistics' },
+      { id: 'general', label: '⚡ Universal ROI' }
+    ];
+    switcherEl.innerHTML = pills.map(p => `
+      <button type="button" class="welcome-ind-pill ${p.id === key ? 'active' : ''}" onclick="switchIndustryEnvironment('${p.id}'); renderLiveCalculatorForIndustry('${p.id}');">
+        ${p.label}
+      </button>
+    `).join('');
+  }
+
+  if (slidersEl) {
+    slidersEl.innerHTML = cfg.sliders.map(s => `
+      <div class="calc-slider-group">
+        <div class="calc-slider-top">
+          <span>${s.label}</span>
+          <span class="calc-slider-val" id="calcVal_${s.id}">${s.val}${s.unit ? ' ' + s.unit : ''}</span>
+        </div>
+        <input type="range" class="calc-range-input" id="calcInput_${s.id}" min="${s.min}" max="${s.max}" step="${s.step}" value="${s.val}"/>
+      </div>
+    `).join('');
+
+    const updateOutput = () => {
+      const vals = {};
+      cfg.sliders.forEach(s => {
+        const inp = document.getElementById(`calcInput_${s.id}`);
+        const valSpan = document.getElementById(`calcVal_${s.id}`);
+        const num = inp ? parseFloat(inp.value) : s.val;
+        vals[s.id] = num;
+        if (valSpan) valSpan.textContent = `${num}${s.unit ? ' ' + s.unit : ''}`;
+      });
+      const res = cfg.compute(vals);
+      const statusBanner = document.getElementById('calcStatusBanner');
+      const kpiGrid = document.getElementById('calcKpiGrid');
+      const formulaBox = document.getElementById('calcFormulaBox');
+      if (statusBanner) {
+        statusBanner.textContent = res.status;
+        statusBanner.className = `calc-status-banner ${res.statusClass || ''}`;
+      }
+      if (kpiGrid) {
+        kpiGrid.innerHTML = res.kpis.map(k => `
+          <div class="calc-kpi-box">
+            <div class="calc-kpi-num">${k.num}</div>
+            <div class="calc-kpi-label">${k.label}</div>
+          </div>
+        `).join('');
+      }
+      if (formulaBox) formulaBox.textContent = res.formula;
+      currentCalcPrompt = res.prompt;
+    };
+
+    cfg.sliders.forEach(s => {
+      const inp = document.getElementById(`calcInput_${s.id}`);
+      if (inp) inp.addEventListener('input', updateOutput);
+    });
+    updateOutput();
+  }
+};
+
+window.sendCalcResultToChat = function() {
+  closeLiveIndustryCalculator();
+  if (currentCalcPrompt && typeof quickFillPrompt === 'function') {
+    quickFillPrompt(currentCalcPrompt);
+  }
+};
+
+// Initialize Pinboard counter on startup
+setTimeout(updatePinCountBadge, 500);
 
 function renderAutonomousFollowUps(rawText, col) {
   if (!rawText || !col) return null;
