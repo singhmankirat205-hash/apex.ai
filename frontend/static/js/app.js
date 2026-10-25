@@ -705,207 +705,102 @@ setTimeout(() => {
 }, 600);
 
 // ══════════════════════════════════════════════════════════════════════════════
-// CINEMATIC GOTHIC HORROR BACKGROUND ENGINE (BLOOD MOON, GRAVEYARD & BATS)
+// GOLDEN HORIZON & LIVE ASCENDING VERTICAL LIGHT-LINES ENGINE
+// Animates glowing vertical light beams, star-tips, beaded light trails & golden bokeh
+// moving continuously upwards from the golden horizon!
 // ══════════════════════════════════════════════════════════════════════════════
-
-const HORROR_LEFT_TREE_AND_GRAVEYARD_SVG = `
-  <svg class="holo-svg-left" viewBox="0 0 360 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <!-- Top Corner Spider Cobweb -->
-    <path d="M0 0 L130 0 M0 0 L115 55 M0 0 L85 95 M0 0 L42 120 M0 0 L0 135" stroke="rgba(220,38,38,0.28)" stroke-width="1.2"/>
-    <path d="M40 0 Q36 22 32 32 Q20 38 0 42 M78 0 Q68 38 56 58 Q34 72 0 78 M112 0 Q96 52 76 84 Q45 104 0 112" stroke="rgba(220,38,38,0.25)" stroke-width="1.1" fill="none"/>
-    <!-- Dangling Widow Spider on Thread -->
-    <line x1="56" y1="58" x2="56" y2="128" stroke="rgba(239,68,68,0.45)" stroke-width="1"/>
-    <circle cx="56" cy="132" r="4.5" fill="#090102" stroke="#EF4444" stroke-width="1.2"/>
-    <circle cx="56" cy="132" r="1.5" fill="#EF4444" class="holo-float-pulse"/>
-
-    <!-- Gnarled Dead Haunted Oak Tree Silhouette -->
-    <path d="M18 395 Q55 320 52 230 Q48 165 12 115 L24 108 Q62 150 68 205 Q82 135 138 78 L145 88 Q98 142 86 202 Q125 168 182 152 L185 162 Q128 182 88 228 Q84 315 118 395 Z" fill="#060102" stroke="#991B1B" stroke-width="2"/>
-    <!-- Hanging Noose / Cursed Lantern from Branch -->
-    <line x1="142" y1="168" x2="142" y2="222" stroke="#DC2626" stroke-width="1.8"/>
-    <polygon points="132,222 152,222 148,248 136,248" fill="rgba(239,68,68,0.28)" stroke="#EF4444" stroke-width="1.6" class="holo-float-pulse"/>
-    <circle cx="142" cy="235" r="4" fill="#FCA5A5" class="holo-float-pulse"/>
-
-    <!-- Perching Raven with Glowing Red Eye on Branch -->
-    <path d="M112 104 Q124 92 136 98 L146 95 L138 103 Q134 114 118 118 L104 126 L112 104 Z" fill="#050001" stroke="#EF4444" stroke-width="1.2"/>
-    <circle cx="133" cy="98" r="2" fill="#EF4444" class="holo-float-pulse"/>
-
-    <!-- Tilted Gothic Graveyard Tombstones & Crosses -->
-    <g transform="rotate(-7 195 345)">
-      <path d="M168 390 V315 C168 292, 222 292, 222 315 V390 Z" fill="#080103" stroke="#991B1B" stroke-width="2"/>
-      <line x1="195" y1="308" x2="195" y2="342" stroke="#EF4444" stroke-width="2.2"/>
-      <line x1="181" y1="320" x2="209" y2="320" stroke="#EF4444" stroke-width="2.2"/>
-    </g>
-    <!-- Celtic Cross Monument -->
-    <g transform="rotate(6 278 335)">
-      <rect x="272" y="275" width="12" height="115" fill="#070102" stroke="#991B1B" stroke-width="1.8"/>
-      <rect x="248" y="298" width="60" height="12" fill="#070102" stroke="#991B1B" stroke-width="1.8"/>
-      <circle cx="278" cy="304" r="18" fill="none" stroke="#DC2626" stroke-width="1.8"/>
-    </g>
-
-    <!-- Wrought-Iron Spiked Graveyard Fence -->
-    <line x1="8" y1="362" x2="345" y2="362" stroke="#7F1D1D" stroke-width="2.5"/>
-    <line x1="8" y1="384" x2="345" y2="384" stroke="#7F1D1D" stroke-width="2.5"/>
-    <g stroke="#991B1B" stroke-width="2.2">
-      <line x1="35" y1="338" x2="35" y2="395"/><line x1="75" y1="338" x2="75" y2="395"/>
-      <line x1="115" y1="338" x2="115" y2="395"/><line x1="155" y1="338" x2="155" y2="395"/>
-      <line x1="235" y1="338" x2="235" y2="395"/><line x1="315" y1="338" x2="315" y2="395"/>
-    </g>
-    <!-- Glowing Red Demon Eyes Peering from the Dark Bushes -->
-    <ellipse cx="252" cy="374" rx="4.5" ry="2" fill="#EF4444" class="holo-float-pulse"/>
-    <ellipse cx="266" cy="374" rx="4.5" ry="2" fill="#EF4444" class="holo-float-pulse"/>
-  </svg>`;
-
-const HORROR_RIGHT_MANSION_AND_BLOODMOON_SVG = `
-  <svg class="holo-svg-right" viewBox="0 0 360 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <radialGradient id="bloodMoonGrad" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#FCA5A5" stop-opacity="0.95"/>
-        <stop offset="38%" stop-color="#EF4444" stop-opacity="0.88"/>
-        <stop offset="75%" stop-color="#991B1B" stop-opacity="0.65"/>
-        <stop offset="100%" stop-color="#450A0A" stop-opacity="0"/>
-      </radialGradient>
-    </defs>
-
-    <!-- Giant Ominous Blood Moon in Upper Sky -->
-    <circle cx="235" cy="108" r="78" fill="url(#bloodMoonGrad)" class="holo-float-pulse"/>
-    <circle cx="235" cy="108" r="54" fill="rgba(185, 28, 28, 0.55)" stroke="#EF4444" stroke-width="1.8"/>
-    <!-- Blood Moon Craters & Creeping Cloud Shadow -->
-    <circle cx="216" cy="92" r="11" fill="rgba(69, 10, 10, 0.45)"/>
-    <circle cx="254" cy="122" r="15" fill="rgba(69, 10, 10, 0.45)"/>
-    <path d="M160 118 Q235 104 312 122" stroke="rgba(8, 1, 3, 0.85)" stroke-width="10" stroke-linecap="round"/>
-
-    <!-- Hanging Rusted Torture Chains from Top Right -->
-    <line x1="318" y1="0" x2="318" y2="145" stroke="#991B1B" stroke-width="3" stroke-dasharray="7 4"/>
-    <line x1="342" y1="0" x2="342" y2="110" stroke="#7F1D1D" stroke-width="2.5" stroke-dasharray="6 4"/>
-    <path d="M318 145 C318 162, 336 162, 330 146" stroke="#EF4444" stroke-width="2.5" fill="none"/>
-
-    <!-- Haunted Gothic Asylum / Dracula Castle Silhouette -->
-    <!-- Central Spire Tower -->
-    <polygon points="175,112 142,210 208,210" fill="#050001" stroke="#991B1B" stroke-width="2"/>
-    <line x1="175" y1="78" x2="175" y2="112" stroke="#EF4444" stroke-width="2"/>
-    <line x1="164" y1="90" x2="186" y2="90" stroke="#EF4444" stroke-width="2"/>
-    <!-- Left & Right Battered Turrets -->
-    <polygon points="98,162 72,235 124,235" fill="#050001" stroke="#991B1B" stroke-width="1.8"/>
-    <polygon points="256,155 230,235 282,235" fill="#050001" stroke="#991B1B" stroke-width="1.8"/>
-    <!-- Main Castle Fortress Body -->
-    <path d="M58 395 L68 235 H286 L298 395 Z" fill="#050002" stroke="#991B1B" stroke-width="2.2"/>
-
-    <!-- Eerie Glowing Crimson & Possessed Windows Inside Haunted Mansion -->
-    <path d="M163 245 C163 228, 187 228, 187 245 V282 H163 Z" fill="#EF4444" class="holo-float-pulse"/>
-    <line x1="175" y1="230" x2="175" y2="282" stroke="#050001" stroke-width="2"/>
-    <line x1="163" y1="256" x2="187" y2="256" stroke="#050001" stroke-width="2"/>
-
-    <path d="M90 268 C90 256, 108 256, 108 268 V296 H90 Z" fill="#DC2626" class="holo-float-pulse"/>
-    <path d="M246 268 C246 256, 264 256, 264 268 V296 H246 Z" fill="#DC2626" class="holo-float-pulse"/>
-    <!-- Grand Haunted Archway Entrance -->
-    <path d="M152 395 V338 C152 315, 198 315, 198 338 V395 Z" fill="rgba(220, 38, 38, 0.25)" stroke="#EF4444" stroke-width="2"/>
-  </svg>`;
 
 const INDUSTRY_BG_THEMES = {
   textile: {
-    sector: 'CURSED LOOM // HAUNTED APPAREL MILL',
-    specs: 'BLOOD-SPUN SILK · PHANTOM WEAVE · MIDNIGHT SHIFT',
-    badgeText: '🩸 TEXO TEXTILE INTELLIGENCE • CURSED CRIMSON MILL',
+    badgeText: '✨ TEXO TEXTILE & APPAREL INTELLIGENCE • GOLDEN LOOM CORE',
     colors: [
-      { fill: 'rgba(239, 68, 68,', glow: '#EF4444' },   // Arterial Blood Red
-      { fill: 'rgba(153, 27, 27,', glow: '#991B1B' },   // Dried Crimson
-      { fill: 'rgba(252, 165, 165,', glow: '#FCA5A5' }  // Ghostly Bone Ash
+      { fill: 'rgba(251, 191, 36,', glow: '#FBBF24' },
+      { fill: 'rgba(254, 240, 138,', glow: '#FEF08A' },
+      { fill: 'rgba(245, 158, 11,', glow: '#F59E0B' }
     ],
-    lineColor: '220, 38, 38',
-    mouseLineColor: '239, 68, 68',
+    lineColor: '251, 191, 36',
+    mouseLineColor: '254, 240, 138',
     mode: 'textile',
-    holoLeft: HORROR_LEFT_TREE_AND_GRAVEYARD_SVG,
-    holoRight: HORROR_RIGHT_MANSION_AND_BLOODMOON_SVG
+    holoLeft: '',
+    holoRight: ''
   },
   food: {
-    sector: 'FORBIDDEN SLAUGHTERHOUSE // WITCH CAULDRON LAB',
-    specs: 'BLOOD HARVEST · NIGHTSHADE ELIXIR · CRITICAL HAZARD',
-    badgeText: '🩸 TEXO FOOD & BEVERAGE • HAUNTEDHARVEST CORE',
+    badgeText: '✨ TEXO FOOD & BEVERAGE INTELLIGENCE • CULINARY & HACCP CORE',
     colors: [
-      { fill: 'rgba(220, 38, 38,', glow: '#DC2626' },   // Blood Crimson
-      { fill: 'rgba(22, 163, 74,', glow: '#16A34A' },   // Poison Witch-Brew Green
-      { fill: 'rgba(234, 88, 12,', glow: '#EA580C' }    // Hellfire Ember Orange
+      { fill: 'rgba(251, 191, 36,', glow: '#FBBF24' },
+      { fill: 'rgba(254, 240, 138,', glow: '#FEF08A' },
+      { fill: 'rgba(245, 158, 11,', glow: '#F59E0B' }
     ],
-    lineColor: '220, 38, 38',
-    mouseLineColor: '22, 163, 74',
+    lineColor: '251, 191, 36',
+    mouseLineColor: '254, 240, 138',
     mode: 'food',
-    holoLeft: HORROR_LEFT_TREE_AND_GRAVEYARD_SVG,
-    holoRight: HORROR_RIGHT_MANSION_AND_BLOODMOON_SVG
+    holoLeft: '',
+    holoRight: ''
   },
   pharma: {
-    sector: 'WARD 13 // ABANDONED BIO-MORGUE & ASYLUM LAB',
-    specs: 'QUARANTINE BREACH · NECROTIC SERUM · CONTAGION LEVEL 5',
-    badgeText: '🩸 TEXO BIOPHARMA • HAUNTED ASYLUM BIO-WARD',
+    badgeText: '✨ TEXO BIOPHARMA & CLINICAL INTELLIGENCE • cGMP STERILE CORE',
     colors: [
-      { fill: 'rgba(239, 68, 68,', glow: '#EF4444' },   // Blood Specimen Red
-      { fill: 'rgba(16, 185, 129,', glow: '#10B981' },  // Reanimator Toxic Green
-      { fill: 'rgba(147, 51, 234,', glow: '#9333EA' }   // Necrotic Violet
+      { fill: 'rgba(251, 191, 36,', glow: '#FBBF24' },
+      { fill: 'rgba(254, 240, 138,', glow: '#FEF08A' },
+      { fill: 'rgba(245, 158, 11,', glow: '#F59E0B' }
     ],
-    lineColor: '239, 68, 68',
-    mouseLineColor: '16, 185, 129',
+    lineColor: '251, 191, 36',
+    mouseLineColor: '254, 240, 138',
     mode: 'pharma',
-    holoLeft: HORROR_LEFT_TREE_AND_GRAVEYARD_SVG,
-    holoRight: HORROR_RIGHT_MANSION_AND_BLOODMOON_SVG
+    holoLeft: '',
+    holoRight: ''
   },
   auto: {
-    sector: 'HIGHWAY 666 // HELLFIRE FOUNDRY & PHANTOM ENGINE',
-    specs: 'BRIMSTONE COMBUSTION · BLOOD CHASSIS · REDLINE CURSE',
-    badgeText: '🩸 TEXO AUTOMOTIVE • HELLFIRE FOUNDRY CORE',
+    badgeText: '✨ TEXO AUTOMOTIVE & EV INTELLIGENCE • POWERTRAIN CORE',
     colors: [
-      { fill: 'rgba(239, 68, 68,', glow: '#EF4444' },   // Hellfire Red
-      { fill: 'rgba(249, 115, 22,', glow: '#F97316' },  // Molten Brimstone
-      { fill: 'rgba(153, 27, 27,', glow: '#991B1B' }    // Charred Blood
+      { fill: 'rgba(251, 191, 36,', glow: '#FBBF24' },
+      { fill: 'rgba(254, 240, 138,', glow: '#FEF08A' },
+      { fill: 'rgba(245, 158, 11,', glow: '#F59E0B' }
     ],
-    lineColor: '239, 68, 68',
-    mouseLineColor: '249, 115, 22',
+    lineColor: '251, 191, 36',
+    mouseLineColor: '254, 240, 138',
     mode: 'auto',
-    holoLeft: HORROR_LEFT_TREE_AND_GRAVEYARD_SVG,
-    holoRight: HORROR_RIGHT_MANSION_AND_BLOODMOON_SVG
+    holoLeft: '',
+    holoRight: ''
   },
   construction: {
-    sector: 'CATACOMB RUINS // ANCIENT CRYPT & GOTHIC CITADEL',
-    specs: 'OSSUARY VAULT · CURSED MONOLITH · SEISMIC DREAD',
-    badgeText: '🩸 TEXO CIVIL & STRUCTURAL • CATACOMB CITADEL CORE',
+    badgeText: '✨ TEXO CIVIL & STRUCTURAL INTELLIGENCE • BIM SKYLINE CORE',
     colors: [
-      { fill: 'rgba(220, 38, 38,', glow: '#DC2626' },   // Blood Rust
-      { fill: 'rgba(217, 119, 6,', glow: '#D97706' },   // Torchlight Amber
-      { fill: 'rgba(148, 163, 184,', glow: '#94A3B8' }  // Tombstone Ash
+      { fill: 'rgba(251, 191, 36,', glow: '#FBBF24' },
+      { fill: 'rgba(254, 240, 138,', glow: '#FEF08A' },
+      { fill: 'rgba(245, 158, 11,', glow: '#F59E0B' }
     ],
-    lineColor: '220, 38, 38',
-    mouseLineColor: '217, 119, 6',
+    lineColor: '251, 191, 36',
+    mouseLineColor: '254, 240, 138',
     mode: 'construction',
-    holoLeft: HORROR_LEFT_TREE_AND_GRAVEYARD_SVG,
-    holoRight: HORROR_RIGHT_MANSION_AND_BLOODMOON_SVG
+    holoLeft: '',
+    holoRight: ''
   },
   logistics: {
-    sector: 'FLYING DUTCHMAN // GHOST SHIP & PHANTOM CONVOY',
-    specs: 'BERMUDA FOG CORRIDOR · DEAD-WEIGHT CARGO · MIDNIGHT TRANSIT',
-    badgeText: '🩸 TEXO GLOBAL LOGISTICS • GHOST FLEET CORE',
+    badgeText: '✨ TEXO GLOBAL LOGISTICS INTELLIGENCE • FREIGHT & FLEET CORE',
     colors: [
-      { fill: 'rgba(239, 68, 68,', glow: '#EF4444' },   // Blood Flare
-      { fill: 'rgba(20, 184, 166,', glow: '#14B8A6' },  // Ectoplasm Sea Mist
-      { fill: 'rgba(153, 27, 27,', glow: '#991B1B' }    // Deep Abyss Crimson
+      { fill: 'rgba(251, 191, 36,', glow: '#FBBF24' },
+      { fill: 'rgba(254, 240, 138,', glow: '#FEF08A' },
+      { fill: 'rgba(245, 158, 11,', glow: '#F59E0B' }
     ],
-    lineColor: '239, 68, 68',
-    mouseLineColor: '20, 184, 166',
+    lineColor: '251, 191, 36',
+    mouseLineColor: '254, 240, 138',
     mode: 'logistics',
-    holoLeft: HORROR_LEFT_TREE_AND_GRAVEYARD_SVG,
-    holoRight: HORROR_RIGHT_MANSION_AND_BLOODMOON_SVG
+    holoLeft: '',
+    holoRight: ''
   },
   general: {
-    sector: 'ABYSSAL NEXUS // NOSFERATU COVEN & ELDER CORE',
-    specs: 'BLOOD MOON ECLIPSE · NECROMANCY MATRIX · NIGHTMARE ENGINE',
-    badgeText: '🩸 TEXO UNIVERSAL INTELLIGENCE • BLOOD MOON CORE',
+    badgeText: '✨ TEXO UNIVERSAL INTELLIGENCE 2.0 • GOLDEN ENTERPRISE CORE',
     colors: [
-      { fill: 'rgba(244, 63, 94,', glow: '#F43F5E' },   // Vampire Crimson
-      { fill: 'rgba(153, 27, 27,', glow: '#991B1B' },   // Dark Arterial Red
-      { fill: 'rgba(168, 85, 247,', glow: '#A855F7' }   // Eldritch Purple
+      { fill: 'rgba(251, 191, 36,', glow: '#FBBF24' },
+      { fill: 'rgba(254, 240, 138,', glow: '#FEF08A' },
+      { fill: 'rgba(245, 158, 11,', glow: '#F59E0B' }
     ],
-    lineColor: '244, 63, 94',
-    mouseLineColor: '168, 85, 247',
+    lineColor: '251, 191, 36',
+    mouseLineColor: '254, 240, 138',
     mode: 'general',
-    holoLeft: HORROR_LEFT_TREE_AND_GRAVEYARD_SVG,
-    holoRight: HORROR_RIGHT_MANSION_AND_BLOODMOON_SVG
+    holoLeft: '',
+    holoRight: ''
   }
 };
 
@@ -920,10 +815,10 @@ window.toggleDarkModeTheme = function(forceState) {
   const btn = document.getElementById('darkModeToggleBtn');
   if (btn) {
     btn.classList.toggle('active', nextDark);
-    btn.innerHTML = nextDark ? '🩸 Blood Glass' : '🌙 Pitch Dark';
+    btn.innerHTML = nextDark ? '✨ Gold Glass' : '🌙 Dark Mode';
     btn.title = nextDark
-      ? 'Switch to Smoked Blood-Glass Horror Mode'
-      : 'Switch to Pitch-Black Abyssal Horror Mode';
+      ? 'Switch to Golden Horizon Glass Mode'
+      : 'Switch to Deep Obsidian Dark Mode';
   }
   if (typeof playClick === 'function') playClick();
 };
@@ -940,20 +835,11 @@ let activeIndustryBgKey = 'textile';
 function applyIndustryBackgroundTheme(indKey) {
   const key = INDUSTRY_BG_THEMES[indKey] ? indKey : 'general';
   activeIndustryBgKey = key;
-  const theme = INDUSTRY_BG_THEMES[key];
 
-  // 1. Set data-industry on <body> and #industryBgStage for CSS horror transitions
   document.body.setAttribute('data-industry', key);
   const bgStage = document.getElementById('industryBgStage');
   if (bgStage) bgStage.setAttribute('data-industry', key);
 
-  // 2. Inject custom Gothic Horror SVG silhouettes
-  const holoArt = document.getElementById('industryHoloArt');
-  if (holoArt) {
-    holoArt.innerHTML = `${theme.holoLeft}${theme.holoRight}`;
-  }
-
-  // 3. Sync both sidebar #industrySelect and top header #headerIndustrySelect
   if (typeof industrySelect !== 'undefined' && industrySelect && industrySelect.value !== key) {
     industrySelect.value = key;
   }
@@ -962,12 +848,6 @@ function applyIndustryBackgroundTheme(indKey) {
     headerSelect.value = key;
   }
 
-  // 4. Recolor live canvas horror particles smoothly
-  if (typeof window.__recolorIndustryParticles === 'function') {
-    window.__recolorIndustryParticles(key);
-  }
-
-  // 5. Sync Live Industry Calculator if open
   if (typeof window.renderLiveCalculatorForIndustry === 'function') {
     const calcModal = document.getElementById('liveCalcModal');
     if (calcModal && calcModal.style.display !== 'none') {
@@ -997,69 +877,17 @@ function initParticles() {
   const canvas = document.getElementById('particleCanvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  let W, H;
-  let particles = [];
+  let W = (canvas.width = window.innerWidth || 1280);
+  let H = (canvas.height = window.innerHeight || 800);
   let frameTick = 0;
 
-  // Horror Top-Edge Blood Drips
-  const bloodDrips = [];
-  for (let d = 0; d < 28; d++) {
-    bloodDrips.push({
-      xRatio: (d + 0.3 + Math.random() * 0.4) / 28,
-      baseLen: 18 + Math.random() * 68,
-      speed: 0.6 + Math.random() * 1.1,
-      dropY: Math.random() * 260,
-      phase: Math.random() * Math.PI * 2,
-      thickness: 2.2 + Math.random() * 3.2
-    });
-  }
-
-  // Flock of Flying Silhouetted Horror Bats
-  const horrorBats = [];
-  for (let b = 0; b < 11; b++) {
-    horrorBats.push({
-      x: Math.random() * (window.innerWidth || 1200),
-      y: 45 + Math.random() * ((window.innerHeight || 800) * 0.48),
-      vx: (Math.random() > 0.5 ? 1 : -1) * (1.1 + Math.random() * 1.4),
-      vy: (Math.random() - 0.5) * 0.4,
-      wingSpan: 12 + Math.random() * 12,
-      flapPhase: Math.random() * Math.PI * 2,
-      flapSpeed: 0.16 + Math.random() * 0.08
-    });
-  }
-
-  // Periodic Forked Lightning State
-  let lightningTimer = 140;
-  let lightningAlpha = 0;
-  let lightningSegments = [];
-
-  function triggerLightningBolt() {
-    lightningAlpha = 0.85;
-    lightningSegments = [];
-    let curX = (W || 1200) * (0.25 + Math.random() * 0.55);
-    let curY = 0;
-    while (curY < (H || 800) * 0.72) {
-      const nextX = curX + (Math.random() - 0.48) * 68;
-      const nextY = curY + 24 + Math.random() * 34;
-      lightningSegments.push({ x1: curX, y1: curY, x2: nextX, y2: nextY, width: 2.6 });
-      if (Math.random() < 0.35) {
-        const bx = nextX + (Math.random() - 0.5) * 85;
-        const by = nextY + 35 + Math.random() * 45;
-        lightningSegments.push({ x1: nextX, y1: nextY, x2: bx, y2: by, width: 1.2 });
-      }
-      curX = nextX;
-      curY = nextY;
-    }
-  }
-
   function resize() {
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
+    W = canvas.width = window.innerWidth || 1280;
+    H = canvas.height = window.innerHeight || 800;
   }
-  resize();
   window.addEventListener('resize', resize);
 
-  const mouse = { x: -2000, y: -2000, radius: 170 };
+  const mouse = { x: -2000, y: -2000, radius: 160 };
   window.addEventListener('mousemove', e => {
     mouse.x = e.clientX;
     mouse.y = e.clientY;
@@ -1069,161 +897,205 @@ function initParticles() {
     mouse.y = -2000;
   });
 
-  function getTheme() {
-    return INDUSTRY_BG_THEMES[activeIndustryBgKey] || INDUSTRY_BG_THEMES.textile;
+  // 1. LIVE UPWARD-MOVING GOLDEN VERTICAL LIGHT LINES (88 beams)
+  // Matches the exact glowing vertical lines with bright white-gold star tips from the image
+  const risingLines = [];
+  const lineCount = 88;
+  function createRisingLine(initialRandomY) {
+    const horizonY = H * 0.815;
+    // Concentrate slightly more around center while spanning full width
+    const xRatio = Math.random();
+    const tailLen = 110 + Math.random() * 290;
+    const minY = H * (0.03 + Math.random() * 0.45);
+    const headY = initialRandomY
+      ? (minY + Math.random() * (horizonY - minY))
+      : (horizonY - Math.random() * 18);
+    return {
+      xRatio: xRatio,
+      headY: headY,
+      minY: minY,
+      tailLen: tailLen,
+      speed: 0.65 + Math.random() * 1.65,
+      lineWidth: 1.0 + Math.random() * 1.6,
+      starRadius: 1.6 + Math.random() * 2.2,
+      haloRadius: 7 + Math.random() * 11,
+      twinklePhase: Math.random() * Math.PI * 2,
+      twinkleSpeed: 0.04 + Math.random() * 0.06,
+      isBrightHero: Math.random() < 0.28
+    };
+  }
+  for (let i = 0; i < lineCount; i++) {
+    risingLines.push(createRisingLine(true));
   }
 
-  // Rising Hellfire Embers & Floating Graveyard Ash
-  const count = Math.min(75, Math.floor((window.innerWidth * window.innerHeight) / 19000));
-  const initialTheme = getTheme();
-  for (let i = 0; i < count; i++) {
-    const colIdx = i % 3;
-    particles.push({
-      x: Math.random() * (W || 1200),
-      y: Math.random() * (H || 900),
-      vx: (Math.random() - 0.5) * 0.45,
-      vy: -(0.25 + Math.random() * 0.65), // Rising embers & ash
-      r: Math.random() * 2.4 + 1.0,
-      baseAlpha: Math.random() * 0.48 + 0.24,
-      phase: Math.random() * Math.PI * 2,
-      colIdx: colIdx,
-      color: initialTheme.colors[colIdx]
+  // 2. VERTICAL BEADED / DOTTED PARTICLE STREAMS MOVING UPWARDS (46 columns)
+  const dottedStreams = [];
+  for (let d = 0; d < 46; d++) {
+    dottedStreams.push({
+      xRatio: (d + 0.2 + Math.random() * 0.6) / 46,
+      yOffset: Math.random() * H,
+      speed: 0.55 + Math.random() * 1.15,
+      dotSpacing: 7 + Math.floor(Math.random() * 5),
+      dotCount: 16 + Math.floor(Math.random() * 18),
+      alpha: 0.28 + Math.random() * 0.42
     });
   }
 
-  window.__recolorIndustryParticles = function(indKey) {
-    const t = INDUSTRY_BG_THEMES[indKey] || INDUSTRY_BG_THEMES.textile;
-    for (let i = 0; i < particles.length; i++) {
-      particles[i].color = t.colors[particles[i].colIdx % t.colors.length];
-    }
-  };
+  // 3. FLOATING SOFT GOLDEN BOKEH ORBS & RISING SPARKLES (55 particles)
+  const particles = [];
+  for (let i = 0; i < 55; i++) {
+    particles.push({
+      x: Math.random() * W,
+      y: Math.random() * (H * 0.82),
+      vx: (Math.random() - 0.5) * 0.22,
+      vy: -(0.30 + Math.random() * 0.75), // Moving upwards
+      r: Math.random() < 0.28 ? (3.2 + Math.random() * 4.2) : (1.1 + Math.random() * 1.8),
+      baseAlpha: Math.random() * 0.48 + 0.22,
+      phase: Math.random() * Math.PI * 2,
+      color: { fill: 'rgba(253, 224, 71,', glow: '#FBBF24' }
+    });
+  }
 
-  // Initialize theme immediately on particle boot
+  // 4. GLITTERING GOLDEN SAND-DUNE HORIZON SPARKLES (150 sparkles below horizon)
+  const duneSparkles = [];
+  for (let s = 0; s < 150; s++) {
+    duneSparkles.push({
+      xRatio: Math.random(),
+      yRatio: 0.815 + Math.random() * 0.18,
+      r: 0.8 + Math.random() * 1.7,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.03 + Math.random() * 0.06
+    });
+  }
+
   const startKey = (typeof industrySelect !== 'undefined' && industrySelect && industrySelect.value) ? industrySelect.value : 'textile';
   applyIndustryBackgroundTheme(startKey);
 
-  function drawIndustryCanvasSignature(theme) {
+  function drawIndustryCanvasSignature() {
     frameTick += 0.018;
+    const horizonY = H * 0.815;
     ctx.save();
 
-    // 1. OOZING TOP-EDGE DRIPPING BLOOD STREAMS & FALLING BLOOD DROPLETS
-    for (let d = 0; d < bloodDrips.length; d++) {
-      const bd = bloodDrips[d];
-      const bx = bd.xRatio * W;
-      const oozeLen = bd.baseLen + Math.sin(frameTick * 1.4 + bd.phase) * 14;
+    // A. RADIANT GOLDEN HORIZON LINE & CENTER SOLAR BLOOM
+    const horizonGlow = ctx.createLinearGradient(0, horizonY - 22, 0, horizonY + 26);
+    horizonGlow.addColorStop(0, 'rgba(251, 191, 36, 0)');
+    horizonGlow.addColorStop(0.5, 'rgba(254, 240, 138, 0.38)');
+    horizonGlow.addColorStop(1, 'rgba(217, 119, 6, 0)');
+    ctx.fillStyle = horizonGlow;
+    ctx.fillRect(0, horizonY - 22, W, 48);
 
-      // Blood stalactite stream from top edge
-      const grad = ctx.createLinearGradient(bx, 0, bx, oozeLen + 10);
-      grad.addColorStop(0, 'rgba(127, 29, 29, 0.92)');
-      grad.addColorStop(0.7, 'rgba(220, 38, 38, 0.82)');
-      grad.addColorStop(1, 'rgba(239, 68, 68, 0.95)');
-
-      ctx.beginPath();
-      ctx.moveTo(bx - bd.thickness, 0);
-      ctx.quadraticCurveTo(bx, oozeLen + 12, bx + bd.thickness, 0);
-      ctx.closePath();
-      ctx.fillStyle = grad;
-      ctx.fill();
-
-      // Swollen blood droplet at tip
-      ctx.beginPath();
-      ctx.arc(bx, oozeLen, bd.thickness * 0.85, 0, Math.PI * 2);
-      ctx.fillStyle = '#DC2626';
-      ctx.fill();
-
-      // Falling detached blood drop
-      bd.dropY += bd.speed * 2.1;
-      if (bd.dropY > H * 0.65) {
-        bd.dropY = oozeLen;
+    // B. VERTICAL BEADED / DOTTED GOLDEN TRAILS MOVING UPWARDS
+    for (let d = 0; d < dottedStreams.length; d++) {
+      const ds = dottedStreams[d];
+      ds.yOffset -= ds.speed;
+      const totalColHeight = ds.dotCount * ds.dotSpacing;
+      if (ds.yOffset < H * 0.05) {
+        ds.yOffset = horizonY;
       }
-      if (bd.dropY > oozeLen) {
-        const dropAlpha = Math.max(0, 1 - (bd.dropY - oozeLen) / (H * 0.55));
+      const dx = ds.xRatio * W;
+      ctx.fillStyle = `rgba(253, 224, 71, ${ds.alpha})`;
+      for (let k = 0; k < ds.dotCount; k++) {
+        const dy = ds.yOffset + k * ds.dotSpacing;
+        if (dy > H * 0.04 && dy < horizonY) {
+          const fade = Math.min(1, (horizonY - dy) / 70) * (1 - k / ds.dotCount);
+          ctx.globalAlpha = fade * ds.alpha;
+          ctx.fillRect(dx, dy, 1.3, 1.8);
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // C. PRIMARY GLOWING VERTICAL LIGHT-LINES SHOOTING / MOVING UPWARDS
+    for (let i = 0; i < risingLines.length; i++) {
+      const ln = risingLines[i];
+      ln.headY -= ln.speed;
+      ln.twinklePhase += ln.twinkleSpeed;
+
+      // Respawn at the golden horizon once the line reaches its upper peak
+      if (ln.headY < ln.minY) {
+        ln.headY = horizonY + Math.random() * 12;
+        ln.xRatio = Math.random();
+      }
+
+      const x = ln.xRatio * W;
+      const topY = ln.headY;
+      const bottomY = Math.min(horizonY, topY + ln.tailLen);
+
+      if (bottomY > topY) {
+        // Smooth fade-in near horizon and fade-out near peak altitude
+        const distFromTop = Math.max(0, (topY - ln.minY) / 95);
+        const distFromHorizon = Math.max(0, (horizonY - topY) / 35);
+        const visibility = Math.min(1, distFromTop, distFromHorizon);
+
+        // 1. Vertical Glowing Golden Line Tail
+        const lineGrad = ctx.createLinearGradient(x, topY, x, bottomY);
+        lineGrad.addColorStop(0, `rgba(254, 249, 195, ${0.95 * visibility})`);
+        lineGrad.addColorStop(0.18, `rgba(251, 191, 36, ${0.85 * visibility})`);
+        lineGrad.addColorStop(0.65, `rgba(217, 119, 6, ${0.38 * visibility})`);
+        lineGrad.addColorStop(1, 'rgba(180, 83, 9, 0)');
+
         ctx.beginPath();
-        ctx.arc(bx, bd.dropY, bd.thickness * 0.62, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(220, 38, 38, ${dropAlpha * 0.78})`;
-        ctx.fill();
-      }
-    }
-
-    // 2. CREEPING GRAVEYARD BLOOD-MIST WAVES AT BOTTOM HORIZON
-    for (let m = 0; m < 3; m++) {
-      ctx.beginPath();
-      const baseY = H * (0.76 + m * 0.08);
-      for (let x = 0; x <= W; x += 28) {
-        const y = baseY + Math.sin(x * 0.004 + frameTick * (0.8 + m * 0.25) + m) * 22;
-        if (x === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      }
-      ctx.lineTo(W, H);
-      ctx.lineTo(0, H);
-      ctx.closePath();
-      ctx.fillStyle = m === 0 ? 'rgba(69, 10, 10, 0.14)' : (m === 1 ? 'rgba(127, 29, 29, 0.12)' : 'rgba(5, 0, 2, 0.36)');
-      ctx.fill();
-    }
-
-    // 3. FLOCK OF FLYING SILHOUETTED BATS ACROSS THE BLOOD MOON
-    for (let b = 0; b < horrorBats.length; b++) {
-      const bat = horrorBats[b];
-      bat.x += bat.vx;
-      bat.y += bat.vy + Math.sin(frameTick * 2 + b) * 0.25;
-      bat.flapPhase += bat.flapSpeed;
-
-      if (bat.x < -40) bat.x = W + 40;
-      if (bat.x > W + 40) bat.x = -40;
-      if (bat.y < 30) bat.y = H * 0.45;
-      if (bat.y > H * 0.58) bat.y = 45;
-
-      const wingLift = Math.sin(bat.flapPhase) * (bat.wingSpan * 0.68);
-      const ws = bat.wingSpan;
-
-      ctx.save();
-      ctx.translate(bat.x, bat.y);
-      ctx.beginPath();
-      // Left bat wing
-      ctx.moveTo(0, 0);
-      ctx.quadraticCurveTo(-ws * 0.5, -wingLift - 5, -ws, -wingLift);
-      ctx.quadraticCurveTo(-ws * 0.55, -wingLift * 0.3 + 4, 0, 3);
-      // Right bat wing
-      ctx.moveTo(0, 0);
-      ctx.quadraticCurveTo(ws * 0.5, -wingLift - 5, ws, -wingLift);
-      ctx.quadraticCurveTo(ws * 0.55, -wingLift * 0.3 + 4, 0, 3);
-      ctx.fillStyle = '#070102';
-      ctx.strokeStyle = 'rgba(239, 68, 68, 0.55)';
-      ctx.lineWidth = 1;
-      ctx.fill();
-      ctx.stroke();
-
-      // Tiny glowing red bat eyes
-      ctx.fillStyle = '#EF4444';
-      ctx.fillRect(-2, -1.5, 1.4, 1.4);
-      ctx.fillRect(1, -1.5, 1.4, 1.4);
-      ctx.restore();
-    }
-
-    // 4. PERIODIC FORKED THUNDERSTORM LIGHTNING FLASH
-    lightningTimer--;
-    if (lightningTimer <= 0) {
-      triggerLightningBolt();
-      lightningTimer = 170 + Math.floor(Math.random() * 220);
-    }
-    if (lightningAlpha > 0.01) {
-      // Eerie crimson/white sky flash
-      ctx.fillStyle = `rgba(239, 68, 68, ${lightningAlpha * 0.14})`;
-      ctx.fillRect(0, 0, W, H);
-
-      for (let s = 0; s < lightningSegments.length; s++) {
-        const seg = lightningSegments[s];
-        ctx.beginPath();
-        ctx.moveTo(seg.x1, seg.y1);
-        ctx.lineTo(seg.x2, seg.y2);
-        ctx.strokeStyle = `rgba(254, 202, 202, ${lightningAlpha})`;
-        ctx.lineWidth = seg.width;
-        ctx.shadowBlur = 18;
-        ctx.shadowColor = '#EF4444';
+        ctx.moveTo(x, topY);
+        ctx.lineTo(x, bottomY);
+        ctx.strokeStyle = lineGrad;
+        ctx.lineWidth = ln.lineWidth;
         ctx.stroke();
+
+        // 2. Soft Golden-Amber Halo Bloom at the Top Tip of the Line
+        const pulseScale = 1 + Math.sin(ln.twinklePhase) * 0.18;
+        const haloR = ln.haloRadius * pulseScale;
+        const haloGrad = ctx.createRadialGradient(x, topY, 0, x, topY, haloR);
+        haloGrad.addColorStop(0, `rgba(255, 251, 235, ${0.92 * visibility})`);
+        haloGrad.addColorStop(0.35, `rgba(251, 191, 36, ${0.58 * visibility})`);
+        haloGrad.addColorStop(1, 'rgba(245, 158, 11, 0)');
+
+        ctx.beginPath();
+        ctx.arc(x, topY, haloR, 0, Math.PI * 2);
+        ctx.fillStyle = haloGrad;
+        ctx.fill();
+
+        // 3. Brilliant White-Gold Star Point at the Tip
+        ctx.beginPath();
+        ctx.arc(x, topY, ln.starRadius * pulseScale, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${0.98 * visibility})`;
+        ctx.fill();
+
+        // Optional horizontal star-cross flare on hero beams
+        if (ln.isBrightHero && visibility > 0.4) {
+          ctx.strokeStyle = `rgba(254, 243, 199, ${0.55 * visibility})`;
+          ctx.lineWidth = 0.9;
+          ctx.beginPath();
+          ctx.moveTo(x - haloR * 0.75, topY);
+          ctx.lineTo(x + haloR * 0.75, topY);
+          ctx.stroke();
+        }
       }
-      ctx.shadowBlur = 0;
-      lightningAlpha *= 0.84;
+    }
+
+    // D. TWINKLING GOLDEN SAND-DUNE SPARKLES & UNDULATING WAVE RIDGES AT BOTTOM
+    for (let w = 0; w < 2; w++) {
+      ctx.beginPath();
+      const waveBaseY = H * (0.855 + w * 0.055);
+      for (let x = 0; x <= W; x += 24) {
+        const wy = waveBaseY + Math.sin(x * 0.008 + frameTick * 1.1 + w * 2) * 7;
+        if (x === 0) ctx.moveTo(x, wy);
+        else ctx.lineTo(x, wy);
+      }
+      ctx.strokeStyle = w === 0 ? 'rgba(254, 240, 138, 0.26)' : 'rgba(245, 158, 11, 0.22)';
+      ctx.lineWidth = 1.4;
+      ctx.stroke();
+    }
+
+    for (let s = 0; s < duneSparkles.length; s++) {
+      const sp = duneSparkles[s];
+      sp.phase += sp.speed;
+      const sx = sp.xRatio * W + Math.sin(frameTick + s) * 2.5;
+      const sy = sp.yRatio * H;
+      const sAlpha = 0.25 + (Math.sin(sp.phase) * 0.5 + 0.5) * 0.65;
+      ctx.beginPath();
+      ctx.arc(sx, sy, sp.r, 0, Math.PI * 2);
+      ctx.fillStyle = s % 3 === 0 ? `rgba(255, 251, 235, ${sAlpha})` : `rgba(251, 191, 36, ${sAlpha})`;
+      ctx.fill();
     }
 
     ctx.restore();
@@ -1231,112 +1103,37 @@ function initParticles() {
 
   function draw() {
     ctx.clearRect(0, 0, W, H);
-    const theme = getTheme();
+    const theme = INDUSTRY_BG_THEMES[activeIndustryBgKey] || INDUSTRY_BG_THEMES.textile;
 
-    // Draw bespoke horror blood drips, flying bats & lightning
+    // Draw live upward-moving golden vertical lines, beaded trails & horizon sparkles
     drawIndustryCanvasSignature(theme);
 
-    // Update & draw rising hellfire embers & graveyard ash
+    // Draw floating golden bokeh orbs moving gently upwards
     for (let i = 0; i < particles.length; i++) {
       const p = particles[i];
-      p.x += p.vx + Math.sin(p.phase * 0.7) * 0.22;
+      p.x += p.vx + Math.sin(p.phase * 0.6) * 0.15;
       p.y += p.vy;
-      p.phase += 0.025;
+      p.phase += 0.022;
 
-      // Wrap edges
       if (p.x < -10) p.x = W + 10;
       if (p.x > W + 10) p.x = -10;
-      if (p.y < -10) p.y = H + 10;
-      if (p.y > H + 10) p.y = -10;
+      if (p.y < -10) p.y = H * 0.81;
+      if (p.y > H * 0.82) p.y = H * 0.80;
 
-      // Mouse soft repulsion / deflection
-      const mdx = mouse.x - p.x;
-      const mdy = mouse.y - p.y;
-      const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
-      if (mDist < mouse.radius && mDist > 0) {
-        const force = (1 - mDist / mouse.radius) * 1.8;
-        p.x -= (mdx / mDist) * force;
-        p.y -= (mdy / mDist) * force;
-      }
-
-      const currentAlpha = p.baseAlpha + Math.sin(p.phase) * 0.18;
+      const currentAlpha = p.baseAlpha + Math.sin(p.phase) * 0.16;
 
       ctx.save();
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `${p.color.fill}${Math.max(0.12, currentAlpha)})`;
-      ctx.shadowBlur = 10;
+      ctx.fillStyle = `${p.color.fill}${Math.max(0.10, currentAlpha)})`;
+      ctx.shadowBlur = p.r > 2.8 ? 14 : 7;
       ctx.shadowColor = p.color.glow;
-      ctx.fill();
-      ctx.restore();
-    }
-
-    // Connect close particles with industry-colored neural energy lines
-    const maxDist = 132;
-    const maxDistSq = maxDist * maxDist;
-    const mouseRadiusSq = mouse.radius * mouse.radius;
-
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        const dx = particles[i].x - particles[j].x;
-        const dy = particles[i].y - particles[j].y;
-        const distSq = dx * dx + dy * dy;
-        if (distSq < maxDistSq) {
-          const dist = Math.sqrt(distSq);
-          const alpha = (1 - dist / maxDist) * 0.18;
-          ctx.beginPath();
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = `rgba(${theme.lineColor}, ${alpha})`;
-          ctx.lineWidth = 0.75;
-          ctx.stroke();
-        }
-      }
-
-      // Connect to mouse if near
-      const mdx = mouse.x - particles[i].x;
-      const mdy = mouse.y - particles[i].y;
-      const mDistSq = mdx * mdx + mdy * mdy;
-      if (mDistSq < mouseRadiusSq) {
-        const mDist = Math.sqrt(mDistSq);
-        const mAlpha = (1 - mDist / mouse.radius) * 0.32;
-        ctx.beginPath();
-        ctx.moveTo(particles[i].x, particles[i].y);
-        ctx.lineTo(mouse.x, mouse.y);
-        ctx.strokeStyle = `rgba(${theme.mouseLineColor}, ${mAlpha})`;
-        ctx.lineWidth = 0.9;
-        ctx.stroke();
-      }
-    }
-
-    // Neural energy data pulses traveling along connections
-    if (Math.random() < 0.24 && pulses.length < 24 && particles.length > 1) {
-      const a = Math.floor(Math.random() * particles.length);
-      const b = (a + 1 + Math.floor(Math.random() * 4)) % particles.length;
-      pulses.push({ from: particles[a], to: particles[b], t: 0, speed: 0.02 + Math.random() * 0.025, color: particles[a].color.glow });
-    }
-    for (let k = pulses.length - 1; k >= 0; k--) {
-      const pulse = pulses[k];
-      pulse.t += pulse.speed;
-      if (pulse.t >= 1) {
-        pulses.splice(k, 1);
-        continue;
-      }
-      const px = pulse.from.x + (pulse.to.x - pulse.from.x) * pulse.t;
-      const py = pulse.from.y + (pulse.to.y - pulse.from.y) * pulse.t;
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(px, py, 2.3, 0, Math.PI * 2);
-      ctx.fillStyle = pulse.color;
-      ctx.shadowBlur = 11;
-      ctx.shadowColor = pulse.color;
       ctx.fill();
       ctx.restore();
     }
 
     requestAnimationFrame(draw);
   }
-  const pulses = [];
   draw();
 }
 

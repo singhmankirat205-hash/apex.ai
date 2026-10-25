@@ -5146,354 +5146,184 @@ pre:has(code.language-json\:action) {
 
 
 /* ==========================================================================
-   🩸 CINEMATIC GOTHIC HORROR BACKGROUND & SMOKED BLOOD-GLASS ENGINE
-   Replaces futuristic themes with a spine-chilling Blood-Moon, Haunted Asylum,
-   Gnarled Dead Forest, Graveyard Mist & Cursed Crimson Horror Atmosphere!
+   ✨ GOLDEN HORIZON & LIVE ASCENDING LIGHT-LINES BACKGROUND ENGINE
+   Uses the user's golden horizon & rising light-beams backdrop with a live
+   60FPS upward-moving vertical light-lines & starlight bokeh animation!
    ========================================================================== */
 
-:root {
-  --ind-primary: #EF4444;
-  --ind-secondary: #991B1B;
-  --ind-accent: #FCA5A5;
-  --ind-glow-rgb: 220, 38, 38;
-  --ind-sec-rgb: 127, 29, 29;
-  --ind-acc-rgb: 252, 165, 165;
-  --ind-bg-base: #040001;
-  --ind-bg-grad: radial-gradient(circle at 75% 18%, rgba(220, 38, 38, 0.34) 0%, rgba(127, 29, 29, 0.14) 28%, transparent 56%),
-                 radial-gradient(circle at 18% 78%, rgba(127, 29, 29, 0.28) 0%, transparent 55%),
-                 radial-gradient(circle at 50% 95%, rgba(69, 10, 10, 0.45) 0%, transparent 60%),
-                 linear-gradient(180deg, #030001 0%, #0E0104 48%, #1A0206 82%, #050001 100%);
-}
-
-body[data-industry="general"] {
-  --ind-primary: #F43F5E;
-  --ind-secondary: #881337;
-  --ind-accent: #A855F7;
-  --ind-glow-rgb: 244, 63, 94;
-  --ind-sec-rgb: 136, 19, 55;
-  --ind-acc-rgb: 168, 85, 247;
-  --ind-bg-base: #040002;
-  --ind-bg-grad: radial-gradient(circle at 76% 18%, rgba(225, 29, 72, 0.36) 0%, rgba(136, 19, 55, 0.15) 30%, transparent 56%),
-                 radial-gradient(circle at 20% 80%, rgba(126, 34, 206, 0.22) 0%, transparent 52%),
-                 linear-gradient(180deg, #030002 0%, #110208 50%, #1C030B 85%, #040002 100%);
-}
-
-body[data-industry="textile"] {
-  --ind-primary: #EF4444;
-  --ind-secondary: #991B1B;
-  --ind-accent: #F87171;
-  --ind-glow-rgb: 239, 68, 68;
-  --ind-sec-rgb: 153, 27, 27;
-  --ind-acc-rgb: 248, 113, 113;
-  --ind-bg-base: #050001;
-  --ind-bg-grad: radial-gradient(circle at 76% 18%, rgba(220, 38, 38, 0.38) 0%, rgba(153, 27, 27, 0.16) 28%, transparent 55%),
-                 radial-gradient(circle at 18% 76%, rgba(127, 29, 29, 0.32) 0%, transparent 54%),
-                 radial-gradient(circle at 50% 92%, rgba(80, 7, 16, 0.44) 0%, transparent 58%),
-                 linear-gradient(180deg, #040001 0%, #120104 48%, #1E0207 84%, #050001 100%);
-}
-
-body[data-industry="food"] {
-  --ind-primary: #DC2626;
-  --ind-secondary: #15803D;
-  --ind-accent: #EA580C;
-  --ind-glow-rgb: 220, 38, 38;
-  --ind-sec-rgb: 21, 128, 61;
-  --ind-acc-rgb: 234, 88, 12;
-  --ind-bg-base: #040201;
-  --ind-bg-grad: radial-gradient(circle at 76% 18%, rgba(220, 38, 38, 0.34) 0%, transparent 52%),
-                 radial-gradient(circle at 20% 80%, rgba(21, 128, 61, 0.24) 0%, transparent 52%),
-                 linear-gradient(180deg, #030101 0%, #120302 52%, #0B1306 86%, #030101 100%);
-}
-
-body[data-industry="pharma"] {
-  --ind-primary: #EF4444;
-  --ind-secondary: #10B981;
-  --ind-accent: #9333EA;
-  --ind-glow-rgb: 239, 68, 68;
-  --ind-sec-rgb: 16, 185, 129;
-  --ind-acc-rgb: 147, 51, 234;
-  --ind-bg-base: #030104;
-  --ind-bg-grad: radial-gradient(circle at 76% 18%, rgba(220, 38, 38, 0.34) 0%, transparent 52%),
-                 radial-gradient(circle at 18% 76%, rgba(16, 185, 129, 0.20) 0%, transparent 52%),
-                 linear-gradient(180deg, #020003 0%, #0D020B 50%, #160308 85%, #020003 100%);
-}
-
-body[data-industry="auto"] {
-  --ind-primary: #EF4444;
-  --ind-secondary: #EA580C;
-  --ind-accent: #991B1B;
-  --ind-glow-rgb: 239, 68, 68;
-  --ind-sec-rgb: 234, 88, 12;
-  --ind-acc-rgb: 153, 27, 27;
-  --ind-bg-base: #060001;
-  --ind-bg-grad: radial-gradient(circle at 76% 18%, rgba(239, 68, 68, 0.40) 0%, rgba(153, 27, 27, 0.18) 30%, transparent 56%),
-                 radial-gradient(circle at 22% 82%, rgba(234, 88, 12, 0.25) 0%, transparent 52%),
-                 linear-gradient(180deg, #040001 0%, #170203 52%, #240404 86%, #050001 100%);
-}
-
-body[data-industry="construction"] {
-  --ind-primary: #DC2626;
-  --ind-secondary: #B45309;
-  --ind-accent: #7F1D1D;
-  --ind-glow-rgb: 220, 38, 38;
-  --ind-sec-rgb: 180, 83, 9;
-  --ind-acc-rgb: 127, 29, 29;
-  --ind-bg-base: #050101;
-  --ind-bg-grad: radial-gradient(circle at 76% 18%, rgba(220, 38, 38, 0.35) 0%, transparent 54%),
-                 radial-gradient(circle at 20% 80%, rgba(180, 83, 9, 0.22) 0%, transparent 52%),
-                 linear-gradient(180deg, #030101 0%, #120303 50%, #1B0603 85%, #040101 100%);
-}
-
+:root,
+body[data-industry="general"],
+body[data-industry="textile"],
+body[data-industry="food"],
+body[data-industry="pharma"],
+body[data-industry="auto"],
+body[data-industry="construction"],
 body[data-industry="logistics"] {
-  --ind-primary: #EF4444;
-  --ind-secondary: #0F766E;
-  --ind-accent: #991B1B;
-  --ind-glow-rgb: 239, 68, 68;
-  --ind-sec-rgb: 15, 118, 110;
-  --ind-acc-rgb: 153, 27, 27;
-  --ind-bg-base: #020304;
-  --ind-bg-grad: radial-gradient(circle at 76% 18%, rgba(220, 38, 38, 0.35) 0%, transparent 54%),
-                 radial-gradient(circle at 20% 82%, rgba(15, 118, 110, 0.22) 0%, transparent 52%),
-                 linear-gradient(180deg, #020102 0%, #0E0205 50%, #071212 86%, #020102 100%);
+  --ind-primary: #FBBF24;
+  --ind-secondary: #F59E0B;
+  --ind-accent: #FEF08A;
+  --ind-glow-rgb: 251, 191, 36;
+  --ind-sec-rgb: 245, 158, 11;
+  --ind-acc-rgb: 254, 240, 138;
+  --ind-bg-base: #120A02;
+  --ind-bg-grad: radial-gradient(ellipse 75% 28% at 50% 82%, rgba(251, 191, 36, 0.42) 0%, rgba(217, 119, 6, 0.18) 45%, transparent 75%),
+                 linear-gradient(180deg, #0D0701 0%, #1C0F02 52%, #2E1904 80%, #1A0E02 100%);
 }
 
 body {
   background: var(--ind-bg-grad) !important;
   background-color: var(--ind-bg-base) !important;
-  transition: background 0.7s ease, background-color 0.7s ease;
+  transition: background 0.6s ease;
 }
 
-/* Main Horror Stage Container */
+/* Main Stage Container */
 .industry-bg-stage,
-.horror-bg-stage {
+.golden-beams-stage {
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
-  background: var(--ind-bg-grad);
-  transition: all 0.6s ease;
+  background: #120A02;
 }
 
-/* 1. Creeping Graveyard Blood-Mist & Ground Fog Layer */
-.ind-nebula-glow,
-.horror-fog-layer {
+/* 1. User's Golden Horizon & Rising Light-Beams Base Image Layer */
+.golden-horizon-photo-layer {
   position: absolute;
-  inset: -12%;
-  width: 124%;
-  height: 124%;
+  inset: 0;
+  background-image: url('/static/img/golden_horizon_bg.png?v=6.6.0');
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  opacity: 0.92;
+  filter: contrast(1.06) saturate(1.12);
+}
+
+/* 2. Breathing Golden Horizon Core Flare Layer */
+.golden-horizon-flare-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
   background:
-    radial-gradient(ellipse 55% 35% at 75% 20%, rgba(220, 38, 38, 0.30) 0%, transparent 65%),
-    radial-gradient(ellipse 75% 32% at 30% 88%, rgba(127, 29, 29, 0.42) 0%, transparent 70%),
-    radial-gradient(ellipse 80% 28% at 75% 92%, rgba(20, 2, 5, 0.85) 0%, transparent 75%),
-    radial-gradient(ellipse 65% 25% at 50% 78%, rgba(185, 28, 28, 0.24) 0%, transparent 70%);
-  filter: blur(34px);
-  animation: horrorFogCreep 18s ease-in-out infinite alternate;
+    radial-gradient(ellipse 68% 14% at 50% 81.5%, rgba(254, 249, 195, 0.50) 0%, rgba(251, 191, 36, 0.32) 38%, rgba(217, 119, 6, 0.12) 68%, transparent 88%),
+    radial-gradient(ellipse 90% 45% at 50% 65%, rgba(245, 158, 11, 0.14) 0%, transparent 70%);
+  animation: goldenHorizonPulse 5s ease-in-out infinite alternate;
 }
 
-@keyframes horrorFogCreep {
-  0%   { transform: translate(-2%, 0) scale(1); opacity: 0.82; }
-  50%  { transform: translate(2.5%, -1.5%) scale(1.06); opacity: 0.96; }
-  100% { transform: translate(-1.5%, 1%) scale(0.98); opacity: 0.85; }
+@keyframes goldenHorizonPulse {
+  0%   { opacity: 0.78; transform: scaleY(0.96); }
+  100% { opacity: 1.00; transform: scaleY(1.06); }
 }
 
-/* 2. Heavy Claustrophobic Horror Vignette, Scratched Film Grain & Blood-Stained Edges */
-.ind-pattern-layer,
-.horror-vignette-layer {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  box-shadow:
-    inset 0 0 190px rgba(0, 0, 0, 0.96),
-    inset 0 0 85px rgba(69, 10, 10, 0.65),
-    inset 0 18px 48px rgba(153, 27, 27, 0.35);
-  background-image:
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.012) 0px, rgba(255, 255, 255, 0.012) 1px, transparent 1px, transparent 48px),
-    radial-gradient(circle at 50% 50%, transparent 45%, rgba(0, 0, 0, 0.78) 100%);
-  animation: horrorHeartbeatVignette 5.5s ease-in-out infinite;
-}
-
-@keyframes horrorHeartbeatVignette {
-  0%, 100% {
-    box-shadow:
-      inset 0 0 190px rgba(0, 0, 0, 0.96),
-      inset 0 0 80px rgba(85, 10, 10, 0.55),
-      inset 0 14px 40px rgba(185, 28, 28, 0.28);
-  }
-  15% {
-    box-shadow:
-      inset 0 0 210px rgba(0, 0, 0, 0.98),
-      inset 0 0 115px rgba(185, 28, 28, 0.52),
-      inset 0 24px 65px rgba(220, 38, 38, 0.45);
-  }
-  30% {
-    box-shadow:
-      inset 0 0 185px rgba(0, 0, 0, 0.95),
-      inset 0 0 75px rgba(85, 10, 10, 0.50),
-      inset 0 14px 40px rgba(185, 28, 28, 0.25);
-  }
-  45% {
-    box-shadow:
-      inset 0 0 205px rgba(0, 0, 0, 0.98),
-      inset 0 0 105px rgba(220, 38, 38, 0.44),
-      inset 0 20px 55px rgba(220, 38, 38, 0.38);
-  }
-}
-
-/* 3. Gothic Horror Silhouette Art (Haunted Asylum, Gnarled Dead Trees, Graveyard & Blood Moon) */
-.ind-holo-art,
-.horror-silhouette-art {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  padding: 40px 16px 0 264px;
-  pointer-events: none;
-  opacity: 0.94;
-  z-index: 1;
-}
-
-.holo-svg-left,
-.holo-svg-right {
-  width: 450px;
-  height: 460px;
-  max-width: 40vw;
-  max-height: 68vh;
-  filter: drop-shadow(0 0 28px rgba(220, 38, 38, 0.45)) drop-shadow(0 0 55px rgba(0, 0, 0, 0.95));
-  transition: all 0.5s ease;
-  overflow: visible;
-}
-
-@media (max-width: 900px) {
-  .ind-holo-art,
-  .horror-silhouette-art {
-    padding: 40px 8px 0 8px;
-    opacity: 0.72;
-  }
-  .holo-svg-left,
-  .holo-svg-right {
-    width: 250px;
-    height: 260px;
-  }
-}
-
-.holo-float-pulse,
-.holo-pulse {
-  animation: eerieFlickerGlow 3.2s ease-in-out infinite alternate;
-}
-
-@keyframes eerieFlickerGlow {
-  0%   { opacity: 0.45; filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.4)); }
-  45%  { opacity: 0.95; filter: drop-shadow(0 0 18px rgba(239, 68, 68, 0.9)); }
-  52%  { opacity: 0.30; }
-  60%  { opacity: 1.00; filter: drop-shadow(0 0 22px rgba(239, 68, 68, 1)); }
-  100% { opacity: 0.75; filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.7)); }
+.ind-holo-art {
+  display: none !important;
 }
 
 /* ==========================================================================
-   🩸 SMOKED OBSIDIAN & BLOOD-CRIMSON GOTHIC GLASS UI
-   Translucent dark smoked glass with crimson blood-ember borders
+   ✨ LUXURY SMOKED-GOLD CRYSTAL GLASS UI
+   Translucent warm smoked-amber glass so the upward-moving golden light lines
+   shine vividly through the sidebar, header, welcome card, and chat bubbles!
    ========================================================================== */
 
 .sidebar {
-  background: linear-gradient(180deg, rgba(18, 2, 5, 0.74) 0%, rgba(7, 1, 3, 0.82) 55%, rgba(28, 3, 7, 0.78) 100%) !important;
-  backdrop-filter: blur(22px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(160%) !important;
-  border-right: 1px solid rgba(220, 38, 38, 0.38) !important;
-  box-shadow: 8px 0 40px rgba(0, 0, 0, 0.85), inset -1px 0 0 rgba(239, 68, 68, 0.20) !important;
+  background: linear-gradient(180deg, rgba(22, 13, 3, 0.56) 0%, rgba(12, 7, 1, 0.66) 55%, rgba(28, 16, 3, 0.60) 100%) !important;
+  backdrop-filter: blur(18px) saturate(165%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(165%) !important;
+  border-right: 1px solid rgba(251, 191, 36, 0.36) !important;
+  box-shadow: 8px 0 36px rgba(0, 0, 0, 0.65), inset -1px 0 0 rgba(254, 240, 138, 0.18) !important;
 }
 
 .chat-header {
-  background: linear-gradient(90deg, rgba(20, 2, 5, 0.76) 0%, rgba(8, 1, 3, 0.82) 50%, rgba(24, 3, 7, 0.76) 100%) !important;
-  backdrop-filter: blur(22px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(160%) !important;
-  border-bottom: 1px solid rgba(220, 38, 38, 0.42) !important;
-  box-shadow: 0 8px 34px rgba(0, 0, 0, 0.80), 0 1px 18px rgba(220, 38, 38, 0.18) !important;
+  background: linear-gradient(90deg, rgba(24, 14, 3, 0.58) 0%, rgba(14, 8, 2, 0.64) 50%, rgba(26, 15, 3, 0.58) 100%) !important;
+  backdrop-filter: blur(18px) saturate(165%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(165%) !important;
+  border-bottom: 1px solid rgba(251, 191, 36, 0.40) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55), 0 1px 16px rgba(251, 191, 36, 0.15) !important;
 }
 
 .structured-welcome-card {
-  background: linear-gradient(145deg, rgba(22, 3, 6, 0.62) 0%, rgba(8, 1, 3, 0.68) 52%, rgba(30, 4, 8, 0.62) 100%) !important;
-  border: 1px solid rgba(220, 38, 38, 0.48) !important;
-  box-shadow: 0 24px 68px rgba(0, 0, 0, 0.88), 0 0 48px rgba(220, 38, 38, 0.22), inset 0 1px 1px rgba(252, 165, 165, 0.18) !important;
-  backdrop-filter: blur(18px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
+  background: linear-gradient(145deg, rgba(26, 15, 3, 0.44) 0%, rgba(14, 8, 2, 0.52) 52%, rgba(32, 18, 4, 0.46) 100%) !important;
+  border: 1px solid rgba(251, 191, 36, 0.48) !important;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.72), 0 0 48px rgba(251, 191, 36, 0.20), inset 0 1px 1px rgba(254, 249, 195, 0.25) !important;
+  backdrop-filter: blur(14px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
 }
 
 .welcome-pillar-card,
 button.feature.starter-question-btn {
-  background: linear-gradient(135deg, rgba(28, 4, 8, 0.62) 0%, rgba(10, 2, 4, 0.72) 68%, rgba(40, 5, 10, 0.58) 100%) !important;
-  border: 1px solid rgba(220, 38, 38, 0.36) !important;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(252, 165, 165, 0.14) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
+  background: linear-gradient(135deg, rgba(32, 18, 4, 0.48) 0%, rgba(16, 9, 2, 0.58) 68%, rgba(42, 24, 5, 0.46) 100%) !important;
+  border: 1px solid rgba(251, 191, 36, 0.36) !important;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(254, 249, 195, 0.18) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
   transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .welcome-pillar-card:hover,
 button.feature.starter-question-btn:hover {
-  background: linear-gradient(135deg, rgba(127, 29, 29, 0.48) 0%, rgba(20, 3, 6, 0.78) 65%, rgba(153, 27, 27, 0.42) 100%) !important;
-  border-color: #EF4444 !important;
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.85), 0 0 28px rgba(239, 68, 68, 0.42) !important;
+  background: linear-gradient(135deg, rgba(180, 83, 9, 0.42) 0%, rgba(28, 16, 3, 0.65) 65%, rgba(217, 119, 6, 0.38) 100%) !important;
+  border-color: #FBBF24 !important;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.72), 0 0 28px rgba(251, 191, 36, 0.40) !important;
   transform: translateY(-3px) !important;
 }
 
 .pillar-action,
 .sidebar-label {
-  color: #F87171 !important;
+  color: #FBBF24 !important;
 }
 
 .quick-btn,
 .role-select {
-  background: rgba(14, 2, 5, 0.68) !important;
-  border: 1px solid rgba(220, 38, 38, 0.30) !important;
-  backdrop-filter: blur(14px) !important;
+  background: rgba(18, 10, 2, 0.56) !important;
+  border: 1px solid rgba(251, 191, 36, 0.32) !important;
+  backdrop-filter: blur(12px) !important;
 }
 
 .quick-btn:hover {
-  background: rgba(185, 28, 28, 0.32) !important;
-  border-color: #EF4444 !important;
-  color: #FFFFFF !important;
-  box-shadow: 0 0 18px rgba(239, 68, 68, 0.40) !important;
+  background: rgba(245, 158, 11, 0.28) !important;
+  border-color: #FBBF24 !important;
+  color: #FFFBEB !important;
+  box-shadow: 0 0 18px rgba(251, 191, 36, 0.38) !important;
 }
 
 .new-chat-btn {
-  background: linear-gradient(135deg, #DC2626, #7F1D1D) !important;
-  color: #FFFFFF !important;
-  border: 1px solid rgba(252, 165, 165, 0.35) !important;
-  box-shadow: 0 0 24px rgba(220, 38, 38, 0.52) !important;
+  background: linear-gradient(135deg, #FBBF24, #D97706) !important;
+  color: #1C0F02 !important;
+  font-weight: 800 !important;
+  border: 1px solid rgba(254, 249, 195, 0.55) !important;
+  box-shadow: 0 0 24px rgba(251, 191, 36, 0.50) !important;
 }
 
 .message.assistant .bubble {
-  background: linear-gradient(135deg, rgba(24, 3, 7, 0.72) 0%, rgba(10, 1, 4, 0.80) 65%, rgba(35, 4, 9, 0.70) 100%) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(220, 38, 38, 0.38) !important;
-  border-left: 4px solid #EF4444 !important;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.80), 0 0 24px rgba(220, 38, 38, 0.16) !important;
+  background: linear-gradient(135deg, rgba(28, 16, 3, 0.60) 0%, rgba(14, 8, 2, 0.70) 65%, rgba(36, 20, 4, 0.58) 100%) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(251, 191, 36, 0.38) !important;
+  border-left: 4px solid #FBBF24 !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65), 0 0 24px rgba(251, 191, 36, 0.15) !important;
 }
 
 .message.user .bubble {
-  background: linear-gradient(135deg, rgba(185, 28, 28, 0.88) 0%, rgba(105, 12, 18, 0.92) 100%) !important;
-  color: #FFFFFF !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65);
-  border: 1px solid rgba(252, 165, 165, 0.38) !important;
-  box-shadow: 0 8px 28px rgba(220, 38, 38, 0.42) !important;
-  backdrop-filter: blur(16px) !important;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.88) 0%, rgba(180, 83, 9, 0.92) 100%) !important;
+  color: #FFFBEB !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(254, 249, 195, 0.45) !important;
+  box-shadow: 0 8px 28px rgba(251, 191, 36, 0.38) !important;
+  backdrop-filter: blur(14px) !important;
 }
 
 .input-area {
-  background: linear-gradient(180deg, rgba(8, 1, 3, 0.45) 0%, rgba(22, 2, 6, 0.78) 100%) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  border-top: 1px solid rgba(220, 38, 38, 0.38) !important;
+  background: linear-gradient(180deg, rgba(12, 7, 1, 0.28) 0%, rgba(24, 13, 2, 0.62) 100%) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-top: 1px solid rgba(251, 191, 36, 0.36) !important;
 }
 
 .input-box {
-  background: rgba(12, 2, 4, 0.72) !important;
-  border: 1px solid rgba(220, 38, 38, 0.46) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.75), 0 0 20px rgba(220, 38, 38, 0.18) !important;
-  backdrop-filter: blur(20px) !important;
+  background: rgba(16, 9, 2, 0.58) !important;
+  border: 1px solid rgba(251, 191, 36, 0.45) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.65), 0 0 20px rgba(251, 191, 36, 0.18) !important;
+  backdrop-filter: blur(16px) !important;
 }
 
 /* 7. Header Quick Industry Switcher Pill & Glass Feature Buttons */
