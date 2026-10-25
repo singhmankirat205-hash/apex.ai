@@ -705,14 +705,332 @@ setTimeout(() => {
 }, 600);
 
 // ══════════════════════════════════════════════════════════════════════════════
-// PARTICLES (main background)
+// FUTURISTIC MULTI-INDUSTRY HOLOGRAPHIC BACKGROUND ENGINE & PARTICLES
 // ══════════════════════════════════════════════════════════════════════════════
+const INDUSTRY_BG_THEMES = {
+  textile: {
+    sector: 'SECTOR // TEXTILE & APPAREL CYBER-WEAVE MATRIX',
+    specs: 'JACQUARD WARP/WEFT GRID · ASTM D5430 OPTICAL SCAN · PANTONE TCX SPECTROMETRY',
+    badgeText: '⚡ TEXO TEXTILE & APPAREL INTELLIGENCE • CYBER-LOOM CORE',
+    colors: [
+      { fill: 'rgba(0, 245, 160,', glow: '#00F5A0' },   // Neon Mint Warp
+      { fill: 'rgba(6, 182, 212,', glow: '#06B6D4' },   // Cyber Cyan Weft
+      { fill: 'rgba(245, 158, 11,', glow: '#F59E0B' }   // Golden Silk Filament
+    ],
+    lineColor: '0, 245, 160',
+    mouseLineColor: '6, 182, 212',
+    mode: 'textile',
+    holoLeft: `
+      <svg class="holo-svg-left" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Cyber Jacquard Loom & Spool Matrix -->
+        <circle cx="160" cy="160" r="138" stroke="#00F5A0" stroke-width="1" stroke-dasharray="8 6" class="holo-spin-slow" style="transform-origin:160px 160px;"/>
+        <circle cx="160" cy="160" r="108" stroke="#06B6D4" stroke-width="1.2" stroke-dasharray="18 10" class="holo-spin-reverse" style="transform-origin:160px 160px;"/>
+        <!-- Interlaced Warp & Weft Grid -->
+        <g stroke="#00F5A0" stroke-width="1.1" opacity="0.75">
+          <line x1="70" y1="90" x2="250" y2="90"/><line x1="70" y1="125" x2="250" y2="125"/>
+          <line x1="70" y1="160" x2="250" y2="160"/><line x1="70" y1="195" x2="250" y2="195"/>
+          <line x1="70" y1="230" x2="250" y2="230"/>
+        </g>
+        <g stroke="#06B6D4" stroke-width="1.1" opacity="0.75">
+          <line x1="90" y1="70" x2="90" y2="250"/><line x1="125" y1="70" x2="125" y2="250"/>
+          <line x1="160" y1="70" x2="160" y2="250"/><line x1="195" y1="70" x2="195" y2="250"/>
+          <line x1="230" y1="70" x2="230" y2="250"/>
+        </g>
+        <!-- Jacquard Intersections -->
+        <g fill="#F59E0B" class="holo-float-pulse">
+          <circle cx="90" cy="90" r="4"/><circle cx="160" cy="90" r="4"/><circle cx="230" cy="90" r="4"/>
+          <circle cx="125" cy="125" r="4"/><circle cx="195" cy="125" r="4"/>
+          <circle cx="90" cy="160" r="4"/><circle cx="160" cy="160" r="5.5"/><circle cx="230" cy="160" r="4"/>
+          <circle cx="125" cy="195" r="4"/><circle cx="195" cy="195" r="4"/>
+          <circle cx="90" cy="230" r="4"/><circle cx="160" cy="230" r="4"/><circle cx="230" cy="230" r="4"/>
+        </g>
+        <text x="160" y="295" text-anchor="middle" fill="#00F5A0" font-family="monospace" font-size="9" letter-spacing="2">LOOM MATRIX // EPI:120 PPI:96</text>
+      </svg>`,
+    holoRight: `
+      <svg class="holo-svg-right" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Double Helix Polymer Fiber & Yarn Cone Blueprint -->
+        <polygon points="160,30 280,95 280,225 160,290 40,225 40,95" stroke="#06B6D4" stroke-width="1" stroke-dasharray="6 4" class="holo-spin-slow" style="transform-origin:160px 160px;"/>
+        <path d="M80 240 L135 65 L185 65 L240 240 Z" stroke="#00F5A0" stroke-width="1.5" fill="rgba(0,245,160,0.04)"/>
+        <ellipse cx="160" cy="65" rx="25" ry="8" stroke="#F59E0B" stroke-width="1.4"/>
+        <ellipse cx="160" cy="240" rx="80" ry="18" stroke="#00F5A0" stroke-width="1.4" stroke-dasharray="5 3"/>
+        <path d="M105 180 Q160 140 215 180 M95 210 Q160 165 225 210 M118 145 Q160 115 202 145 M128 110 Q160 90 192 110" stroke="#06B6D4" stroke-width="1.2"/>
+        <text x="160" y="285" text-anchor="middle" fill="#F59E0B" font-family="monospace" font-size="9" letter-spacing="2">YARN TENSILE // 40s COMBED</text>
+      </svg>`
+  },
+  food: {
+    sector: 'SECTOR // FOOD & BEVERAGE BIO-KINETICS LAB',
+    specs: 'HTST PASTEURIZATION 72°C · HACCP CRITICAL CONTROL · MOLECULAR FLAVOR MATRIX',
+    badgeText: '🥣 TEXO FOOD & BEVERAGE INTELLIGENCE • HACCP BIO-SAFE CORE',
+    colors: [
+      { fill: 'rgba(249, 115, 22,', glow: '#F97316' },  // Citrus Amber
+      { fill: 'rgba(250, 204, 21,', glow: '#FACC15' },  // Honey Gold
+      { fill: 'rgba(16, 185, 129,', glow: '#10B981' }   // Botanical Mint
+    ],
+    lineColor: '249, 115, 22',
+    mouseLineColor: '250, 204, 21',
+    mode: 'food',
+    holoLeft: `
+      <svg class="holo-svg-left" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Bio-Fermentation Bioreactor & Thermal Pasteurizer -->
+        <circle cx="160" cy="160" r="135" stroke="#F97316" stroke-width="1" stroke-dasharray="10 6" class="holo-spin-slow" style="transform-origin:160px 160px;"/>
+        <rect x="95" y="65" width="130" height="175" rx="35" stroke="#FACC15" stroke-width="1.6" fill="rgba(249,115,22,0.04)"/>
+        <!-- Impeller Shaft & Blades -->
+        <line x1="160" y1="45" x2="160" y2="210" stroke="#10B981" stroke-width="2"/>
+        <ellipse cx="160" cy="135" rx="42" ry="10" stroke="#10B981" stroke-width="1.5"/>
+        <ellipse cx="160" cy="185" rx="42" ry="10" stroke="#10B981" stroke-width="1.5"/>
+        <!-- Effervescent Bubbles -->
+        <g fill="#FACC15" class="holo-float-pulse">
+          <circle cx="125" cy="205" r="4"/><circle cx="190" cy="195" r="5"/><circle cx="140" cy="160" r="3.5"/>
+          <circle cx="180" cy="150" r="4.5"/><circle cx="130" cy="115" r="3"/><circle cx="185" cy="105" r="4"/>
+        </g>
+        <text x="160" y="285" text-anchor="middle" fill="#FACC15" font-family="monospace" font-size="9" letter-spacing="2">HTST CCP-1 // 72.5°C • 15 SEC</text>
+      </svg>`,
+    holoRight: `
+      <svg class="holo-svg-right" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Organic Hexagonal Carbohydrate / Flavor Molecule -->
+        <circle cx="160" cy="160" r="130" stroke="#10B981" stroke-width="1" stroke-dasharray="6 8" class="holo-spin-reverse" style="transform-origin:160px 160px;"/>
+        <polygon points="160,75 215,107 215,172 160,205 105,172 105,107" stroke="#F97316" stroke-width="2" fill="rgba(250,204,21,0.05)"/>
+        <polygon points="215,172 265,200 265,255 215,280 165,255 165,200" stroke="#FACC15" stroke-width="1.5"/>
+        <polygon points="105,172 155,200 155,255 105,280 55,255 55,200" stroke="#10B981" stroke-width="1.5"/>
+        <g fill="#F97316">
+          <circle cx="160" cy="75" r="5"/><circle cx="215" cy="107" r="5"/><circle cx="215" cy="172" r="5"/>
+          <circle cx="160" cy="205" r="5"/><circle cx="105" cy="172" r="5"/><circle cx="105" cy="107" r="5"/>
+        </g>
+        <text x="160" y="302" text-anchor="middle" fill="#10B981" font-family="monospace" font-size="9" letter-spacing="2">MAP SEAL // O2 &lt; 0.4% • BRIX 14.2</text>
+      </svg>`
+  },
+  pharma: {
+    sector: 'SECTOR // BIOPHARMA R&D & cGMP STERILE CLEANROOM',
+    specs: 'FDA 21 CFR PART 11 · USP <711> DISSOLUTION · GRADE-A LAMINAR CASCADE (+15 Pa)',
+    badgeText: '💊 TEXO BIOPHARMA & CLINICAL INTELLIGENCE • cGMP STERILE CORE',
+    colors: [
+      { fill: 'rgba(56, 189, 248,', glow: '#38BDF8' },  // Cryo Medical Blue
+      { fill: 'rgba(168, 85, 247,', glow: '#A855F7' },  // Genomic Violet
+      { fill: 'rgba(45, 212, 191,', glow: '#2DD4BF' }   // Sterile Teal
+    ],
+    lineColor: '56, 189, 248',
+    mouseLineColor: '168, 85, 247',
+    mode: 'pharma',
+    holoLeft: `
+      <svg class="holo-svg-left" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Double Helix DNA & Cryo Helix Ring -->
+        <circle cx="160" cy="160" r="136" stroke="#38BDF8" stroke-width="1" stroke-dasharray="12 6" class="holo-spin-slow" style="transform-origin:160px 160px;"/>
+        <path d="M110 55 C210 95, 110 155, 210 195 C110 235, 210 265, 110 280" stroke="#38BDF8" stroke-width="2" fill="none"/>
+        <path d="M210 55 C110 95, 210 155, 110 195 C210 235, 110 265, 210 280" stroke="#A855F7" stroke-width="2" fill="none"/>
+        <g stroke="#2DD4BF" stroke-width="1.3">
+          <line x1="125" y1="75" x2="195" y2="75"/><line x1="142" y1="100" x2="178" y2="100"/>
+          <line x1="125" y1="130" x2="195" y2="130"/><line x1="135" y1="160" x2="185" y2="160"/>
+          <line x1="125" y1="190" x2="195" y2="190"/><line x1="140" y1="220" x2="180" y2="220"/>
+          <line x1="125" y1="250" x2="195" y2="250"/>
+        </g>
+        <text x="160" y="300" text-anchor="middle" fill="#38BDF8" font-family="monospace" font-size="9" letter-spacing="2">GENOMIC HELIX // USP &lt;788&gt; PASS</text>
+      </svg>`,
+    holoRight: `
+      <svg class="holo-svg-right" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- HPLC Chromatogram & Molecular Crosshair -->
+        <circle cx="160" cy="160" r="128" stroke="#A855F7" stroke-width="1" stroke-dasharray="5 5" class="holo-spin-reverse" style="transform-origin:160px 160px;"/>
+        <polyline points="50,220 95,220 110,180 125,220 155,220 175,70 195,220 225,220 240,150 255,220 280,220" stroke="#2DD4BF" stroke-width="2" fill="rgba(45,212,191,0.06)"/>
+        <line x1="50" y1="220" x2="280" y2="220" stroke="#38BDF8" stroke-width="1"/>
+        <circle cx="175" cy="70" r="5" fill="#A855F7" class="holo-float-pulse"/>
+        <text x="160" y="280" text-anchor="middle" fill="#2DD4BF" font-family="monospace" font-size="9" letter-spacing="2">HPLC ASSAY // Rs &gt; 2.4 • 99.8%</text>
+      </svg>`
+  },
+  auto: {
+    sector: 'SECTOR // AUTOMOTIVE & EV POWERTRAIN METROLOGY',
+    specs: 'IATF 16949 ZERO-DEFECT · CMM GD&T LASER SCAN · EV ULTRASONIC CELL TELEMETRY',
+    badgeText: '🚗 TEXO AUTOMOTIVE & EV INTELLIGENCE • IATF 16949 CORE',
+    colors: [
+      { fill: 'rgba(239, 68, 68,', glow: '#EF4444' },   // Racing Crimson
+      { fill: 'rgba(59, 130, 246,', glow: '#3B82F6' },  // EV Plasma Blue
+      { fill: 'rgba(245, 158, 11,', glow: '#F59E0B' }   // Spark Amber
+    ],
+    lineColor: '59, 130, 246',
+    mouseLineColor: '239, 68, 68',
+    mode: 'auto',
+    holoLeft: `
+      <svg class="holo-svg-left" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- EV Rotor Turbine & HUD Tachometer -->
+        <circle cx="160" cy="160" r="135" stroke="#EF4444" stroke-width="1.5" stroke-dasharray="20 8" class="holo-spin-slow" style="transform-origin:160px 160px;"/>
+        <circle cx="160" cy="160" r="105" stroke="#3B82F6" stroke-width="2" stroke-dasharray="40 15" class="holo-spin-reverse" style="transform-origin:160px 160px;"/>
+        <circle cx="160" cy="160" r="65" stroke="#F59E0B" stroke-width="1.2"/>
+        <circle cx="160" cy="160" r="22" stroke="#EF4444" stroke-width="2" fill="rgba(239,68,68,0.1)"/>
+        <g stroke="#3B82F6" stroke-width="1.4">
+          <line x1="160" y1="55" x2="160" y2="95"/><line x1="160" y1="225" x2="160" y2="265"/>
+          <line x1="55" y1="160" x2="95" y2="160"/><line x1="225" y1="160" x2="265" y2="160"/>
+          <line x1="86" y1="86" x2="114" y2="114"/><line x1="206" y1="206" x2="234" y2="234"/>
+        </g>
+        <text x="160" y="295" text-anchor="middle" fill="#EF4444" font-family="monospace" font-size="9" letter-spacing="2">EV TORQUE // Cpk 1.85 • 800V</text>
+      </svg>`,
+    holoRight: `
+      <svg class="holo-svg-right" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Aerodynamic Wind-Tunnel & GD&T Datum Target -->
+        <polygon points="160,35 275,160 160,285 45,160" stroke="#3B82F6" stroke-width="1.2" stroke-dasharray="8 4"/>
+        <path d="M45 135 Q140 95 275 135 M35 160 Q150 130 285 160 M45 185 Q140 165 275 185" stroke="#EF4444" stroke-width="1.6"/>
+        <circle cx="160" cy="160" r="42" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="6 4" class="holo-spin-slow" style="transform-origin:160px 160px;"/>
+        <text x="160" y="295" text-anchor="middle" fill="#3B82F6" font-family="monospace" font-size="9" letter-spacing="2">GD&amp;T DATUM // ASME Y14.5 ±0.02mm</text>
+      </svg>`
+  },
+  construction: {
+    sector: 'SECTOR // STRUCTURAL BIM & CIVIL GEOTECHNICAL CAD',
+    specs: 'ACI 318 REINFORCED CONCRETE · ASTM C39 COMPRESSIVE · LIDAR TOPOGRAPHIC MESH',
+    badgeText: '🏗️ TEXO CIVIL & STRUCTURAL INTELLIGENCE • BIM CAD CORE',
+    colors: [
+      { fill: 'rgba(245, 158, 11,', glow: '#F59E0B' },  // Safety Caution Gold
+      { fill: 'rgba(56, 189, 248,', glow: '#38BDF8' },  // Blueprint Cyan
+      { fill: 'rgba(148, 163, 184,', glow: '#94A3B8' }  // Structural Steel
+    ],
+    lineColor: '245, 158, 11',
+    mouseLineColor: '56, 189, 248',
+    mode: 'construction',
+    holoLeft: `
+      <svg class="holo-svg-left" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Isometric Structural Steel Truss & Tower Frame -->
+        <polygon points="160,40 255,95 255,225 160,280 65,225 65,95" stroke="#38BDF8" stroke-width="1.4"/>
+        <line x1="160" y1="40" x2="160" y2="280" stroke="#F59E0B" stroke-width="1.6"/>
+        <line x1="65" y1="95" x2="255" y2="225" stroke="#38BDF8" stroke-width="1.1" stroke-dasharray="5 3"/>
+        <line x1="255" y1="95" x2="65" y2="225" stroke="#38BDF8" stroke-width="1.1" stroke-dasharray="5 3"/>
+        <polygon points="160,85 215,120 215,195 160,230 105,195 105,120" stroke="#F59E0B" stroke-width="1.3" fill="rgba(245,158,11,0.04)"/>
+        <text x="160" y="302" text-anchor="middle" fill="#F59E0B" font-family="monospace" font-size="9" letter-spacing="2">ASTM C39 // 45 MPa • ACI 318</text>
+      </svg>`,
+    holoRight: `
+      <svg class="holo-svg-right" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- LiDAR Surveying Theodolite Crosshair -->
+        <circle cx="160" cy="160" r="130" stroke="#F59E0B" stroke-width="1.2" stroke-dasharray="15 5" class="holo-spin-slow" style="transform-origin:160px 160px;"/>
+        <circle cx="160" cy="160" r="90" stroke="#38BDF8" stroke-width="1"/>
+        <circle cx="160" cy="160" r="45" stroke="#F59E0B" stroke-width="1" stroke-dasharray="4 4"/>
+        <line x1="20" y1="160" x2="300" y2="160" stroke="#38BDF8" stroke-width="1"/>
+        <line x1="160" y1="20" x2="160" y2="300" stroke="#38BDF8" stroke-width="1"/>
+        <text x="160" y="305" text-anchor="middle" fill="#38BDF8" font-family="monospace" font-size="9" letter-spacing="2">BIM SURVEY // ELEV +142.80m</text>
+      </svg>`
+  },
+  logistics: {
+    sector: 'SECTOR // GLOBAL SUPPLY CHAIN & ORBITAL FLEET RADAR',
+    specs: 'OTIF 99.4% TELEMETRY · COLD-CHAIN MKT SENSOR · AUTONOMOUS CORRIDOR ROUTING',
+    badgeText: '🚚 TEXO GLOBAL LOGISTICS INTELLIGENCE • FLEET RADAR CORE',
+    colors: [
+      { fill: 'rgba(20, 184, 166,', glow: '#14B8A6' },  // Radar Teal
+      { fill: 'rgba(132, 204, 22,', glow: '#84CC16' },  // Signal Lime
+      { fill: 'rgba(56, 189, 248,', glow: '#38BDF8' }   // Orbital Sky
+    ],
+    lineColor: '20, 184, 166',
+    mouseLineColor: '132, 204, 22',
+    mode: 'logistics',
+    holoLeft: `
+      <svg class="holo-svg-left" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Global Geodesic Radar Globe & Orbital Arcs -->
+        <circle cx="160" cy="160" r="130" stroke="#14B8A6" stroke-width="1.5"/>
+        <ellipse cx="160" cy="160" rx="130" ry="50" stroke="#14B8A6" stroke-width="1" stroke-dasharray="6 4"/>
+        <ellipse cx="160" cy="160" rx="55" ry="130" stroke="#14B8A6" stroke-width="1" stroke-dasharray="6 4"/>
+        <circle cx="160" cy="160" r="144" stroke="#84CC16" stroke-width="1" stroke-dasharray="12 10" class="holo-spin-slow" style="transform-origin:160px 160px;"/>
+        <g fill="#84CC16" class="holo-float-pulse">
+          <circle cx="105" cy="120" r="4.5"/><circle cx="215" cy="145" r="4.5"/><circle cx="160" cy="210" r="4.5"/>
+        </g>
+        <path d="M105 120 Q160 75 215 145 Q195 190 160 210" stroke="#84CC16" stroke-width="1.6" stroke-dasharray="4 3"/>
+        <text x="160" y="302" text-anchor="middle" fill="#84CC16" font-family="monospace" font-size="9" letter-spacing="2">ORBITAL AIS // OTIF 99.4% LIVE</text>
+      </svg>`,
+    holoRight: `
+      <svg class="holo-svg-right" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Cold-Chain RFID & Fleet Routing Matrix -->
+        <circle cx="160" cy="160" r="125" stroke="#14B8A6" stroke-width="1" stroke-dasharray="8 6" class="holo-spin-reverse" style="transform-origin:160px 160px;"/>
+        <polygon points="160,65 245,112 245,208 160,255 75,208 75,112" stroke="#38BDF8" stroke-width="1.4"/>
+        <line x1="160" y1="160" x2="245" y2="112" stroke="#84CC16" stroke-width="2"/>
+        <circle cx="160" cy="160" r="6" fill="#84CC16"/>
+        <text x="160" y="295" text-anchor="middle" fill="#14B8A6" font-family="monospace" font-size="9" letter-spacing="2">REEFER MKT // +4.2°C NOMINAL</text>
+      </svg>`
+  },
+  general: {
+    sector: 'SECTOR // UNIVERSAL QUANTUM INDUSTRIAL INTELLIGENCE',
+    specs: 'ISO 9001:2015 QMS · SIX SIGMA DMAIC ENGINE · MULTILINGUAL NEURAL CORE',
+    badgeText: '⚡ TEXO UNIVERSAL INTELLIGENCE 2.0 • QUANTUM ENTERPRISE CORE',
+    colors: [
+      { fill: 'rgba(139, 92, 246,', glow: '#8B5CF6' },  // Quantum Purple
+      { fill: 'rgba(6, 182, 212,', glow: '#06B6D4' },   // Cyber Cyan
+      { fill: 'rgba(236, 72, 153,', glow: '#EC4899' }   // Plasma Magenta
+    ],
+    lineColor: '139, 92, 246',
+    mouseLineColor: '6, 182, 212',
+    mode: 'general',
+    holoLeft: `
+      <svg class="holo-svg-left" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="160" cy="160" r="135" stroke="#8B5CF6" stroke-width="1.2" stroke-dasharray="14 6" class="holo-spin-slow" style="transform-origin:160px 160px;"/>
+        <circle cx="160" cy="160" r="102" stroke="#06B6D4" stroke-width="1.2" stroke-dasharray="8 8" class="holo-spin-reverse" style="transform-origin:160px 160px;"/>
+        <polygon points="160,60 246,110 246,210 160,260 74,210 74,110" stroke="#EC4899" stroke-width="1.3"/>
+        <circle cx="160" cy="160" r="28" stroke="#06B6D4" stroke-width="1.8" fill="rgba(139,92,246,0.08)"/>
+        <text x="160" y="300" text-anchor="middle" fill="#8B5CF6" font-family="monospace" font-size="9" letter-spacing="2">QUANTUM CORE // SIX SIGMA DMAIC</text>
+      </svg>`,
+    holoRight: `
+      <svg class="holo-svg-right" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="160" cy="160" r="128" stroke="#06B6D4" stroke-width="1" stroke-dasharray="10 6" class="holo-spin-reverse" style="transform-origin:160px 160px;"/>
+        <rect x="85" y="85" width="150" height="150" stroke="#8B5CF6" stroke-width="1.2" transform="rotate(45 160 160)"/>
+        <rect x="85" y="85" width="150" height="150" stroke="#EC4899" stroke-width="1.2"/>
+        <text x="160" y="295" text-anchor="middle" fill="#06B6D4" font-family="monospace" font-size="9" letter-spacing="2">ISO 9001:2015 // CAPA VERIFIED</text>
+      </svg>`
+  }
+};
+
+let activeIndustryBgKey = 'textile';
+
+function applyIndustryBackgroundTheme(indKey) {
+  const key = INDUSTRY_BG_THEMES[indKey] ? indKey : 'general';
+  activeIndustryBgKey = key;
+  const theme = INDUSTRY_BG_THEMES[key];
+
+  // 1. Set data-industry on <body> and #industryBgStage for CSS transitions
+  document.body.setAttribute('data-industry', key);
+  const bgStage = document.getElementById('industryBgStage');
+  if (bgStage) bgStage.setAttribute('data-industry', key);
+
+  // 2. Inject custom SVG holographic industry schematics
+  const holoArt = document.getElementById('industryHoloArt');
+  if (holoArt) {
+    holoArt.innerHTML = `${theme.holoLeft}${theme.holoRight}`;
+  }
+
+  // 3. Update HUD telemetry labels
+  const sectorEl = document.getElementById('indHudSectorLabel');
+  const specsEl = document.getElementById('indHudSpecsLabel');
+  if (sectorEl) sectorEl.textContent = theme.sector;
+  if (specsEl) specsEl.textContent = theme.specs;
+
+  // 4. Sync both sidebar #industrySelect and top header #headerIndustrySelect
+  if (typeof industrySelect !== 'undefined' && industrySelect && industrySelect.value !== key) {
+    industrySelect.value = key;
+  }
+  const headerSelect = document.getElementById('headerIndustrySelect');
+  if (headerSelect && headerSelect.value !== key) {
+    headerSelect.value = key;
+  }
+
+  // 5. Recolor live canvas particles smoothly
+  if (typeof window.__recolorIndustryParticles === 'function') {
+    window.__recolorIndustryParticles(key);
+  }
+}
+
+window.switchIndustryEnvironment = function(indKey) {
+  if (!indKey) return;
+  if (typeof industrySelect !== 'undefined' && industrySelect) {
+    industrySelect.value = indKey;
+  }
+  const headerSelect = document.getElementById('headerIndustrySelect');
+  if (headerSelect) {
+    headerSelect.value = indKey;
+  }
+  if (typeof updateIndustryAndRoles === 'function') {
+    updateIndustryAndRoles(indKey);
+  } else {
+    applyIndustryBackgroundTheme(indKey);
+  }
+  if (typeof playClick === 'function') playClick();
+};
+
 function initParticles() {
   const canvas = document.getElementById('particleCanvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   let W, H;
   let particles = [];
+  let frameTick = 0;
 
   function resize() {
     W = canvas.width = window.innerWidth;
@@ -721,7 +1039,7 @@ function initParticles() {
   resize();
   window.addEventListener('resize', resize);
 
-  const mouse = { x: -2000, y: -2000, radius: 160 };
+  const mouse = { x: -2000, y: -2000, radius: 170 };
   window.addEventListener('mousemove', e => {
     mouse.x = e.clientX;
     mouse.y = e.clientY;
@@ -731,36 +1049,119 @@ function initParticles() {
     mouse.y = -2000;
   });
 
-  const colors = [
-    { fill: 'rgba(0,245,160,', glow: '#00F5A0' },   // Neon Mint
-    { fill: 'rgba(6,182,212,', glow: '#06B6D4' },   // Cyber Cyan
-    { fill: 'rgba(139,92,246,', glow: '#8B5CF6' }   // Quantum Purple
-  ];
+  function getTheme() {
+    return INDUSTRY_BG_THEMES[activeIndustryBgKey] || INDUSTRY_BG_THEMES.textile;
+  }
 
-  const count = Math.min(65, Math.floor((window.innerWidth * window.innerHeight) / 22000));
+  const count = Math.min(72, Math.floor((window.innerWidth * window.innerHeight) / 20000));
+  const initialTheme = getTheme();
   for (let i = 0; i < count; i++) {
-    const colIdx = i % 7 === 0 ? 2 : (i % 3 === 0 ? 1 : 0);
+    const colIdx = i % 3;
     particles.push({
       x: Math.random() * (W || 1200),
       y: Math.random() * (H || 900),
-      vx: (Math.random() - 0.5) * 0.45,
-      vy: (Math.random() - 0.5) * 0.45,
-      r: Math.random() * 2 + 1,
-      baseAlpha: Math.random() * 0.4 + 0.2,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.5,
+      r: Math.random() * 2.2 + 1.1,
+      baseAlpha: Math.random() * 0.42 + 0.22,
       phase: Math.random() * Math.PI * 2,
-      color: colors[colIdx]
+      colIdx: colIdx,
+      color: initialTheme.colors[colIdx]
     });
+  }
+
+  window.__recolorIndustryParticles = function(indKey) {
+    const t = INDUSTRY_BG_THEMES[indKey] || INDUSTRY_BG_THEMES.textile;
+    for (let i = 0; i < particles.length; i++) {
+      particles[i].color = t.colors[particles[i].colIdx % t.colors.length];
+    }
+  };
+
+  // Initialize theme immediately on particle boot
+  const startKey = (typeof industrySelect !== 'undefined' && industrySelect && industrySelect.value) ? industrySelect.value : 'textile';
+  applyIndustryBackgroundTheme(startKey);
+
+  function drawIndustryCanvasSignature(theme) {
+    frameTick += 0.015;
+    ctx.save();
+    if (theme.mode === 'textile') {
+      // Undulating holographic warp & weft silk/yarn harmonic threads across screen
+      for (let w = 0; w < 3; w++) {
+        ctx.beginPath();
+        const baseY = H * (0.28 + w * 0.22);
+        for (let x = 0; x <= W; x += 28) {
+          const y = baseY + Math.sin(x * 0.006 + frameTick + w * 1.4) * 26 + Math.cos(x * 0.012 - frameTick) * 10;
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = w === 1 ? 'rgba(6, 182, 212, 0.11)' : 'rgba(0, 245, 160, 0.10)';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+      }
+    } else if (theme.mode === 'food') {
+      // Rising golden effervescent fermentation micro-bubbles & thermal rings
+      for (let b = 0; b < 12; b++) {
+        const bx = ((b * 137 + Math.sin(frameTick + b) * 35) % (W || 1200));
+        const by = H - (((frameTick * 42 + b * 85) % (H || 900)));
+        const br = 3.5 + (b % 4) * 2.2;
+        ctx.beginPath();
+        ctx.arc(bx, by, br, 0, Math.PI * 2);
+        ctx.strokeStyle = b % 2 === 0 ? 'rgba(250, 204, 21, 0.20)' : 'rgba(249, 115, 22, 0.18)';
+        ctx.lineWidth = 1.1;
+        ctx.stroke();
+      }
+    } else if (theme.mode === 'pharma') {
+      // Double-helix sinusoidal bio-wave across center horizon
+      ctx.beginPath();
+      for (let x = 0; x <= W; x += 24) {
+        const y1 = H * 0.5 + Math.sin(x * 0.008 + frameTick * 1.3) * 45;
+        if (x === 0) ctx.moveTo(x, y1);
+        else ctx.lineTo(x, y1);
+      }
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.11)';
+      ctx.lineWidth = 1.3;
+      ctx.stroke();
+    } else if (theme.mode === 'auto') {
+      // High-speed aerodynamic wind-tunnel slipstream streaks
+      for (let s = 0; s < 5; s++) {
+        const sy = H * (0.2 + s * 0.15);
+        const sx = ((frameTick * 220 + s * 260) % (W + 300)) - 150;
+        const grad = ctx.createLinearGradient(sx - 120, sy, sx + 40, sy);
+        grad.addColorStop(0, 'rgba(239, 68, 68, 0)');
+        grad.addColorStop(1, s % 2 === 0 ? 'rgba(239, 68, 68, 0.22)' : 'rgba(59, 130, 246, 0.22)');
+        ctx.beginPath();
+        ctx.moveTo(sx - 120, sy);
+        ctx.lineTo(sx + 40, sy);
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 1.8;
+        ctx.stroke();
+      }
+    } else if (theme.mode === 'logistics') {
+      // Rotating radar sweep arc around center
+      const cx = W * 0.5, cy = H * 0.5;
+      const rad = Math.min(W, H) * 0.36;
+      ctx.beginPath();
+      ctx.arc(cx, cy, rad, frameTick * 0.8, frameTick * 0.8 + 0.65);
+      ctx.strokeStyle = 'rgba(20, 184, 166, 0.16)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+    ctx.restore();
   }
 
   function draw() {
     ctx.clearRect(0, 0, W, H);
+    const theme = getTheme();
+
+    // Draw bespoke industry background wave / signature
+    drawIndustryCanvasSignature(theme);
 
     // Update & draw particles
     for (let i = 0; i < particles.length; i++) {
       const p = particles[i];
       p.x += p.vx;
       p.y += p.vy;
-      p.phase += 0.02;
+      p.phase += 0.022;
 
       // Wrap edges
       if (p.x < -10) p.x = W + 10;
@@ -778,22 +1179,26 @@ function initParticles() {
         p.y -= (mdy / mDist) * force;
       }
 
-      // Pulsing alpha
-      const currentAlpha = p.baseAlpha + Math.sin(p.phase) * 0.15;
+      const currentAlpha = p.baseAlpha + Math.sin(p.phase) * 0.16;
 
       ctx.save();
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `${p.color.fill}${Math.max(0.08, currentAlpha)})`;
-      ctx.shadowBlur = 8;
+      if (theme.mode === 'construction' && i % 3 === 0) {
+        // Structural CAD diamond/square nodes for construction
+        ctx.rect(p.x - p.r, p.y - p.r, p.r * 2.1, p.r * 2.1);
+      } else {
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      }
+      ctx.fillStyle = `${p.color.fill}${Math.max(0.1, currentAlpha)})`;
+      ctx.shadowBlur = 9;
       ctx.shadowColor = p.color.glow;
       ctx.fill();
       ctx.restore();
     }
 
-    // Connect close particles with neural energy lines
-    const maxDist = 125;
-    const maxDistSq = 125 * 125;
+    // Connect close particles with industry-colored neural energy lines
+    const maxDist = 132;
+    const maxDistSq = maxDist * maxDist;
     const mouseRadiusSq = mouse.radius * mouse.radius;
 
     for (let i = 0; i < particles.length; i++) {
@@ -803,12 +1208,12 @@ function initParticles() {
         const distSq = dx * dx + dy * dy;
         if (distSq < maxDistSq) {
           const dist = Math.sqrt(distSq);
-          const alpha = (1 - dist / maxDist) * 0.14;
+          const alpha = (1 - dist / maxDist) * 0.18;
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
           ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = `rgba(0, 245, 160, ${alpha})`;
-          ctx.lineWidth = 0.65;
+          ctx.strokeStyle = `rgba(${theme.lineColor}, ${alpha})`;
+          ctx.lineWidth = 0.75;
           ctx.stroke();
         }
       }
@@ -819,18 +1224,18 @@ function initParticles() {
       const mDistSq = mdx * mdx + mdy * mdy;
       if (mDistSq < mouseRadiusSq) {
         const mDist = Math.sqrt(mDistSq);
-        const mAlpha = (1 - mDist / mouse.radius) * 0.28;
+        const mAlpha = (1 - mDist / mouse.radius) * 0.32;
         ctx.beginPath();
         ctx.moveTo(particles[i].x, particles[i].y);
         ctx.lineTo(mouse.x, mouse.y);
-        ctx.strokeStyle = `rgba(6, 182, 212, ${mAlpha})`;
-        ctx.lineWidth = 0.8;
+        ctx.strokeStyle = `rgba(${theme.mouseLineColor}, ${mAlpha})`;
+        ctx.lineWidth = 0.9;
         ctx.stroke();
       }
     }
 
     // Neural energy data pulses traveling along connections
-    if (Math.random() < 0.22 && pulses.length < 24 && particles.length > 1) {
+    if (Math.random() < 0.24 && pulses.length < 24 && particles.length > 1) {
       const a = Math.floor(Math.random() * particles.length);
       const b = (a + 1 + Math.floor(Math.random() * 4)) % particles.length;
       pulses.push({ from: particles[a], to: particles[b], t: 0, speed: 0.02 + Math.random() * 0.025, color: particles[a].color.glow });
@@ -846,9 +1251,9 @@ function initParticles() {
       const py = pulse.from.y + (pulse.to.y - pulse.from.y) * pulse.t;
       ctx.save();
       ctx.beginPath();
-      ctx.arc(px, py, 2.2, 0, Math.PI * 2);
+      ctx.arc(px, py, 2.3, 0, Math.PI * 2);
       ctx.fillStyle = pulse.color;
-      ctx.shadowBlur = 10;
+      ctx.shadowBlur = 11;
       ctx.shadowColor = pulse.color;
       ctx.fill();
       ctx.restore();
@@ -2098,6 +2503,9 @@ function updateIndustryAndRoles(indKey) {
 
   // 7. Dynamically adapt Studio Lab for this specific Industry
   updateStudioLabForIndustry(indKey);
+
+  // 8. Morph futuristic holographic background environment & sync top header switcher
+  applyIndustryBackgroundTheme(indKey);
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -2340,11 +2748,18 @@ function updateStudioLabForIndustry(indKey) {
   }
 }
 
-// Industry selector change event
+// Industry selector change event (left sidebar + top header switcher)
 industrySelect.addEventListener('change', () => {
   updateIndustryAndRoles(industrySelect.value);
   playClick();
 });
+
+const headerIndustrySelect = document.getElementById('headerIndustrySelect');
+if (headerIndustrySelect) {
+  headerIndustrySelect.addEventListener('change', () => {
+    window.switchIndustryEnvironment(headerIndustrySelect.value);
+  });
+}
 
 // Role selector change event
 roleSelect.addEventListener('change', () => {
@@ -3604,6 +4019,9 @@ function appendWelcomeCard(indKey) {
   messagesArea.innerHTML = '';
   const key = indKey || (industrySelect ? industrySelect.value : 'textile') || 'textile';
   const data = INDUSTRY_DATA[key] || INDUSTRY_DATA['general'] || INDUSTRY_DATA['textile'];
+  const theme = INDUSTRY_BG_THEMES[key] || INDUSTRY_BG_THEMES['textile'];
+  applyIndustryBackgroundTheme(key);
+
   const questions = (data && data.starterQuestions && data.starterQuestions.length)
     ? data.starterQuestions
     : (INDUSTRY_DATA['textile'] && INDUSTRY_DATA['textile'].starterQuestions) || [];
@@ -3619,6 +4037,20 @@ function appendWelcomeCard(indKey) {
         <span class="starter-title">${q.title}</span>
         <span class="starter-subtitle">${q.question}</span>
       </div>
+    </button>
+  `).join('');
+
+  const industryPills = [
+    { id: 'textile', label: '🧵 Textile & Apparel' },
+    { id: 'food', label: '🥣 Food & Beverage' },
+    { id: 'pharma', label: '💊 Pharma & Bio' },
+    { id: 'auto', label: '🚗 Automotive & EV' },
+    { id: 'construction', label: '🏗️ Civil & BIM' },
+    { id: 'logistics', label: '🚚 Global Logistics' },
+    { id: 'general', label: '⚡ Universal Core' }
+  ].map(p => `
+    <button type="button" class="welcome-ind-pill ${p.id === key ? 'active' : ''}" onclick="switchIndustryEnvironment('${p.id}')" title="Switch chatbot background & intelligence to ${p.label}">
+      ${p.label}
     </button>
   `).join('');
 
@@ -3639,11 +4071,11 @@ function appendWelcomeCard(indKey) {
     <div class="welcome-hero-section">
       <div class="welcome-top-badge">
         <span class="badge-pulse-glow"></span>
-        <span class="badge-txt">⚡ TEXO UNIVERSAL INTELLIGENCE 2.0 • ENTERPRISE CORE</span>
+        <span class="badge-txt">${theme.badgeText || '⚡ TEXO UNIVERSAL INTELLIGENCE 2.0 • ENTERPRISE CORE'}</span>
       </div>
       
       <div class="welcome-logo-wrap celebration-interactive" title="Tap for celebration fireworks! 🎆🎉" style="cursor:pointer;">
-        <img src="/static/apex_logo.jpg" alt="TEXO" class="welcome-logo-img"/>
+        <img src="/static/texo_logo.jpg?v=6.1.0" alt="TEXO" class="welcome-logo-img"/>
         <div class="welcome-glow"></div>
       </div>
       
@@ -3654,8 +4086,13 @@ function appendWelcomeCard(indKey) {
       ${welcomeBannerHtml}
 
       <p class="welcome-tagline">
-        Next-generation autonomous intelligence workspace. Ask anything across global data, technical analysis, operations, or enterprise document generation with real-time neural voice.
+        Next-generation autonomous intelligence workspace. Select an industry environment below to dynamically morph the holographic schematic background, domain telemetry, and specialized AI engineering prompts.
       </p>
+
+      <!-- Interactive 1-Click Industry Holographic Environment Switcher Strip -->
+      <div class="welcome-industry-strip" role="group" aria-label="Select Industry Holographic Environment">
+        ${industryPills}
+      </div>
     </div>
 
     <!-- Structured Capability Pillars (4 Interactive Cards) -->
@@ -3679,7 +4116,7 @@ function appendWelcomeCard(indKey) {
       </div>
 
       <div class="welcome-pillar-card" onclick="triggerMicVoiceListening()">
-        <div class="pillar-icon-wrap">🎙️</div>
+        <div class="pillar-icon-wrap">${CYBER_SPEAKER_SVG}</div>
         <div class="pillar-content">
           <h4 class="pillar-title">Multilingual Voice AI</h4>
           <p class="pillar-desc">Listen in any world language with ultra-realistic human neural voice personas.</p>
@@ -3701,7 +4138,7 @@ function appendWelcomeCard(indKey) {
     <div class="welcome-prompts-section">
       <div class="prompts-section-header">
         <span class="prompts-header-icon">⚡</span>
-        <span class="prompts-header-title">Suggested Quick Actions</span>
+        <span class="prompts-header-title">Suggested Quick Actions (${data.name.split('/')[0].trim()})</span>
         <span class="prompts-header-sub">Tap any query to start instantly</span>
       </div>
       <div class="welcome-features welcome-questions" id="welcomeQuestions">
@@ -3713,7 +4150,7 @@ function appendWelcomeCard(indKey) {
     <div class="welcome-trust-bar">
       <div class="trust-item"><span class="trust-dot"></span> 🧠 Continuous Enterprise Memory</div>
       <div class="trust-item"><span class="trust-dot"></span> 🌐 Any-Language Listening</div>
-      <div class="trust-item"><span class="trust-dot"></span> 🎙️ Ultra-Real Neural Voice</div>
+      <div class="trust-item"><span class="trust-dot"></span> ${CYBER_SPEAKER_SVG} Ultra-Real Neural Voice</div>
       <div class="trust-item"><span class="trust-dot"></span> ⚡ Zero-Code Visual Charts</div>
     </div>`;
 

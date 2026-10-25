@@ -5143,3 +5143,494 @@ pre:has(code.language-json\:action) {
 .pillar-audio-svg .p-wave.p-wave-2 {
   animation: acousticArc 1.6s ease-in-out infinite 0.3s;
 }
+
+
+/* ==========================================================================
+   🌌 FUTURISTIC MULTI-INDUSTRY HOLOGRAPHIC BACKGROUND ENGINE
+   Dynamically morphs the entire environment by selected industry:
+   Textile · Food & Beverage · Pharma · Automotive · Construction · Logistics · General
+   ========================================================================== */
+
+:root {
+  --ind-primary: #00F5D4;
+  --ind-secondary: #6366F1;
+  --ind-accent: #EC4899;
+  --ind-glow-rgb: 0, 245, 212;
+  --ind-sec-rgb: 99, 102, 241;
+  --ind-acc-rgb: 236, 72, 153;
+  --ind-bg-base: #040715;
+}
+
+body[data-industry="general"] {
+  --ind-primary: #00F5A0;
+  --ind-secondary: #06B6D4;
+  --ind-accent: #8B5CF6;
+  --ind-glow-rgb: 0, 245, 160;
+  --ind-sec-rgb: 6, 182, 212;
+  --ind-acc-rgb: 139, 92, 246;
+  --ind-bg-base: #030712;
+}
+
+body[data-industry="textile"] {
+  --ind-primary: #00F5D4;
+  --ind-secondary: #818CF8;
+  --ind-accent: #F472B6;
+  --ind-glow-rgb: 0, 245, 212;
+  --ind-sec-rgb: 129, 140, 248;
+  --ind-acc-rgb: 244, 114, 182;
+  --ind-bg-base: #050616;
+}
+
+body[data-industry="food"] {
+  --ind-primary: #F59E0B;
+  --ind-secondary: #10B981;
+  --ind-accent: #84CC16;
+  --ind-glow-rgb: 245, 158, 11;
+  --ind-sec-rgb: 16, 185, 129;
+  --ind-acc-rgb: 132, 204, 22;
+  --ind-bg-base: #04100C;
+}
+
+body[data-industry="pharma"] {
+  --ind-primary: #0EA5E9;
+  --ind-secondary: #14B8A6;
+  --ind-accent: #A855F7;
+  --ind-glow-rgb: 14, 165, 233;
+  --ind-sec-rgb: 20, 184, 166;
+  --ind-acc-rgb: 168, 85, 247;
+  --ind-bg-base: #020C18;
+}
+
+body[data-industry="auto"] {
+  --ind-primary: #F97316;
+  --ind-secondary: #38BDF8;
+  --ind-accent: #EF4444;
+  --ind-glow-rgb: 249, 115, 22;
+  --ind-sec-rgb: 56, 189, 248;
+  --ind-acc-rgb: 239, 68, 68;
+  --ind-bg-base: #08090F;
+}
+
+body[data-industry="construction"] {
+  --ind-primary: #FBBF24;
+  --ind-secondary: #06B6D4;
+  --ind-accent: #F97316;
+  --ind-glow-rgb: 251, 191, 36;
+  --ind-sec-rgb: 6, 182, 212;
+  --ind-acc-rgb: 249, 115, 22;
+  --ind-bg-base: #050B16;
+}
+
+body[data-industry="logistics"] {
+  --ind-primary: #00F0FF;
+  --ind-secondary: #22C55E;
+  --ind-accent: #6366F1;
+  --ind-glow-rgb: 0, 240, 255;
+  --ind-sec-rgb: 34, 197, 94;
+  --ind-acc-rgb: 99, 102, 241;
+  --ind-bg-base: #020914;
+}
+
+body {
+  background-color: var(--ind-bg-base) !important;
+  transition: background-color 0.6s ease;
+}
+
+/* Main Stage Container */
+.industry-bg-stage {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  transition: all 0.6s ease;
+}
+
+/* 1. Volumetric Nebula & Horizon Glow */
+.ind-nebula-glow {
+  position: absolute;
+  inset: -15%;
+  width: 130%;
+  height: 130%;
+  background:
+    radial-gradient(ellipse 55% 45% at 22% 18%, rgba(var(--ind-glow-rgb), 0.22) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 45% at 82% 28%, rgba(var(--ind-sec-rgb), 0.20) 0%, transparent 65%),
+    radial-gradient(ellipse 65% 40% at 52% 92%, rgba(var(--ind-acc-rgb), 0.18) 0%, transparent 70%),
+    radial-gradient(circle at 50% 50%, rgba(var(--ind-glow-rgb), 0.07) 0%, transparent 60%);
+  filter: blur(42px);
+  animation: nebulaDrift 18s ease-in-out infinite alternate;
+  transition: background 0.6s ease;
+}
+
+@keyframes nebulaDrift {
+  0%   { transform: translate(0, 0) scale(1) rotate(0deg); }
+  50%  { transform: translate(-2%, 1.5%) scale(1.05) rotate(1deg); }
+  100% { transform: translate(2%, -1.5%) scale(0.98) rotate(-1deg); }
+}
+
+/* 2. Futuristic 3D Perspective Cyber-Grid Floor & Horizon */
+.ind-perspective-grid {
+  position: absolute;
+  left: -25%;
+  right: -25%;
+  bottom: -18%;
+  height: 68%;
+  background-image:
+    linear-gradient(to right, rgba(var(--ind-glow-rgb), 0.22) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(var(--ind-sec-rgb), 0.22) 1px, transparent 1px);
+  background-size: 54px 54px;
+  transform: perspective(460px) rotateX(66deg);
+  transform-origin: center top;
+  mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.85) 35%, rgba(0, 0, 0, 0.95) 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.85) 35%, rgba(0, 0, 0, 0.95) 100%);
+  animation: gridScrollForward 3.2s linear infinite;
+  opacity: 0.75;
+}
+
+@keyframes gridScrollForward {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 54px; }
+}
+
+/* 3. Industry-Specific Geometric Pattern Mesh */
+.ind-pattern-layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0.55;
+  transition: all 0.5s ease;
+}
+
+/* TEXTILE: Intersecting Jacquard Diamond & Warp-Weft Laser Weave */
+.industry-bg-stage[data-industry="textile"] .ind-pattern-layer {
+  background-image:
+    repeating-linear-gradient(45deg, rgba(0, 245, 212, 0.06) 0px, rgba(0, 245, 212, 0.06) 1px, transparent 1px, transparent 28px),
+    repeating-linear-gradient(-45deg, rgba(129, 140, 248, 0.06) 0px, rgba(129, 140, 248, 0.06) 1px, transparent 1px, transparent 28px),
+    repeating-linear-gradient(0deg, rgba(244, 114, 182, 0.04) 0px, rgba(244, 114, 182, 0.04) 1px, transparent 1px, transparent 14px),
+    repeating-linear-gradient(90deg, rgba(0, 245, 212, 0.04) 0px, rgba(0, 245, 212, 0.04) 1px, transparent 1px, transparent 14px);
+}
+
+/* FOOD & BEVERAGE: Warm Golden Nectar & Botanical Cellular Lattice */
+.industry-bg-stage[data-industry="food"] .ind-pattern-layer {
+  background-image:
+    radial-gradient(circle at 24px 24px, rgba(245, 158, 11, 0.14) 2px, transparent 2.5px),
+    radial-gradient(circle at 0px 0px, rgba(16, 185, 129, 0.12) 2px, transparent 2.5px),
+    repeating-linear-gradient(60deg, rgba(245, 158, 11, 0.045) 0px, rgba(245, 158, 11, 0.045) 1px, transparent 1px, transparent 36px),
+    repeating-linear-gradient(-60deg, rgba(16, 185, 129, 0.045) 0px, rgba(16, 185, 129, 0.045) 1px, transparent 1px, transparent 36px);
+  background-size: 48px 48px, 48px 48px, 100% 100%, 100% 100%;
+}
+
+/* PHARMA: Sterile Cryo-Cleanroom Hexagonal Biochemical Grid */
+.industry-bg-stage[data-industry="pharma"] .ind-pattern-layer {
+  background-image:
+    radial-gradient(circle at center, rgba(14, 165, 233, 0.15) 1.5px, transparent 2px),
+    linear-gradient(30deg, rgba(20, 184, 166, 0.05) 1px, transparent 1px),
+    linear-gradient(150deg, rgba(14, 165, 233, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168, 85, 247, 0.04) 1px, transparent 1px);
+  background-size: 38px 38px, 44px 25px, 44px 25px, 44px 25px;
+}
+
+/* AUTOMOTIVE: Carbon-Fiber Twill Weave & Tachometer Telemetry Grid */
+.industry-bg-stage[data-industry="auto"] .ind-pattern-layer {
+  background-image:
+    repeating-linear-gradient(135deg, rgba(249, 115, 22, 0.07) 0px, rgba(249, 115, 22, 0.07) 2px, transparent 2px, transparent 12px),
+    repeating-linear-gradient(45deg, rgba(56, 189, 248, 0.04) 0px, rgba(56, 189, 248, 0.04) 1px, transparent 1px, transparent 24px),
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 64px 64px;
+}
+
+/* CONSTRUCTION: Architectural CAD Blueprint & Structural Truss Grid */
+.industry-bg-stage[data-industry="construction"] .ind-pattern-layer {
+  background-image:
+    linear-gradient(rgba(251, 191, 36, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(6, 182, 212, 0.07) 1px, transparent 1px),
+    linear-gradient(rgba(251, 191, 36, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(6, 182, 212, 0.03) 1px, transparent 1px);
+  background-size: 80px 80px, 80px 80px, 16px 16px, 16px 16px;
+}
+
+/* LOGISTICS: Orbital Geodesic Radar & Supply Matrix */
+.industry-bg-stage[data-industry="logistics"] .ind-pattern-layer {
+  background-image:
+    radial-gradient(circle at 50% 50%, transparent 60px, rgba(0, 240, 255, 0.05) 61px, transparent 62px),
+    radial-gradient(circle at 50% 50%, transparent 180px, rgba(34, 197, 94, 0.05) 181px, transparent 182px),
+    radial-gradient(circle at 50% 50%, transparent 320px, rgba(0, 240, 255, 0.05) 321px, transparent 322px),
+    linear-gradient(rgba(0, 240, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 197, 94, 0.035) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 52px 52px, 52px 52px;
+}
+
+/* GENERAL: Quantum Cyber-Nexus Matrix */
+.industry-bg-stage[data-industry="general"] .ind-pattern-layer {
+  background-image:
+    radial-gradient(circle at 30px 30px, rgba(0, 245, 160, 0.12) 1.5px, transparent 2px),
+    linear-gradient(rgba(0, 245, 160, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(6, 182, 212, 0.045) 1px, transparent 1px);
+  background-size: 60px 60px, 60px 60px, 60px 60px;
+}
+
+/* 4. Sweeping Holographic Laser Scanline */
+.ind-scanline-beam {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 140px;
+  background: linear-gradient(180deg, transparent 0%, rgba(var(--ind-glow-rgb), 0.04) 50%, rgba(var(--ind-glow-rgb), 0.14) 98%, rgba(var(--ind-glow-rgb), 0.45) 100%);
+  animation: laserSweepVertical 9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+@keyframes laserSweepVertical {
+  0%   { top: -150px; opacity: 0; }
+  15%  { opacity: 0.65; }
+  85%  { opacity: 0.65; }
+  100% { top: 105%; opacity: 0; }
+}
+
+/* 5. Large Animated Holographic Industry Vector Schematics */
+.ind-holo-art {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 60px 30px 60px 280px;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+@media (max-width: 900px) {
+  .ind-holo-art {
+    padding: 60px 12px;
+    opacity: 0.55;
+  }
+}
+
+.holo-wing {
+  width: 390px;
+  height: 390px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 0 18px rgba(var(--ind-glow-rgb), 0.35));
+  transition: all 0.5s ease;
+}
+
+.holo-wing svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.holo-spin-slow {
+  transform-origin: center;
+  animation: holoSpin 32s linear infinite;
+}
+
+.holo-spin-rev {
+  transform-origin: center;
+  animation: holoSpinRev 24s linear infinite;
+}
+
+.holo-pulse {
+  animation: holoPulseGlow 3.2s ease-in-out infinite alternate;
+}
+
+.holo-float {
+  animation: holoFloatUp 5s ease-in-out infinite alternate;
+}
+
+@keyframes holoSpin {
+  to { transform: rotate(360deg); }
+}
+@keyframes holoSpinRev {
+  to { transform: rotate(-360deg); }
+}
+@keyframes holoPulseGlow {
+  0%   { opacity: 0.35; }
+  100% { opacity: 0.95; }
+}
+@keyframes holoFloatUp {
+  0%   { transform: translateY(8px); }
+  100% { transform: translateY(-8px); }
+}
+
+/* 6. Corner HUD Telemetry Readouts */
+.ind-hud-telemetry {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  background: rgba(5, 10, 22, 0.65);
+  border: 1px solid rgba(var(--ind-glow-rgb), 0.3);
+  border-radius: 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  color: var(--ind-primary);
+  text-transform: uppercase;
+  box-shadow: 0 0 14px rgba(var(--ind-glow-rgb), 0.15);
+  backdrop-filter: blur(6px);
+  z-index: 2;
+}
+
+.ind-hud-telemetry.top-left {
+  top: 72px;
+  left: 280px;
+}
+
+.ind-hud-telemetry.bottom-right {
+  bottom: 92px;
+  right: 26px;
+}
+
+@media (max-width: 860px) {
+  .ind-hud-telemetry {
+    display: none;
+  }
+}
+
+.ind-hud-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ind-primary);
+  box-shadow: 0 0 8px var(--ind-primary);
+  animation: badgeBlink 1.5s infinite alternate;
+}
+
+/* 7. Header Quick Industry Switcher Pill */
+.header-industry-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: 10px;
+  padding: 4px 11px;
+  background: rgba(var(--ind-glow-rgb), 0.10);
+  border: 1px solid rgba(var(--ind-glow-rgb), 0.42);
+  border-radius: 999px;
+  box-shadow: 0 0 16px rgba(var(--ind-glow-rgb), 0.18);
+  transition: all 0.25s ease;
+}
+
+.header-industry-switcher:hover {
+  background: rgba(var(--ind-glow-rgb), 0.18);
+  border-color: var(--ind-primary);
+  box-shadow: 0 0 22px rgba(var(--ind-glow-rgb), 0.35);
+}
+
+.ind-switch-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ind-primary);
+  box-shadow: 0 0 10px var(--ind-primary);
+  flex-shrink: 0;
+}
+
+.header-industry-select {
+  background: transparent;
+  border: none;
+  color: #F8FAFC;
+  font-family: var(--font-heading, sans-serif);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+  padding-right: 4px;
+}
+
+.header-industry-select option {
+  background: #0B1324;
+  color: #F8FAFC;
+  font-weight: 600;
+}
+
+/* 8. Welcome Card Translucent Cyber-Glass & Interactive Industry Bar */
+.structured-welcome-card {
+  background: linear-gradient(180deg, rgba(10, 16, 30, 0.72) 0%, rgba(5, 9, 19, 0.78) 100%) !important;
+  border: 1px solid rgba(var(--ind-glow-rgb), 0.38) !important;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7), 0 0 45px rgba(var(--ind-glow-rgb), 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  transition: border-color 0.5s ease, box-shadow 0.5s ease !important;
+}
+
+.welcome-top-badge {
+  background: rgba(var(--ind-glow-rgb), 0.12) !important;
+  border-color: rgba(var(--ind-glow-rgb), 0.45) !important;
+  color: var(--ind-primary) !important;
+  box-shadow: 0 0 18px rgba(var(--ind-glow-rgb), 0.22) !important;
+}
+
+.badge-pulse-glow {
+  background: var(--ind-primary) !important;
+  box-shadow: 0 0 10px var(--ind-primary) !important;
+}
+
+/* Interactive Industry Environment Pills on Welcome Screen */
+.welcome-industry-strip {
+  margin: 18px auto 6px auto;
+  padding: 12px 14px;
+  background: rgba(6, 11, 24, 0.68);
+  border: 1px solid rgba(var(--ind-glow-rgb), 0.28);
+  border-radius: 16px;
+  max-width: 780px;
+}
+
+.welcome-ind-strip-label {
+  display: block;
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--ind-primary);
+  text-transform: uppercase;
+  margin-bottom: 9px;
+}
+
+.welcome-ind-pills {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.welcome-ind-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 13px;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  color: #CBD5E1;
+  font-family: var(--font-heading, sans-serif);
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.welcome-ind-pill:hover {
+  transform: translateY(-2px);
+  border-color: var(--ind-primary);
+  color: #FFFFFF;
+  background: rgba(var(--ind-glow-rgb), 0.16);
+  box-shadow: 0 4px 14px rgba(var(--ind-glow-rgb), 0.25);
+}
+
+.welcome-ind-pill.active {
+  background: linear-gradient(135deg, rgba(var(--ind-glow-rgb), 0.28), rgba(var(--ind-sec-rgb), 0.25));
+  border-color: var(--ind-primary);
+  color: #FFFFFF;
+  box-shadow: 0 0 18px rgba(var(--ind-glow-rgb), 0.4);
+}
+
+#particleCanvas {
+  opacity: 0.92 !important;
+}

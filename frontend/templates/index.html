@@ -74,13 +74,27 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Syne:wght@700;800;900&family=Orbitron:wght@600;700;900&family=Space+Grotesk:wght@600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/static/css/style.css?v=6.0.0"/>
+  <link rel="stylesheet" href="/static/css/style.css?v=6.1.0"/>
 </head>
-<body>
+<body data-industry="textile">
 
-<!-- ── AMBIENT CYBER GLOW & MESH ───────────────────────────────────────── -->
-<div class="cyber-aurora"></div>
-<div class="cyber-grid-overlay"></div>
+<!-- ── FUTURISTIC MULTI-INDUSTRY HOLOGRAPHIC BACKGROUND ENGINE ──────────── -->
+<div class="cyber-aurora" id="cyberAurora"></div>
+<div class="cyber-grid-overlay" id="cyberGridOverlay"></div>
+<div class="industry-bg-stage" id="industryBgStage" data-industry="textile">
+  <div class="ind-nebula-glow"></div>
+  <div class="ind-perspective-grid"></div>
+  <div class="ind-pattern-layer"></div>
+  <div class="ind-scanline-beam"></div>
+  <div class="ind-holo-art" id="industryHoloArt"></div>
+  <div class="ind-hud-telemetry top-left">
+    <span class="ind-hud-dot"></span>
+    <span class="ind-hud-text" id="indHudSectorLabel">SECTOR // CYBER-LOOM &amp; QUANTUM JACQUARD MATRIX</span>
+  </div>
+  <div class="ind-hud-telemetry bottom-right">
+    <span class="ind-hud-text" id="indHudSpecsLabel">SYS.ENV // TEXTILE-CORE 60FPS HOLOGRAPHIC</span>
+  </div>
+</div>
 
 <!-- ── SPLASH SCREEN ──────────────────────────────────────────────────────── -->
 <div id="splash" class="splash">
@@ -363,6 +377,19 @@
       <div class="header-brand">
         <div class="header-logo">TEXO</div>
         <div class="header-sub">Premium Intelligence</div>
+      </div>
+      <!-- Quick Industry Futuristic Background Switcher -->
+      <div class="header-industry-switcher" id="headerIndustrySwitcher" title="Switch Industry Environment &amp; Futuristic Background">
+        <span class="ind-switch-dot" id="indSwitchDot"></span>
+        <select id="headerIndustrySelect" class="header-industry-select" aria-label="Select Industry Environment">
+          <option value="general">🌐 Universal AI Core</option>
+          <option value="textile">🧵 Textile &amp; Fabric</option>
+          <option value="food">🍽️ Food &amp; Beverage</option>
+          <option value="pharma">💊 Pharma &amp; Biotech</option>
+          <option value="auto">🚗 Automotive &amp; EV</option>
+          <option value="construction">🏗️ Construction &amp; BIM</option>
+          <option value="logistics">📦 Global Logistics</option>
+        </select>
       </div>
     </div>
     <div class="header-right">
@@ -1329,6 +1356,6 @@
 
 <script src="/static/js/chart.min.js"></script>
 <script src="/static/js/marked.min.js"></script>
-<script src="/static/js/app.js?v=6.0.0"></script>
+<script src="/static/js/app.js?v=6.1.0"></script>
 </body>
 </html>
