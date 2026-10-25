@@ -705,318 +705,207 @@ setTimeout(() => {
 }, 600);
 
 // ══════════════════════════════════════════════════════════════════════════════
-// FUTURISTIC MULTI-INDUSTRY SCENIC GRAPHICS & LIQUID-GLASS ENGINE
+// CINEMATIC GOTHIC HORROR BACKGROUND ENGINE (BLOOD MOON, GRAVEYARD & BATS)
 // ══════════════════════════════════════════════════════════════════════════════
+
+const HORROR_LEFT_TREE_AND_GRAVEYARD_SVG = `
+  <svg class="holo-svg-left" viewBox="0 0 360 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Top Corner Spider Cobweb -->
+    <path d="M0 0 L130 0 M0 0 L115 55 M0 0 L85 95 M0 0 L42 120 M0 0 L0 135" stroke="rgba(220,38,38,0.28)" stroke-width="1.2"/>
+    <path d="M40 0 Q36 22 32 32 Q20 38 0 42 M78 0 Q68 38 56 58 Q34 72 0 78 M112 0 Q96 52 76 84 Q45 104 0 112" stroke="rgba(220,38,38,0.25)" stroke-width="1.1" fill="none"/>
+    <!-- Dangling Widow Spider on Thread -->
+    <line x1="56" y1="58" x2="56" y2="128" stroke="rgba(239,68,68,0.45)" stroke-width="1"/>
+    <circle cx="56" cy="132" r="4.5" fill="#090102" stroke="#EF4444" stroke-width="1.2"/>
+    <circle cx="56" cy="132" r="1.5" fill="#EF4444" class="holo-float-pulse"/>
+
+    <!-- Gnarled Dead Haunted Oak Tree Silhouette -->
+    <path d="M18 395 Q55 320 52 230 Q48 165 12 115 L24 108 Q62 150 68 205 Q82 135 138 78 L145 88 Q98 142 86 202 Q125 168 182 152 L185 162 Q128 182 88 228 Q84 315 118 395 Z" fill="#060102" stroke="#991B1B" stroke-width="2"/>
+    <!-- Hanging Noose / Cursed Lantern from Branch -->
+    <line x1="142" y1="168" x2="142" y2="222" stroke="#DC2626" stroke-width="1.8"/>
+    <polygon points="132,222 152,222 148,248 136,248" fill="rgba(239,68,68,0.28)" stroke="#EF4444" stroke-width="1.6" class="holo-float-pulse"/>
+    <circle cx="142" cy="235" r="4" fill="#FCA5A5" class="holo-float-pulse"/>
+
+    <!-- Perching Raven with Glowing Red Eye on Branch -->
+    <path d="M112 104 Q124 92 136 98 L146 95 L138 103 Q134 114 118 118 L104 126 L112 104 Z" fill="#050001" stroke="#EF4444" stroke-width="1.2"/>
+    <circle cx="133" cy="98" r="2" fill="#EF4444" class="holo-float-pulse"/>
+
+    <!-- Tilted Gothic Graveyard Tombstones & Crosses -->
+    <g transform="rotate(-7 195 345)">
+      <path d="M168 390 V315 C168 292, 222 292, 222 315 V390 Z" fill="#080103" stroke="#991B1B" stroke-width="2"/>
+      <line x1="195" y1="308" x2="195" y2="342" stroke="#EF4444" stroke-width="2.2"/>
+      <line x1="181" y1="320" x2="209" y2="320" stroke="#EF4444" stroke-width="2.2"/>
+    </g>
+    <!-- Celtic Cross Monument -->
+    <g transform="rotate(6 278 335)">
+      <rect x="272" y="275" width="12" height="115" fill="#070102" stroke="#991B1B" stroke-width="1.8"/>
+      <rect x="248" y="298" width="60" height="12" fill="#070102" stroke="#991B1B" stroke-width="1.8"/>
+      <circle cx="278" cy="304" r="18" fill="none" stroke="#DC2626" stroke-width="1.8"/>
+    </g>
+
+    <!-- Wrought-Iron Spiked Graveyard Fence -->
+    <line x1="8" y1="362" x2="345" y2="362" stroke="#7F1D1D" stroke-width="2.5"/>
+    <line x1="8" y1="384" x2="345" y2="384" stroke="#7F1D1D" stroke-width="2.5"/>
+    <g stroke="#991B1B" stroke-width="2.2">
+      <line x1="35" y1="338" x2="35" y2="395"/><line x1="75" y1="338" x2="75" y2="395"/>
+      <line x1="115" y1="338" x2="115" y2="395"/><line x1="155" y1="338" x2="155" y2="395"/>
+      <line x1="235" y1="338" x2="235" y2="395"/><line x1="315" y1="338" x2="315" y2="395"/>
+    </g>
+    <!-- Glowing Red Demon Eyes Peering from the Dark Bushes -->
+    <ellipse cx="252" cy="374" rx="4.5" ry="2" fill="#EF4444" class="holo-float-pulse"/>
+    <ellipse cx="266" cy="374" rx="4.5" ry="2" fill="#EF4444" class="holo-float-pulse"/>
+  </svg>`;
+
+const HORROR_RIGHT_MANSION_AND_BLOODMOON_SVG = `
+  <svg class="holo-svg-right" viewBox="0 0 360 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="bloodMoonGrad" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#FCA5A5" stop-opacity="0.95"/>
+        <stop offset="38%" stop-color="#EF4444" stop-opacity="0.88"/>
+        <stop offset="75%" stop-color="#991B1B" stop-opacity="0.65"/>
+        <stop offset="100%" stop-color="#450A0A" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+
+    <!-- Giant Ominous Blood Moon in Upper Sky -->
+    <circle cx="235" cy="108" r="78" fill="url(#bloodMoonGrad)" class="holo-float-pulse"/>
+    <circle cx="235" cy="108" r="54" fill="rgba(185, 28, 28, 0.55)" stroke="#EF4444" stroke-width="1.8"/>
+    <!-- Blood Moon Craters & Creeping Cloud Shadow -->
+    <circle cx="216" cy="92" r="11" fill="rgba(69, 10, 10, 0.45)"/>
+    <circle cx="254" cy="122" r="15" fill="rgba(69, 10, 10, 0.45)"/>
+    <path d="M160 118 Q235 104 312 122" stroke="rgba(8, 1, 3, 0.85)" stroke-width="10" stroke-linecap="round"/>
+
+    <!-- Hanging Rusted Torture Chains from Top Right -->
+    <line x1="318" y1="0" x2="318" y2="145" stroke="#991B1B" stroke-width="3" stroke-dasharray="7 4"/>
+    <line x1="342" y1="0" x2="342" y2="110" stroke="#7F1D1D" stroke-width="2.5" stroke-dasharray="6 4"/>
+    <path d="M318 145 C318 162, 336 162, 330 146" stroke="#EF4444" stroke-width="2.5" fill="none"/>
+
+    <!-- Haunted Gothic Asylum / Dracula Castle Silhouette -->
+    <!-- Central Spire Tower -->
+    <polygon points="175,112 142,210 208,210" fill="#050001" stroke="#991B1B" stroke-width="2"/>
+    <line x1="175" y1="78" x2="175" y2="112" stroke="#EF4444" stroke-width="2"/>
+    <line x1="164" y1="90" x2="186" y2="90" stroke="#EF4444" stroke-width="2"/>
+    <!-- Left & Right Battered Turrets -->
+    <polygon points="98,162 72,235 124,235" fill="#050001" stroke="#991B1B" stroke-width="1.8"/>
+    <polygon points="256,155 230,235 282,235" fill="#050001" stroke="#991B1B" stroke-width="1.8"/>
+    <!-- Main Castle Fortress Body -->
+    <path d="M58 395 L68 235 H286 L298 395 Z" fill="#050002" stroke="#991B1B" stroke-width="2.2"/>
+
+    <!-- Eerie Glowing Crimson & Possessed Windows Inside Haunted Mansion -->
+    <path d="M163 245 C163 228, 187 228, 187 245 V282 H163 Z" fill="#EF4444" class="holo-float-pulse"/>
+    <line x1="175" y1="230" x2="175" y2="282" stroke="#050001" stroke-width="2"/>
+    <line x1="163" y1="256" x2="187" y2="256" stroke="#050001" stroke-width="2"/>
+
+    <path d="M90 268 C90 256, 108 256, 108 268 V296 H90 Z" fill="#DC2626" class="holo-float-pulse"/>
+    <path d="M246 268 C246 256, 264 256, 264 268 V296 H246 Z" fill="#DC2626" class="holo-float-pulse"/>
+    <!-- Grand Haunted Archway Entrance -->
+    <path d="M152 395 V338 C152 315, 198 315, 198 338 V395 Z" fill="rgba(220, 38, 38, 0.25)" stroke="#EF4444" stroke-width="2"/>
+  </svg>`;
+
 const INDUSTRY_BG_THEMES = {
   textile: {
-    sector: 'SECTOR // HAUTE-COUTURE APPAREL & CYBER-LOOM STUDIO',
-    specs: '3D GARMENT DRAPE · JACQUARD WARP/WEFT · ASTM D5430 & PANTONE TCX',
-    badgeText: '🧵 TEXO TEXTILE & APPAREL INTELLIGENCE • COUTURE & LOOM CORE',
+    sector: 'CURSED LOOM // HAUNTED APPAREL MILL',
+    specs: 'BLOOD-SPUN SILK · PHANTOM WEAVE · MIDNIGHT SHIFT',
+    badgeText: '🩸 TEXO TEXTILE INTELLIGENCE • CURSED CRIMSON MILL',
     colors: [
-      { fill: 'rgba(0, 245, 212,', glow: '#00F5D4' },   // Electric Turquoise Silk
-      { fill: 'rgba(244, 63, 94,', glow: '#F43F5E' },   // Couture Rose Magenta
-      { fill: 'rgba(251, 191, 36,', glow: '#FBBF24' }   // Golden Thread
+      { fill: 'rgba(239, 68, 68,', glow: '#EF4444' },   // Arterial Blood Red
+      { fill: 'rgba(153, 27, 27,', glow: '#991B1B' },   // Dried Crimson
+      { fill: 'rgba(252, 165, 165,', glow: '#FCA5A5' }  // Ghostly Bone Ash
     ],
-    lineColor: '0, 245, 212',
-    mouseLineColor: '244, 63, 94',
+    lineColor: '220, 38, 38',
+    mouseLineColor: '239, 68, 68',
     mode: 'textile',
-    holoLeft: `
-      <svg class="holo-svg-left" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="texGownGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#00F5D4" stop-opacity="0.32"/>
-            <stop offset="50%" stop-color="#F43F5E" stop-opacity="0.28"/>
-            <stop offset="100%" stop-color="#FBBF24" stop-opacity="0.22"/>
-          </linearGradient>
-        </defs>
-        <!-- Illuminated Couture Runway Pedestal -->
-        <ellipse cx="170" cy="310" rx="110" ry="22" fill="rgba(0,245,212,0.10)" stroke="#00F5D4" stroke-width="2"/>
-        <ellipse cx="170" cy="310" rx="76" ry="13" stroke="#F43F5E" stroke-width="1.4" stroke-dasharray="6 4"/>
-        <!-- Couture Dress Mannequin Neck, Bodice & Flowing Silk Skirt -->
-        <rect x="163" y="42" width="14" height="24" rx="5" fill="rgba(251,191,36,0.25)" stroke="#FBBF24" stroke-width="1.8"/>
-        <path d="M132 72 Q170 84 208 72 L194 142 Q170 152 146 142 Z" fill="url(#texGownGrad)" stroke="#00F5D4" stroke-width="2.2"/>
-        <!-- Flowing Pleated Gown Silhouette -->
-        <path d="M146 142 L82 296 Q170 322 258 296 L194 142 Z" fill="url(#texGownGrad)" stroke="#F43F5E" stroke-width="2.2"/>
-        <!-- Pleat Drape Lines & Golden Waist Belt -->
-        <path d="M146 142 Q170 152 194 142" stroke="#FBBF24" stroke-width="3.5"/>
-        <path d="M156 146 L118 302 M170 148 L170 308 M184 146 L222 302" stroke="#00F5D4" stroke-width="1.4" opacity="0.8"/>
-        <!-- Floating Golden Needle & Silk Ribbon Swirl -->
-        <path d="M48 180 C95 110, 245 230, 292 135" stroke="#FBBF24" stroke-width="2.4" stroke-dasharray="8 4" class="holo-float-pulse"/>
-        <text x="170" y="346" text-anchor="middle" fill="#00F5D4" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">HAUTE COUTURE // DRAPE &amp; GSM</text>
-      </svg>`,
-    holoRight: `
-      <svg class="holo-svg-right" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- 3D Industrial Conical Yarn Spools & Woven Swatch -->
-        <!-- Left Bobbin Cone (Rose Magenta) -->
-        <ellipse cx="105" cy="250" rx="44" ry="14" fill="rgba(244,63,94,0.22)" stroke="#F43F5E" stroke-width="2"/>
-        <path d="M68 250 L90 115 L120 115 L142 250 Z" fill="rgba(244,63,94,0.18)" stroke="#F43F5E" stroke-width="2"/>
-        <ellipse cx="105" cy="115" rx="15" ry="6" fill="#FBBF24" stroke="#FBBF24" stroke-width="1.5"/>
-        <!-- Right Bobbin Cone (Turquoise Silk) -->
-        <ellipse cx="225" cy="265" rx="44" ry="14" fill="rgba(0,245,212,0.22)" stroke="#00F5D4" stroke-width="2"/>
-        <path d="M188 265 L210 130 L240 130 L262 265 Z" fill="rgba(0,245,212,0.18)" stroke="#00F5D4" stroke-width="2"/>
-        <ellipse cx="225" cy="130" rx="15" ry="6" fill="#FBBF24" stroke="#FBBF24" stroke-width="1.5"/>
-        <!-- Unwinding Glowing Threads Feeding Top Jacquard Swatch -->
-        <path d="M105 110 Q135 55 165 75 M225 125 Q195 60 175 75" stroke="#FBBF24" stroke-width="2.2" class="holo-float-pulse"/>
-        <rect x="115" y="38" width="105" height="56" rx="8" fill="rgba(0,245,212,0.14)" stroke="#00F5D4" stroke-width="2"/>
-        <line x1="115" y1="56" x2="220" y2="56" stroke="#F43F5E" stroke-width="1.6"/>
-        <line x1="115" y1="74" x2="220" y2="74" stroke="#FBBF24" stroke-width="1.6"/>
-        <line x1="150" y1="38" x2="150" y2="94" stroke="#00F5D4" stroke-width="1.6"/>
-        <line x1="185" y1="38" x2="185" y2="94" stroke="#00F5D4" stroke-width="1.6"/>
-        <text x="170" y="325" text-anchor="middle" fill="#FBBF24" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">JACQUARD BOBBINS // 40s COMBED</text>
-      </svg>`
+    holoLeft: HORROR_LEFT_TREE_AND_GRAVEYARD_SVG,
+    holoRight: HORROR_RIGHT_MANSION_AND_BLOODMOON_SVG
   },
   food: {
-    sector: 'SECTOR // CULINARY GASTRONOMY & BEVERAGE BIO-LAB',
-    specs: 'HTST PASTEURIZATION 72°C · BRIX BLENDING · HACCP CRITICAL CONTROL',
-    badgeText: '🥣 TEXO FOOD & BEVERAGE INTELLIGENCE • CULINARY & HACCP CORE',
+    sector: 'FORBIDDEN SLAUGHTERHOUSE // WITCH CAULDRON LAB',
+    specs: 'BLOOD HARVEST · NIGHTSHADE ELIXIR · CRITICAL HAZARD',
+    badgeText: '🩸 TEXO FOOD & BEVERAGE • HAUNTEDHARVEST CORE',
     colors: [
-      { fill: 'rgba(251, 191, 36,', glow: '#FBBF24' },  // Golden Honey
-      { fill: 'rgba(249, 115, 22,', glow: '#F97316' },  // Citrus Sunset
-      { fill: 'rgba(16, 185, 129,', glow: '#10B981' }   // Fresh Mint Leaf
+      { fill: 'rgba(220, 38, 38,', glow: '#DC2626' },   // Blood Crimson
+      { fill: 'rgba(22, 163, 74,', glow: '#16A34A' },   // Poison Witch-Brew Green
+      { fill: 'rgba(234, 88, 12,', glow: '#EA580C' }    // Hellfire Ember Orange
     ],
-    lineColor: '251, 191, 36',
-    mouseLineColor: '16, 185, 129',
+    lineColor: '220, 38, 38',
+    mouseLineColor: '22, 163, 74',
     mode: 'food',
-    holoLeft: `
-      <svg class="holo-svg-left" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Gourmet Chef Cloche Dome, Platter & Rising Aromatic Steam -->
-        <!-- Rising Steam Ribbons -->
-        <path d="M130 120 Q115 85 135 55 Q155 25 135 10" stroke="#FBBF24" stroke-width="3" stroke-linecap="round" class="holo-float-pulse"/>
-        <path d="M170 110 Q155 75 175 45 Q195 15 175 2" stroke="#F97316" stroke-width="3" stroke-linecap="round" class="holo-float-pulse"/>
-        <path d="M210 120 Q195 85 215 55 Q235 25 215 10" stroke="#10B981" stroke-width="3" stroke-linecap="round" class="holo-float-pulse"/>
-        <!-- Cloche Handle & Golden Dome -->
-        <circle cx="170" cy="136" r="12" fill="rgba(251,191,36,0.3)" stroke="#FBBF24" stroke-width="2.5"/>
-        <path d="M62 245 C62 165, 278 165, 278 245 Z" fill="rgba(249,115,22,0.18)" stroke="#FBBF24" stroke-width="2.5"/>
-        <!-- Platter Rim -->
-        <ellipse cx="170" cy="252" rx="124" ry="18" fill="rgba(16,185,129,0.16)" stroke="#10B981" stroke-width="2.2"/>
-        <!-- Botanical Mint Leaf & Golden Wheat Accent -->
-        <path d="M125 215 Q170 185 215 215 Q170 235 125 215 Z" fill="rgba(16,185,129,0.3)" stroke="#10B981" stroke-width="1.8"/>
-        <text x="170" y="315" text-anchor="middle" fill="#FBBF24" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">GASTRONOMY &amp; THERMAL CCP-1</text>
-      </svg>`,
-    holoRight: `
-      <svg class="holo-svg-right" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Sparkling Beverage Chalice, Citrus Wheel & Effervescent Bubbles -->
-        <!-- Citrus Slice Wheel on Rim -->
-        <circle cx="228" cy="105" r="34" fill="rgba(249,115,22,0.25)" stroke="#FBBF24" stroke-width="2.4"/>
-        <circle cx="228" cy="105" r="6" fill="#FBBF24"/>
-        <line x1="228" y1="71" x2="228" y2="139" stroke="#FBBF24" stroke-width="1.4"/>
-        <line x1="194" y1="105" x2="262" y2="105" stroke="#FBBF24" stroke-width="1.4"/>
-        <!-- Beverage Glass Bowl, Liquid Level & Stem -->
-        <path d="M96 105 L244 105 L206 205 C190 228, 150 228, 134 205 Z" fill="rgba(251,191,36,0.18)" stroke="#00F5D4" stroke-width="2.2"/>
-        <path d="M106 135 Q140 125 170 135 T234 135 L206 205 C190 228, 150 228, 134 205 Z" fill="rgba(249,115,22,0.28)" stroke="#F97316" stroke-width="2"/>
-        <line x1="170" y1="222" x2="170" y2="288" stroke="#FBBF24" stroke-width="3.5"/>
-        <ellipse cx="170" cy="292" rx="52" ry="12" fill="rgba(251,191,36,0.22)" stroke="#FBBF24" stroke-width="2.2"/>
-        <!-- Sparkling Bubbles -->
-        <g fill="#FBBF24" class="holo-float-pulse">
-          <circle cx="150" cy="185" r="5"/><circle cx="185" cy="170" r="6"/><circle cx="165" cy="150" r="4.5"/>
-          <circle cx="145" cy="82" r="5"/><circle cx="178" cy="65" r="6.5"/><circle cx="162" cy="44" r="4"/>
-        </g>
-        <text x="170" y="332" text-anchor="middle" fill="#10B981" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">BEVERAGE BRIX // 11.8°Bx • MAP</text>
-      </svg>`
+    holoLeft: HORROR_LEFT_TREE_AND_GRAVEYARD_SVG,
+    holoRight: HORROR_RIGHT_MANSION_AND_BLOODMOON_SVG
   },
   pharma: {
-    sector: 'SECTOR // BIOPHARMA R&D & CLINICAL FORMULATION LAB',
-    specs: 'FDA 21 CFR PART 11 · USP <711> DISSOLUTION · cGMP STERILE CASCADE',
-    badgeText: '💊 TEXO BIOPHARMA & CLINICAL INTELLIGENCE • cGMP STERILE CORE',
+    sector: 'WARD 13 // ABANDONED BIO-MORGUE & ASYLUM LAB',
+    specs: 'QUARANTINE BREACH · NECROTIC SERUM · CONTAGION LEVEL 5',
+    badgeText: '🩸 TEXO BIOPHARMA • HAUNTED ASYLUM BIO-WARD',
     colors: [
-      { fill: 'rgba(56, 189, 248,', glow: '#38BDF8' },  // Cryo Medical Blue
-      { fill: 'rgba(45, 212, 191,', glow: '#2DD4BF' },  // Sterile Aqua
-      { fill: 'rgba(192, 132, 252,', glow: '#C084FC' }  // Genomic Violet
+      { fill: 'rgba(239, 68, 68,', glow: '#EF4444' },   // Blood Specimen Red
+      { fill: 'rgba(16, 185, 129,', glow: '#10B981' },  // Reanimator Toxic Green
+      { fill: 'rgba(147, 51, 234,', glow: '#9333EA' }   // Necrotic Violet
     ],
-    lineColor: '56, 189, 248',
-    mouseLineColor: '45, 212, 191',
+    lineColor: '239, 68, 68',
+    mouseLineColor: '16, 185, 129',
     mode: 'pharma',
-    holoLeft: `
-      <svg class="holo-svg-left" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Medical Shield Cross + Floating 3D Two-Tone Capsule Pills -->
-        <path d="M170 40 L265 78 V165 C265 232, 222 278, 170 302 C118 278, 75 232, 75 165 V78 Z" fill="rgba(56,189,248,0.12)" stroke="#38BDF8" stroke-width="2.4"/>
-        <!-- Glowing Medical Cross Inside Shield -->
-        <path d="M152 105 H188 V145 H228 V181 H188 V221 H152 V181 H112 V145 H152 Z" fill="rgba(45,212,191,0.28)" stroke="#2DD4BF" stroke-width="2.2" class="holo-float-pulse"/>
-        <!-- Floating 3D Capsule Pill (Top Left) -->
-        <g transform="rotate(-32 85 75)">
-          <rect x="45" y="58" width="42" height="32" rx="16" fill="rgba(192,132,252,0.45)" stroke="#C084FC" stroke-width="2"/>
-          <rect x="72" y="58" width="42" height="32" rx="16" fill="rgba(56,189,248,0.45)" stroke="#38BDF8" stroke-width="2"/>
-        </g>
-        <!-- Floating 3D Capsule Pill (Bottom Right) -->
-        <g transform="rotate(28 265 265)">
-          <rect x="225" y="248" width="42" height="32" rx="16" fill="rgba(45,212,191,0.45)" stroke="#2DD4BF" stroke-width="2"/>
-          <rect x="252" y="248" width="42" height="32" rx="16" fill="rgba(192,132,252,0.45)" stroke="#C084FC" stroke-width="2"/>
-        </g>
-        <text x="170" y="336" text-anchor="middle" fill="#38BDF8" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">cGMP CLINICAL // USP &lt;711&gt; S1</text>
-      </svg>`,
-    holoRight: `
-      <svg class="holo-svg-right" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Biotech Erlenmeyer Lab Flask with Glowing Elixir & Molecular Ring -->
-        <rect x="142" y="52" width="56" height="14" rx="6" fill="rgba(56,189,248,0.25)" stroke="#38BDF8" stroke-width="2"/>
-        <path d="M150 66 V125 L82 268 C74 284, 86 300, 104 300 H236 C254 300, 266 284, 258 268 L190 125 V66 Z" fill="rgba(56,189,248,0.10)" stroke="#38BDF8" stroke-width="2.4"/>
-        <!-- Glowing Bio-Elixir Liquid Inside Flask -->
-        <path d="M114 202 Q145 192 170 202 T226 202 L254 264 C260 278, 250 292, 234 292 H106 C90 292, 80 278, 86 264 Z" fill="rgba(45,212,191,0.28)" stroke="#2DD4BF" stroke-width="2"/>
-        <!-- Bubbles & Hexagonal Molecule Above Flask -->
-        <g fill="#C084FC" class="holo-float-pulse">
-          <circle cx="145" cy="255" r="6"/><circle cx="185" cy="240" r="7.5"/><circle cx="165" cy="218" r="5"/>
-          <circle cx="170" cy="165" r="5.5"/><circle cx="162" cy="135" r="4"/>
-        </g>
-        <text x="170" y="336" text-anchor="middle" fill="#2DD4BF" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">HPLC ASSAY // PURITY 99.92%</text>
-      </svg>`
+    holoLeft: HORROR_LEFT_TREE_AND_GRAVEYARD_SVG,
+    holoRight: HORROR_RIGHT_MANSION_AND_BLOODMOON_SVG
   },
   auto: {
-    sector: 'SECTOR // SUPERCAR AERODYNAMICS & EV POWERTRAIN LAB',
-    specs: 'IATF 16949 METROLOGY · 800V SOLID-STATE BATTERY · WIND-TUNNEL DOWNFORCE',
-    badgeText: '🚗 TEXO AUTOMOTIVE & EV INTELLIGENCE • SUPERCAR & EV CORE',
+    sector: 'HIGHWAY 666 // HELLFIRE FOUNDRY & PHANTOM ENGINE',
+    specs: 'BRIMSTONE COMBUSTION · BLOOD CHASSIS · REDLINE CURSE',
+    badgeText: '🩸 TEXO AUTOMOTIVE • HELLFIRE FOUNDRY CORE',
     colors: [
-      { fill: 'rgba(239, 68, 68,', glow: '#EF4444' },   // Racing Red
-      { fill: 'rgba(59, 130, 246,', glow: '#3B82F6' },  // Nitrous Blue
-      { fill: 'rgba(249, 115, 22,', glow: '#F97316' }   // Turbo Orange
+      { fill: 'rgba(239, 68, 68,', glow: '#EF4444' },   // Hellfire Red
+      { fill: 'rgba(249, 115, 22,', glow: '#F97316' },  // Molten Brimstone
+      { fill: 'rgba(153, 27, 27,', glow: '#991B1B' }    // Charred Blood
     ],
-    lineColor: '59, 130, 246',
-    mouseLineColor: '239, 68, 68',
+    lineColor: '239, 68, 68',
+    mouseLineColor: '249, 115, 22',
     mode: 'auto',
-    holoLeft: `
-      <svg class="holo-svg-left" viewBox="0 0 360 340" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Aerodynamic Wind-Tunnel Slipstream Lines Over Supercar -->
-        <path d="M18 145 Q110 135 165 102 Q235 68 342 108" stroke="#3B82F6" stroke-width="2" stroke-dasharray="10 5" class="holo-float-pulse"/>
-        <path d="M12 172 Q95 162 155 122 Q230 85 348 128" stroke="#EF4444" stroke-width="2.2"/>
-        <!-- Futuristic Supercar / EV Fastback Silhouette -->
-        <path d="M28 218 L48 182 L118 164 L178 124 L272 128 L332 168 L342 218 L298 222 A32 32 0 0 0 232 222 L132 222 A32 32 0 0 0 66 222 Z" fill="rgba(239,68,68,0.22)" stroke="#EF4444" stroke-width="2.6"/>
-        <!-- Cockpit Canopy Glass -->
-        <path d="M126 164 L176 132 L254 135 L278 164 Z" fill="rgba(59,130,246,0.32)" stroke="#3B82F6" stroke-width="2"/>
-        <!-- Front & Rear Forged Wheels -->
-        <circle cx="99" cy="222" r="28" fill="rgba(10,16,30,0.9)" stroke="#3B82F6" stroke-width="3"/>
-        <circle cx="99" cy="222" r="12" fill="#EF4444"/>
-        <circle cx="265" cy="222" r="28" fill="rgba(10,16,30,0.9)" stroke="#3B82F6" stroke-width="3"/>
-        <circle cx="265" cy="222" r="12" fill="#EF4444"/>
-        <!-- LED Laser Headlight Blade -->
-        <path d="M32 192 L64 185" stroke="#F97316" stroke-width="4" stroke-linecap="round"/>
-        <text x="180" y="295" text-anchor="middle" fill="#EF4444" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">AERO DOWNFORCE // Cd 0.20 • 800V EV</text>
-      </svg>`,
-    holoRight: `
-      <svg class="holo-svg-right" viewBox="0 0 340 340" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Digital Cockpit RPM Gauge Arc & Forged Brake Rotor Caliper -->
-        <path d="M55 245 A130 130 0 1 1 285 245" stroke="rgba(59,130,246,0.35)" stroke-width="14" stroke-linecap="round"/>
-        <path d="M55 245 A130 130 0 0 1 255 95" stroke="#EF4444" stroke-width="14" stroke-linecap="round" class="holo-float-pulse"/>
-        <!-- Inner Brake Disc & Red Caliper -->
-        <circle cx="170" cy="175" r="74" fill="rgba(59,130,246,0.10)" stroke="#3B82F6" stroke-width="2.5"/>
-        <path d="M215 118 A74 74 0 0 1 242 185 L220 190 A50 50 0 0 0 198 135 Z" fill="#EF4444" stroke="#F97316" stroke-width="2"/>
-        <!-- EV High-Voltage Lightning Bolt in Center Hub -->
-        <polygon points="176,132 146,178 170,178 162,218 196,168 172,168" fill="#F97316"/>
-        <text x="170" y="305" text-anchor="middle" fill="#3B82F6" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">IATF 16949 // Cpk 1.88 • ZERO PPM</text>
-      </svg>`
+    holoLeft: HORROR_LEFT_TREE_AND_GRAVEYARD_SVG,
+    holoRight: HORROR_RIGHT_MANSION_AND_BLOODMOON_SVG
   },
   construction: {
-    sector: 'SECTOR // SMART SKYSCRAPER BIM & STRUCTURAL CIVIL ENGINEERING',
-    specs: 'ACI 318 REINFORCED CONCRETE · ASTM C39 · TOWER CRANE & BRIDGE CAD',
-    badgeText: '🏗️ TEXO CIVIL & STRUCTURAL INTELLIGENCE • BIM SKYLINE CORE',
+    sector: 'CATACOMB RUINS // ANCIENT CRYPT & GOTHIC CITADEL',
+    specs: 'OSSUARY VAULT · CURSED MONOLITH · SEISMIC DREAD',
+    badgeText: '🩸 TEXO CIVIL & STRUCTURAL • CATACOMB CITADEL CORE',
     colors: [
-      { fill: 'rgba(250, 204, 21,', glow: '#FACC15' },  // Caution Gold
-      { fill: 'rgba(56, 189, 248,', glow: '#38BDF8' },  // Blueprint Cyan
-      { fill: 'rgba(251, 146, 60,', glow: '#FB923C' }   // Structural Orange
+      { fill: 'rgba(220, 38, 38,', glow: '#DC2626' },   // Blood Rust
+      { fill: 'rgba(217, 119, 6,', glow: '#D97706' },   // Torchlight Amber
+      { fill: 'rgba(148, 163, 184,', glow: '#94A3B8' }  // Tombstone Ash
     ],
-    lineColor: '56, 189, 248',
-    mouseLineColor: '250, 204, 21',
+    lineColor: '220, 38, 38',
+    mouseLineColor: '217, 119, 6',
     mode: 'construction',
-    holoLeft: `
-      <svg class="holo-svg-left" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- 3D Skyscraper Tower & Giant Construction Tower Crane -->
-        <!-- Skyscraper Building Frame -->
-        <rect x="68" y="105" width="92" height="195" fill="rgba(56,189,248,0.15)" stroke="#38BDF8" stroke-width="2.2"/>
-        <line x1="98" y1="105" x2="98" y2="300" stroke="#38BDF8" stroke-width="1.2"/>
-        <line x1="130" y1="105" x2="130" y2="300" stroke="#38BDF8" stroke-width="1.2"/>
-        <line x1="68" y1="145" x2="160" y2="145" stroke="#38BDF8" stroke-width="1.2"/>
-        <line x1="68" y1="185" x2="160" y2="185" stroke="#38BDF8" stroke-width="1.2"/>
-        <line x1="68" y1="225" x2="160" y2="225" stroke="#38BDF8" stroke-width="1.2"/>
-        <!-- Tower Crane Mast & Jib Boom -->
-        <rect x="212" y="58" width="22" height="242" fill="rgba(250,204,21,0.15)" stroke="#FACC15" stroke-width="2.2"/>
-        <path d="M105 68 H292 L234 42 L105 68 Z" fill="rgba(250,204,21,0.22)" stroke="#FACC15" stroke-width="2.2"/>
-        <!-- Crane Hook & Suspended Steel I-Beam -->
-        <line x1="135" y1="68" x2="135" y2="112" stroke="#FB923C" stroke-width="2" class="holo-float-pulse"/>
-        <rect x="108" y="112" width="54" height="12" fill="#FACC15" stroke="#FB923C" stroke-width="1.8" class="holo-float-pulse"/>
-        <line x1="35" y1="300" x2="305" y2="300" stroke="#38BDF8" stroke-width="2.5"/>
-        <text x="170" y="335" text-anchor="middle" fill="#FACC15" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">BIM SKYLINE // ACI 318 • 45 MPa</text>
-      </svg>`,
-    holoRight: `
-      <svg class="holo-svg-right" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Cable-Stayed Suspension Bridge Span & Structural Pylons -->
-        <rect x="92" y="75" width="18" height="215" fill="rgba(250,204,21,0.25)" stroke="#FACC15" stroke-width="2.2"/>
-        <rect x="230" y="75" width="18" height="215" fill="rgba(250,204,21,0.25)" stroke="#FACC15" stroke-width="2.2"/>
-        <!-- Bridge Deck Truss -->
-        <rect x="24" y="218" width="292" height="16" fill="rgba(56,189,248,0.28)" stroke="#38BDF8" stroke-width="2.2"/>
-        <!-- Stay Cables -->
-        <g stroke="#38BDF8" stroke-width="1.5">
-          <line x1="101" y1="88" x2="32" y2="218"/><line x1="101" y1="115" x2="58" y2="218"/>
-          <line x1="101" y1="88" x2="168" y2="218"/><line x1="101" y1="115" x2="142" y2="218"/>
-          <line x1="239" y1="88" x2="172" y2="218"/><line x1="239" y1="115" x2="198" y2="218"/>
-          <line x1="239" y1="88" x2="308" y2="218"/><line x1="239" y1="115" x2="282" y2="218"/>
-        </g>
-        <text x="170" y="332" text-anchor="middle" fill="#38BDF8" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">STRUCTURAL SPAN // ASTM C39 PASS</text>
-      </svg>`
+    holoLeft: HORROR_LEFT_TREE_AND_GRAVEYARD_SVG,
+    holoRight: HORROR_RIGHT_MANSION_AND_BLOODMOON_SVG
   },
   logistics: {
-    sector: 'SECTOR // GLOBAL INTERMODAL FREIGHT, AIR CARGO & FLEET HUB',
-    specs: 'OTIF 99.4% SLA · COLD-CHAIN MKT REEFER · OCEAN & AIR CORRIDOR',
-    badgeText: '🚚 TEXO GLOBAL LOGISTICS INTELLIGENCE • FREIGHT & FLEET CORE',
+    sector: 'FLYING DUTCHMAN // GHOST SHIP & PHANTOM CONVOY',
+    specs: 'BERMUDA FOG CORRIDOR · DEAD-WEIGHT CARGO · MIDNIGHT TRANSIT',
+    badgeText: '🩸 TEXO GLOBAL LOGISTICS • GHOST FLEET CORE',
     colors: [
-      { fill: 'rgba(0, 240, 255,', glow: '#00F0FF' },   // Orbital Cyan
-      { fill: 'rgba(16, 185, 129,', glow: '#10B981' },  // Emerald Fleet
-      { fill: 'rgba(163, 230, 53,', glow: '#A3E635' }   // Signal Lime
+      { fill: 'rgba(239, 68, 68,', glow: '#EF4444' },   // Blood Flare
+      { fill: 'rgba(20, 184, 166,', glow: '#14B8A6' },  // Ectoplasm Sea Mist
+      { fill: 'rgba(153, 27, 27,', glow: '#991B1B' }    // Deep Abyss Crimson
     ],
-    lineColor: '0, 240, 255',
-    mouseLineColor: '16, 185, 129',
+    lineColor: '239, 68, 68',
+    mouseLineColor: '20, 184, 166',
     mode: 'logistics',
-    holoLeft: `
-      <svg class="holo-svg-left" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Mega Container Cargo Ship & Stacked Intermodal TEU Containers -->
-        <!-- Stacked Containers on Deck -->
-        <rect x="68" y="155" width="58" height="32" fill="rgba(0,240,255,0.28)" stroke="#00F0FF" stroke-width="2"/>
-        <rect x="132" y="155" width="58" height="32" fill="rgba(16,185,129,0.28)" stroke="#10B981" stroke-width="2"/>
-        <rect x="98" y="118" width="58" height="32" fill="rgba(163,230,53,0.28)" stroke="#A3E635" stroke-width="2"/>
-        <!-- Ship Bridge Tower -->
-        <rect x="208" y="110" width="46" height="77" fill="rgba(0,240,255,0.20)" stroke="#00F0FF" stroke-width="2"/>
-        <!-- Ship Hull -->
-        <path d="M36 188 H304 L276 248 H64 Z" fill="rgba(16,185,129,0.26)" stroke="#00F0FF" stroke-width="2.5"/>
-        <!-- Ocean Waves -->
-        <path d="M20 262 Q55 248 90 262 T160 262 T230 262 T300 262" stroke="#00F0FF" stroke-width="2.5" class="holo-float-pulse"/>
-        <text x="170" y="325" text-anchor="middle" fill="#00F0FF" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">INTERMODAL FLEET // OTIF 99.4%</text>
-      </svg>`,
-    holoRight: `
-      <svg class="holo-svg-right" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Cargo Jet Aircraft & Global Trajectory Arc -->
-        <path d="M35 245 Q170 55 305 185" stroke="#10B981" stroke-width="2.2" stroke-dasharray="8 5"/>
-        <!-- Sleek Cargo Jet Silhouette -->
-        <path d="M170 72 L186 125 L268 165 L268 184 L186 168 L182 222 L212 242 L212 255 L170 244 L128 255 L128 242 L158 222 L154 168 L72 184 L72 165 L154 125 Z" fill="rgba(0,240,255,0.24)" stroke="#00F0FF" stroke-width="2.2" class="holo-float-pulse"/>
-        <text x="170" y="325" text-anchor="middle" fill="#A3E635" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">AIR &amp; COLD-CHAIN // MKT +4.2°C</text>
-      </svg>`
+    holoLeft: HORROR_LEFT_TREE_AND_GRAVEYARD_SVG,
+    holoRight: HORROR_RIGHT_MANSION_AND_BLOODMOON_SVG
   },
   general: {
-    sector: 'SECTOR // UNIVERSAL QUANTUM AI & SIX SIGMA CORE',
-    specs: 'ISO 9001:2015 QMS · SIX SIGMA DMAIC · MULTILINGUAL NEURAL ENGINE',
-    badgeText: '⚡ TEXO UNIVERSAL INTELLIGENCE 2.0 • QUANTUM ENTERPRISE CORE',
+    sector: 'ABYSSAL NEXUS // NOSFERATU COVEN & ELDER CORE',
+    specs: 'BLOOD MOON ECLIPSE · NECROMANCY MATRIX · NIGHTMARE ENGINE',
+    badgeText: '🩸 TEXO UNIVERSAL INTELLIGENCE • BLOOD MOON CORE',
     colors: [
-      { fill: 'rgba(0, 245, 160,', glow: '#00F5A0' },   // Neon Mint
-      { fill: 'rgba(6, 182, 212,', glow: '#06B6D4' },   // Cyber Cyan
-      { fill: 'rgba(168, 85, 247,', glow: '#A855F7' }   // Quantum Violet
+      { fill: 'rgba(244, 63, 94,', glow: '#F43F5E' },   // Vampire Crimson
+      { fill: 'rgba(153, 27, 27,', glow: '#991B1B' },   // Dark Arterial Red
+      { fill: 'rgba(168, 85, 247,', glow: '#A855F7' }   // Eldritch Purple
     ],
-    lineColor: '0, 245, 160',
-    mouseLineColor: '6, 182, 212',
+    lineColor: '244, 63, 94',
+    mouseLineColor: '168, 85, 247',
     mode: 'general',
-    holoLeft: `
-      <svg class="holo-svg-left" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- 3D Isometric Crystal Prism & Neural Constellation -->
-        <polygon points="170,42 276,125 232,272 108,272 64,125" fill="rgba(168,85,247,0.16)" stroke="#A855F7" stroke-width="2.2"/>
-        <polygon points="170,42 276,125 170,192 64,125" fill="rgba(6,182,212,0.20)" stroke="#06B6D4" stroke-width="2"/>
-        <line x1="170" y1="192" x2="170" y2="272" stroke="#00F5A0" stroke-width="2.2"/>
-        <circle cx="170" cy="145" r="18" fill="rgba(0,245,160,0.35)" stroke="#00F5A0" stroke-width="2" class="holo-float-pulse"/>
-        <text x="170" y="325" text-anchor="middle" fill="#00F5A0" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">NEURAL PRISM // SIX SIGMA DMAIC</text>
-      </svg>`,
-    holoRight: `
-      <svg class="holo-svg-right" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- 3D Isometric Hypercube Tesseract -->
-        <polygon points="170,52 268,108 268,220 170,276 72,220 72,108" fill="rgba(6,182,212,0.12)" stroke="#06B6D4" stroke-width="2.2"/>
-        <polygon points="170,98 228,132 228,198 170,232 112,198 112,132" fill="rgba(0,245,160,0.20)" stroke="#00F5A0" stroke-width="2.2" class="holo-float-pulse"/>
-        <line x1="170" y1="52" x2="170" y2="98" stroke="#A855F7" stroke-width="1.8"/>
-        <line x1="268" y1="108" x2="228" y2="132" stroke="#A855F7" stroke-width="1.8"/>
-        <line x1="72" y1="108" x2="112" y2="132" stroke="#A855F7" stroke-width="1.8"/>
-        <text x="170" y="325" text-anchor="middle" fill="#06B6D4" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">ISO 9001:2015 // QUANTUM CUBE</text>
-      </svg>`
+    holoLeft: HORROR_LEFT_TREE_AND_GRAVEYARD_SVG,
+    holoRight: HORROR_RIGHT_MANSION_AND_BLOODMOON_SVG
   }
 };
 
@@ -1031,10 +920,10 @@ window.toggleDarkModeTheme = function(forceState) {
   const btn = document.getElementById('darkModeToggleBtn');
   if (btn) {
     btn.classList.toggle('active', nextDark);
-    btn.innerHTML = nextDark ? '💎 Glass Mode' : '🌙 Dark Mode';
+    btn.innerHTML = nextDark ? '🩸 Blood Glass' : '🌙 Pitch Dark';
     btn.title = nextDark
-      ? 'Currently in Pure Obsidian Dark Mode (Click to switch to Vivid Industry Glass Mode)'
-      : 'Currently in Vivid Industry Glass Mode (Click to switch to Pure Obsidian Dark Mode)';
+      ? 'Switch to Smoked Blood-Glass Horror Mode'
+      : 'Switch to Pitch-Black Abyssal Horror Mode';
   }
   if (typeof playClick === 'function') playClick();
 };
@@ -1053,24 +942,18 @@ function applyIndustryBackgroundTheme(indKey) {
   activeIndustryBgKey = key;
   const theme = INDUSTRY_BG_THEMES[key];
 
-  // 1. Set data-industry on <body> and #industryBgStage for CSS liquid-glass & aurora transitions
+  // 1. Set data-industry on <body> and #industryBgStage for CSS horror transitions
   document.body.setAttribute('data-industry', key);
   const bgStage = document.getElementById('industryBgStage');
   if (bgStage) bgStage.setAttribute('data-industry', key);
 
-  // 2. Inject custom SVG holographic industry schematics
+  // 2. Inject custom Gothic Horror SVG silhouettes
   const holoArt = document.getElementById('industryHoloArt');
   if (holoArt) {
     holoArt.innerHTML = `${theme.holoLeft}${theme.holoRight}`;
   }
 
-  // 3. Update HUD telemetry labels
-  const sectorEl = document.getElementById('indHudSectorLabel');
-  const specsEl = document.getElementById('indHudSpecsLabel');
-  if (sectorEl) sectorEl.textContent = theme.sector;
-  if (specsEl) specsEl.textContent = theme.specs;
-
-  // 4. Sync both sidebar #industrySelect and top header #headerIndustrySelect
+  // 3. Sync both sidebar #industrySelect and top header #headerIndustrySelect
   if (typeof industrySelect !== 'undefined' && industrySelect && industrySelect.value !== key) {
     industrySelect.value = key;
   }
@@ -1079,12 +962,12 @@ function applyIndustryBackgroundTheme(indKey) {
     headerSelect.value = key;
   }
 
-  // 5. Recolor live canvas particles smoothly
+  // 4. Recolor live canvas horror particles smoothly
   if (typeof window.__recolorIndustryParticles === 'function') {
     window.__recolorIndustryParticles(key);
   }
 
-  // 6. Sync Live Industry Calculator if open
+  // 5. Sync Live Industry Calculator if open
   if (typeof window.renderLiveCalculatorForIndustry === 'function') {
     const calcModal = document.getElementById('liveCalcModal');
     if (calcModal && calcModal.style.display !== 'none') {
@@ -1118,6 +1001,57 @@ function initParticles() {
   let particles = [];
   let frameTick = 0;
 
+  // Horror Top-Edge Blood Drips
+  const bloodDrips = [];
+  for (let d = 0; d < 28; d++) {
+    bloodDrips.push({
+      xRatio: (d + 0.3 + Math.random() * 0.4) / 28,
+      baseLen: 18 + Math.random() * 68,
+      speed: 0.6 + Math.random() * 1.1,
+      dropY: Math.random() * 260,
+      phase: Math.random() * Math.PI * 2,
+      thickness: 2.2 + Math.random() * 3.2
+    });
+  }
+
+  // Flock of Flying Silhouetted Horror Bats
+  const horrorBats = [];
+  for (let b = 0; b < 11; b++) {
+    horrorBats.push({
+      x: Math.random() * (window.innerWidth || 1200),
+      y: 45 + Math.random() * ((window.innerHeight || 800) * 0.48),
+      vx: (Math.random() > 0.5 ? 1 : -1) * (1.1 + Math.random() * 1.4),
+      vy: (Math.random() - 0.5) * 0.4,
+      wingSpan: 12 + Math.random() * 12,
+      flapPhase: Math.random() * Math.PI * 2,
+      flapSpeed: 0.16 + Math.random() * 0.08
+    });
+  }
+
+  // Periodic Forked Lightning State
+  let lightningTimer = 140;
+  let lightningAlpha = 0;
+  let lightningSegments = [];
+
+  function triggerLightningBolt() {
+    lightningAlpha = 0.85;
+    lightningSegments = [];
+    let curX = (W || 1200) * (0.25 + Math.random() * 0.55);
+    let curY = 0;
+    while (curY < (H || 800) * 0.72) {
+      const nextX = curX + (Math.random() - 0.48) * 68;
+      const nextY = curY + 24 + Math.random() * 34;
+      lightningSegments.push({ x1: curX, y1: curY, x2: nextX, y2: nextY, width: 2.6 });
+      if (Math.random() < 0.35) {
+        const bx = nextX + (Math.random() - 0.5) * 85;
+        const by = nextY + 35 + Math.random() * 45;
+        lightningSegments.push({ x1: nextX, y1: nextY, x2: bx, y2: by, width: 1.2 });
+      }
+      curX = nextX;
+      curY = nextY;
+    }
+  }
+
   function resize() {
     W = canvas.width = window.innerWidth;
     H = canvas.height = window.innerHeight;
@@ -1139,17 +1073,18 @@ function initParticles() {
     return INDUSTRY_BG_THEMES[activeIndustryBgKey] || INDUSTRY_BG_THEMES.textile;
   }
 
-  const count = Math.min(72, Math.floor((window.innerWidth * window.innerHeight) / 20000));
+  // Rising Hellfire Embers & Floating Graveyard Ash
+  const count = Math.min(75, Math.floor((window.innerWidth * window.innerHeight) / 19000));
   const initialTheme = getTheme();
   for (let i = 0; i < count; i++) {
     const colIdx = i % 3;
     particles.push({
       x: Math.random() * (W || 1200),
       y: Math.random() * (H || 900),
-      vx: (Math.random() - 0.5) * 0.5,
-      vy: (Math.random() - 0.5) * 0.5,
-      r: Math.random() * 2.2 + 1.1,
-      baseAlpha: Math.random() * 0.42 + 0.22,
+      vx: (Math.random() - 0.5) * 0.45,
+      vy: -(0.25 + Math.random() * 0.65), // Rising embers & ash
+      r: Math.random() * 2.4 + 1.0,
+      baseAlpha: Math.random() * 0.48 + 0.24,
       phase: Math.random() * Math.PI * 2,
       colIdx: colIdx,
       color: initialTheme.colors[colIdx]
@@ -1170,191 +1105,127 @@ function initParticles() {
   function drawIndustryCanvasSignature(theme) {
     frameTick += 0.018;
     ctx.save();
-    if (theme.mode === 'textile') {
-      // VIVID 3D WOVEN SILK AURORA RIBBONS + LASER JACQUARD SHUTTLES
-      const silkColors = [
-        { stroke: 'rgba(0, 245, 212, 0.34)', fill: 'rgba(0, 245, 212, 0.06)' },
-        { stroke: 'rgba(244, 63, 94, 0.36)', fill: 'rgba(244, 63, 94, 0.06)' },
-        { stroke: 'rgba(251, 191, 36, 0.30)', fill: 'rgba(251, 191, 36, 0.05)' },
-        { stroke: 'rgba(129, 140, 248, 0.30)', fill: 'rgba(129, 140, 248, 0.05)' }
-      ];
-      for (let w = 0; w < 4; w++) {
-        ctx.beginPath();
-        const baseY = H * (0.20 + w * 0.19);
-        for (let x = 0; x <= W; x += 22) {
-          const y = baseY + Math.sin(x * 0.005 + frameTick * 1.2 + w * 1.3) * 44 + Math.cos(x * 0.011 - frameTick * 0.9) * 18;
-          if (x === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = silkColors[w].stroke;
-        ctx.lineWidth = 2.4;
-        ctx.stroke();
 
-        // Flying Laser Loom Shuttles along each silk wave
-        const shuttleX = ((frameTick * 190 + w * 340) % (W + 160)) - 80;
-        const shuttleY = baseY + Math.sin(shuttleX * 0.005 + frameTick * 1.2 + w * 1.3) * 44 + Math.cos(shuttleX * 0.011 - frameTick * 0.9) * 18;
-        ctx.beginPath();
-        ctx.ellipse(shuttleX, shuttleY, 16, 4.5, 0, 0, Math.PI * 2);
-        ctx.fillStyle = w % 2 === 0 ? '#00F5D4' : '#F43F5E';
-        ctx.shadowBlur = 16;
-        ctx.shadowColor = w % 2 === 0 ? '#00F5D4' : '#F43F5E';
-        ctx.fill();
-        ctx.shadowBlur = 0;
-      }
-    } else if (theme.mode === 'food') {
-      // VIVID GOLDEN EFFERVESCENT CHAMPAGNE BUBBLES + HONEYCOMB RINGS + THERMAL WAVES
-      for (let w = 0; w < 2; w++) {
-        ctx.beginPath();
-        const baseY = H * (0.35 + w * 0.30);
-        for (let x = 0; x <= W; x += 24) {
-          const y = baseY + Math.sin(x * 0.004 + frameTick + w * 2) * 38;
-          if (x === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = w === 0 ? 'rgba(251, 191, 36, 0.25)' : 'rgba(16, 185, 129, 0.24)';
-        ctx.lineWidth = 2.2;
-        ctx.stroke();
-      }
-      for (let b = 0; b < 26; b++) {
-        const bx = ((b * 97 + Math.sin(frameTick * 0.9 + b) * 45) % (W || 1200));
-        const by = H - (((frameTick * 52 + b * 68) % ((H || 900) + 60))) + 30;
-        const br = 5 + (b % 5) * 4.2;
-        ctx.beginPath();
-        ctx.arc(bx, by, br, 0, Math.PI * 2);
-        ctx.fillStyle = b % 3 === 0 ? 'rgba(251, 191, 36, 0.14)' : (b % 2 === 0 ? 'rgba(249, 115, 22, 0.14)' : 'rgba(16, 185, 129, 0.14)');
-        ctx.fill();
-        ctx.strokeStyle = b % 3 === 0 ? 'rgba(251, 191, 36, 0.55)' : (b % 2 === 0 ? 'rgba(249, 115, 22, 0.50)' : 'rgba(16, 185, 129, 0.50)');
-        ctx.lineWidth = 1.6;
-        ctx.stroke();
-        // Specular bubble highlight
-        ctx.beginPath();
-        ctx.arc(bx - br * 0.3, by - br * 0.3, br * 0.22, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
-        ctx.fill();
-      }
-    } else if (theme.mode === 'pharma') {
-      // VIVID FULL-SCREEN 3D ROTATING DOUBLE-HELIX DNA STRAND & BIO-NODES
-      const midY = H * 0.5;
-      const amp = Math.min(95, H * 0.14);
-      ctx.beginPath();
-      for (let x = 0; x <= W; x += 18) {
-        const y1 = midY + Math.sin(x * 0.007 + frameTick * 1.5) * amp;
-        if (x === 0) ctx.moveTo(x, y1);
-        else ctx.lineTo(x, y1);
-      }
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.38)';
-      ctx.lineWidth = 2.6;
-      ctx.stroke();
+    // 1. OOZING TOP-EDGE DRIPPING BLOOD STREAMS & FALLING BLOOD DROPLETS
+    for (let d = 0; d < bloodDrips.length; d++) {
+      const bd = bloodDrips[d];
+      const bx = bd.xRatio * W;
+      const oozeLen = bd.baseLen + Math.sin(frameTick * 1.4 + bd.phase) * 14;
+
+      // Blood stalactite stream from top edge
+      const grad = ctx.createLinearGradient(bx, 0, bx, oozeLen + 10);
+      grad.addColorStop(0, 'rgba(127, 29, 29, 0.92)');
+      grad.addColorStop(0.7, 'rgba(220, 38, 38, 0.82)');
+      grad.addColorStop(1, 'rgba(239, 68, 68, 0.95)');
 
       ctx.beginPath();
-      for (let x = 0; x <= W; x += 18) {
-        const y2 = midY + Math.sin(x * 0.007 + frameTick * 1.5 + Math.PI) * amp;
-        if (x === 0) ctx.moveTo(x, y2);
-        else ctx.lineTo(x, y2);
-      }
-      ctx.strokeStyle = 'rgba(192, 132, 252, 0.38)';
-      ctx.lineWidth = 2.6;
-      ctx.stroke();
-
-      // Base-pair ladder rungs & glowing nucleotide spheres
-      for (let x = 40; x < W; x += 52) {
-        const y1 = midY + Math.sin(x * 0.007 + frameTick * 1.5) * amp;
-        const y2 = midY + Math.sin(x * 0.007 + frameTick * 1.5 + Math.PI) * amp;
-        ctx.beginPath();
-        ctx.moveTo(x, y1);
-        ctx.lineTo(x, y2);
-        ctx.strokeStyle = 'rgba(45, 212, 191, 0.28)';
-        ctx.lineWidth = 1.6;
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.arc(x, y1, 3.8, 0, Math.PI * 2);
-        ctx.fillStyle = '#38BDF8';
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(x, y2, 3.8, 0, Math.PI * 2);
-        ctx.fillStyle = '#C084FC';
-        ctx.fill();
-      }
-    } else if (theme.mode === 'auto') {
-      // VIVID CYBER-TACHOMETER ROTOR + HIGH-VELOCITY NITROUS & CRIMSON WIND-TUNNEL STREAKS
-      const cx = W * 0.54, cy = H * 0.5;
-      const rOuter = Math.min(W, H) * 0.28;
-      ctx.beginPath();
-      ctx.arc(cx, cy, rOuter, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(59, 130, 246, 0.20)';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.arc(cx, cy, rOuter * 0.82, -frameTick * 1.4, -frameTick * 1.4 + Math.PI * 0.85);
-      ctx.strokeStyle = 'rgba(239, 68, 68, 0.36)';
-      ctx.lineWidth = 4;
-      ctx.stroke();
-
-      for (let s = 0; s < 9; s++) {
-        const sy = H * (0.12 + s * 0.095);
-        const sx = ((frameTick * 320 + s * 210) % (W + 400)) - 200;
-        const grad = ctx.createLinearGradient(sx - 180, sy, sx + 60, sy);
-        grad.addColorStop(0, 'rgba(239, 68, 68, 0)');
-        grad.addColorStop(1, s % 2 === 0 ? 'rgba(239, 68, 68, 0.48)' : 'rgba(59, 130, 246, 0.48)');
-        ctx.beginPath();
-        ctx.moveTo(sx - 180, sy);
-        ctx.lineTo(sx + 60, sy);
-        ctx.strokeStyle = grad;
-        ctx.lineWidth = 2.6;
-        ctx.stroke();
-      }
-    } else if (theme.mode === 'construction') {
-      // VIVID 3D ARCHITECTURAL SKYLINE WIREFRAME + ROTATING LIDAR THEODOLITE SCANNER
-      const cx = W * 0.54, cy = H * 0.5;
-      const rScan = Math.min(W, H) * 0.30;
-      ctx.beginPath();
-      ctx.arc(cx, cy, rScan, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.22)';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-
-      // Rotating LiDAR beam
-      const angle = frameTick * 0.9;
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(cx + Math.cos(angle) * rScan, cy + Math.sin(angle) * rScan);
-      ctx.strokeStyle = 'rgba(250, 204, 21, 0.45)';
-      ctx.lineWidth = 2.2;
-      ctx.stroke();
-    } else if (theme.mode === 'logistics') {
-      // VIVID ORBITAL RADAR SWEEP + GLOBAL FLIGHT CORRIDOR PARABOLIC ARCS
-      const cx = W * 0.54, cy = H * 0.5;
-      for (let r = 1; r <= 3; r++) {
-        ctx.beginPath();
-        ctx.arc(cx, cy, Math.min(W, H) * (0.12 * r), 0, Math.PI * 2);
-        ctx.strokeStyle = r % 2 === 0 ? 'rgba(16, 185, 129, 0.22)' : 'rgba(0, 240, 255, 0.22)';
-        ctx.lineWidth = 1.6;
-        ctx.stroke();
-      }
-      const rad = Math.min(W, H) * 0.36;
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.arc(cx, cy, rad, frameTick * 1.1, frameTick * 1.1 + 0.55);
+      ctx.moveTo(bx - bd.thickness, 0);
+      ctx.quadraticCurveTo(bx, oozeLen + 12, bx + bd.thickness, 0);
       ctx.closePath();
-      ctx.fillStyle = 'rgba(0, 240, 255, 0.08)';
+      ctx.fillStyle = grad;
       ctx.fill();
-    } else {
-      // UNIVERSAL QUANTUM HARMONIC MATRIX WAVES
-      for (let w = 0; w < 3; w++) {
+
+      // Swollen blood droplet at tip
+      ctx.beginPath();
+      ctx.arc(bx, oozeLen, bd.thickness * 0.85, 0, Math.PI * 2);
+      ctx.fillStyle = '#DC2626';
+      ctx.fill();
+
+      // Falling detached blood drop
+      bd.dropY += bd.speed * 2.1;
+      if (bd.dropY > H * 0.65) {
+        bd.dropY = oozeLen;
+      }
+      if (bd.dropY > oozeLen) {
+        const dropAlpha = Math.max(0, 1 - (bd.dropY - oozeLen) / (H * 0.55));
         ctx.beginPath();
-        const baseY = H * (0.28 + w * 0.22);
-        for (let x = 0; x <= W; x += 24) {
-          const y = baseY + Math.sin(x * 0.005 + frameTick + w) * 34;
-          if (x === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = w === 0 ? 'rgba(0, 245, 160, 0.24)' : (w === 1 ? 'rgba(6, 182, 212, 0.24)' : 'rgba(168, 85, 247, 0.24)');
-        ctx.lineWidth = 2;
-        ctx.stroke();
+        ctx.arc(bx, bd.dropY, bd.thickness * 0.62, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(220, 38, 38, ${dropAlpha * 0.78})`;
+        ctx.fill();
       }
     }
+
+    // 2. CREEPING GRAVEYARD BLOOD-MIST WAVES AT BOTTOM HORIZON
+    for (let m = 0; m < 3; m++) {
+      ctx.beginPath();
+      const baseY = H * (0.76 + m * 0.08);
+      for (let x = 0; x <= W; x += 28) {
+        const y = baseY + Math.sin(x * 0.004 + frameTick * (0.8 + m * 0.25) + m) * 22;
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.lineTo(W, H);
+      ctx.lineTo(0, H);
+      ctx.closePath();
+      ctx.fillStyle = m === 0 ? 'rgba(69, 10, 10, 0.14)' : (m === 1 ? 'rgba(127, 29, 29, 0.12)' : 'rgba(5, 0, 2, 0.36)');
+      ctx.fill();
+    }
+
+    // 3. FLOCK OF FLYING SILHOUETTED BATS ACROSS THE BLOOD MOON
+    for (let b = 0; b < horrorBats.length; b++) {
+      const bat = horrorBats[b];
+      bat.x += bat.vx;
+      bat.y += bat.vy + Math.sin(frameTick * 2 + b) * 0.25;
+      bat.flapPhase += bat.flapSpeed;
+
+      if (bat.x < -40) bat.x = W + 40;
+      if (bat.x > W + 40) bat.x = -40;
+      if (bat.y < 30) bat.y = H * 0.45;
+      if (bat.y > H * 0.58) bat.y = 45;
+
+      const wingLift = Math.sin(bat.flapPhase) * (bat.wingSpan * 0.68);
+      const ws = bat.wingSpan;
+
+      ctx.save();
+      ctx.translate(bat.x, bat.y);
+      ctx.beginPath();
+      // Left bat wing
+      ctx.moveTo(0, 0);
+      ctx.quadraticCurveTo(-ws * 0.5, -wingLift - 5, -ws, -wingLift);
+      ctx.quadraticCurveTo(-ws * 0.55, -wingLift * 0.3 + 4, 0, 3);
+      // Right bat wing
+      ctx.moveTo(0, 0);
+      ctx.quadraticCurveTo(ws * 0.5, -wingLift - 5, ws, -wingLift);
+      ctx.quadraticCurveTo(ws * 0.55, -wingLift * 0.3 + 4, 0, 3);
+      ctx.fillStyle = '#070102';
+      ctx.strokeStyle = 'rgba(239, 68, 68, 0.55)';
+      ctx.lineWidth = 1;
+      ctx.fill();
+      ctx.stroke();
+
+      // Tiny glowing red bat eyes
+      ctx.fillStyle = '#EF4444';
+      ctx.fillRect(-2, -1.5, 1.4, 1.4);
+      ctx.fillRect(1, -1.5, 1.4, 1.4);
+      ctx.restore();
+    }
+
+    // 4. PERIODIC FORKED THUNDERSTORM LIGHTNING FLASH
+    lightningTimer--;
+    if (lightningTimer <= 0) {
+      triggerLightningBolt();
+      lightningTimer = 170 + Math.floor(Math.random() * 220);
+    }
+    if (lightningAlpha > 0.01) {
+      // Eerie crimson/white sky flash
+      ctx.fillStyle = `rgba(239, 68, 68, ${lightningAlpha * 0.14})`;
+      ctx.fillRect(0, 0, W, H);
+
+      for (let s = 0; s < lightningSegments.length; s++) {
+        const seg = lightningSegments[s];
+        ctx.beginPath();
+        ctx.moveTo(seg.x1, seg.y1);
+        ctx.lineTo(seg.x2, seg.y2);
+        ctx.strokeStyle = `rgba(254, 202, 202, ${lightningAlpha})`;
+        ctx.lineWidth = seg.width;
+        ctx.shadowBlur = 18;
+        ctx.shadowColor = '#EF4444';
+        ctx.stroke();
+      }
+      ctx.shadowBlur = 0;
+      lightningAlpha *= 0.84;
+    }
+
     ctx.restore();
   }
 
@@ -1362,15 +1233,15 @@ function initParticles() {
     ctx.clearRect(0, 0, W, H);
     const theme = getTheme();
 
-    // Draw bespoke industry background wave / signature
+    // Draw bespoke horror blood drips, flying bats & lightning
     drawIndustryCanvasSignature(theme);
 
-    // Update & draw particles
+    // Update & draw rising hellfire embers & graveyard ash
     for (let i = 0; i < particles.length; i++) {
       const p = particles[i];
-      p.x += p.vx;
+      p.x += p.vx + Math.sin(p.phase * 0.7) * 0.22;
       p.y += p.vy;
-      p.phase += 0.022;
+      p.phase += 0.025;
 
       // Wrap edges
       if (p.x < -10) p.x = W + 10;
@@ -1388,18 +1259,13 @@ function initParticles() {
         p.y -= (mdy / mDist) * force;
       }
 
-      const currentAlpha = p.baseAlpha + Math.sin(p.phase) * 0.16;
+      const currentAlpha = p.baseAlpha + Math.sin(p.phase) * 0.18;
 
       ctx.save();
       ctx.beginPath();
-      if (theme.mode === 'construction' && i % 3 === 0) {
-        // Structural CAD diamond/square nodes for construction
-        ctx.rect(p.x - p.r, p.y - p.r, p.r * 2.1, p.r * 2.1);
-      } else {
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      }
-      ctx.fillStyle = `${p.color.fill}${Math.max(0.1, currentAlpha)})`;
-      ctx.shadowBlur = 9;
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `${p.color.fill}${Math.max(0.12, currentAlpha)})`;
+      ctx.shadowBlur = 10;
       ctx.shadowColor = p.color.glow;
       ctx.fill();
       ctx.restore();
