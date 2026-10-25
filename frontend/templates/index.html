@@ -74,7 +74,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Syne:wght@700;800;900&family=Orbitron:wght@600;700;900&family=Space+Grotesk:wght@600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/static/css/style.css?v=6.3.0"/>
+  <link rel="stylesheet" href="/static/css/style.css?v=6.4.0"/>
 </head>
 <body data-industry="textile">
 
@@ -374,35 +374,33 @@
   <header class="chat-header">
     <div class="header-left">
       <button class="mobile-menu-btn" id="mobileMenuBtn" title="Toggle Options Sidebar">☰</button>
-      <div class="header-brand">
+      <div class="header-brand" style="display:flex; align-items:center; gap:7px;">
         <div class="header-logo">TEXO</div>
-        <div class="header-sub">Premium Intelligence</div>
+        <div class="status-dot" id="statusDot" title="Engine Ready"></div>
+        <span class="status-label" id="statusLabel" style="display:none;">Ready</span>
       </div>
       <!-- Quick Industry Futuristic Background Switcher -->
-      <div class="header-industry-switcher" id="headerIndustrySwitcher" title="Switch Industry Environment &amp; Futuristic Background">
+      <div class="header-industry-switcher" id="headerIndustrySwitcher" title="Switch Industry Environment &amp; Background">
         <span class="ind-switch-dot" id="indSwitchDot"></span>
         <select id="headerIndustrySelect" class="header-industry-select" aria-label="Select Industry Environment">
-          <option value="general">🌐 Universal AI Core</option>
-          <option value="textile">🧵 Textile &amp; Fabric</option>
-          <option value="food">🍽️ Food &amp; Beverage</option>
-          <option value="pharma">💊 Pharma &amp; Biotech</option>
-          <option value="auto">🚗 Automotive &amp; EV</option>
-          <option value="construction">🏗️ Construction &amp; BIM</option>
-          <option value="logistics">📦 Global Logistics</option>
+          <option value="textile">🧵 Textile</option>
+          <option value="food">🍽️ Food &amp; Bev</option>
+          <option value="pharma">💊 Pharma</option>
+          <option value="auto">🚗 Auto &amp; EV</option>
+          <option value="construction">🏗️ Civil &amp; BIM</option>
+          <option value="logistics">📦 Logistics</option>
+          <option value="general">🌐 Universal</option>
         </select>
       </div>
     </div>
     <div class="header-right">
       <!-- AI Sentinel Client Data Shield (Active in background, hidden from UI) -->
       <div class="sentinel-badge" id="sentinelBadge" style="display:none;"></div>
-      <div class="memory-badge" id="memoryBadge" title="Continuous Cross-Session Enterprise Memory: Active">
-        <span class="mem-dot"></span>MEMORY: ACTIVE
-      </div>
-      <div class="launch-badge">
-        <span class="badge-dot"></span>ENGINE ACTIVE
-      </div>
-      <div class="status-dot" id="statusDot"></div>
-      <span class="status-label" id="statusLabel">Ready</span>
+      <button class="creative-studio-btn glass-feature-btn" id="darkModeToggleBtn" onclick="toggleDarkModeTheme()" title="Switch between Pure Obsidian Dark Mode and Vivid Industry Glass Mode">🌙 Dark Mode</button>
+      <button class="creative-studio-btn glass-feature-btn" id="liveCalcBtn" onclick="openLiveIndustryCalculator()" title="Launch Live Interactive Industry ROI &amp; Engineering Calculator">🧮 Calc</button>
+      <button class="creative-studio-btn glass-feature-btn" id="dualBrainToggleBtn" onclick="toggleDualBrainMode()" title="Toggle Dual-Brain Split View (Executive ROI vs. Shop-Floor Engineering)">⚔️ Split</button>
+      <button class="creative-studio-btn glass-feature-btn" id="pinboardToggleBtn" onclick="openPinboardModal()" title="Open Smart Pinboard &amp; Saved Insights Vault">📌 Pins <span id="pinCountBadge" class="pin-count-badge">0</span></button>
+      <button class="creative-studio-btn glass-feature-btn" id="creativeStudioBtn" title="Launch Multi-Industry Engineering Studio Lab">🧪 Lab</button>
       <button class="tts-toggle active" id="ttsToggle" title="Universal Neural Voice Readout (Click to toggle ON/OFF)">
         <span class="speaker-cyber-badge" id="ttsToggleIcon">
           <svg class="speaker-cyber-svg active" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -411,7 +409,6 @@
             <path class="speaker-wave wave-2" d="M18.8 5.2a9.5 9.5 0 0 1 0 13.6" stroke-width="2.2" stroke-linecap="round"/>
           </svg>
         </span>
-        <span class="tts-label">Voice</span>
       </button>
       <button class="voice-picker-btn" id="voicePickerBtn" title="Choose Realistic AI Voice Persona">
         <span class="voice-studio-badge">
@@ -422,18 +419,17 @@
             <line x1="8" y1="21" x2="16" y2="21"/>
           </svg>
         </span>
-        <span class="voice-label" id="currentVoiceLabel">Voice: Aura ⚡</span>
+        <span class="voice-label" id="currentVoiceLabel">Aura</span>
       </button>
-      <button class="creative-studio-btn glass-feature-btn" id="liveCalcBtn" onclick="openLiveIndustryCalculator()" title="Launch Live Interactive Industry ROI &amp; Engineering Calculator">🧮 Live Calc</button>
-      <button class="creative-studio-btn glass-feature-btn" id="dualBrainToggleBtn" onclick="toggleDualBrainMode()" title="Toggle Dual-Brain Split View (Executive ROI vs. Shop-Floor Engineering)">⚔️ Dual-Brain: OFF</button>
-      <button class="creative-studio-btn glass-feature-btn" id="pinboardToggleBtn" onclick="openPinboardModal()" title="Open Smart Pinboard &amp; Saved Insights Vault">📌 Pinboard <span id="pinCountBadge" class="pin-count-badge">0</span></button>
+      <div class="memory-badge" id="memoryBadge" title="Continuous Cross-Session Enterprise Memory">
+        <span class="mem-dot"></span>🧠
+      </div>
       <button class="history-toggle-btn" id="historyToggle" title="Chat History">🕐</button>
-      <button class="share-btn" id="shareBtn" title="Share TEXO with Others">🔗 Share</button>
-      <button class="creative-studio-btn" id="creativeStudioBtn" title="Launch Radical Textile Creative Studio & Haptic Lab">🧵 Studio Lab</button>
+      <button class="share-btn" id="shareBtn" title="Share TEXO with Others">🔗</button>
       <div class="user-profile-badge" id="userProfileBadge" style="display:none">
         <div class="user-avatar-circle" id="userAvatarCircle">U</div>
         <span class="user-name-label" id="userNameLabel">User</span>
-        <button class="user-signout-btn" id="userSignoutBtn" title="Sign Out of TEXO">🚪 Logout</button>
+        <button class="user-signout-btn" id="userSignoutBtn" title="Sign Out of TEXO">🚪</button>
       </div>
     </div>
   </header>
@@ -1429,6 +1425,6 @@
 </script>
 <script src="/static/js/chart.min.js"></script>
 <script src="/static/js/marked.min.js"></script>
-<script src="/static/js/app.js?v=6.3.0"></script>
+<script src="/static/js/app.js?v=6.4.0"></script>
 </body>
 </html>

@@ -6112,3 +6112,194 @@ button.feature.starter-question-btn:hover {
   max-height: 140px;
   overflow-y: auto;
 }
+
+/* ==========================================================================
+   ⚡ CONCISE SINGLE-ROW HEADER LAYOUT (100% VISIBLE OPTIONS, ZERO CROWDING)
+   ========================================================================== */
+
+.chat-header {
+  padding: 0 12px !important;
+  height: 54px !important;
+  gap: 8px !important;
+}
+
+.header-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-shrink: 0 !important;
+}
+
+.header-logo {
+  font-size: 17px !important;
+  letter-spacing: 1.5px !important;
+}
+
+.header-industry-switcher {
+  margin-left: 2px !important;
+  padding: 4px 9px !important;
+  gap: 5px !important;
+}
+
+.header-industry-select {
+  font-size: 11.5px !important;
+}
+
+.header-right {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 5px !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+}
+
+.header-right::-webkit-scrollbar {
+  display: none !important;
+}
+
+.glass-feature-btn,
+.creative-studio-btn {
+  padding: 5px 9px !important;
+  font-size: 11px !important;
+  border-radius: 8px !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  height: 32px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.tts-toggle,
+.history-toggle-btn,
+.share-btn {
+  width: 32px !important;
+  height: 32px !important;
+  padding: 0 !important;
+  font-size: 14px !important;
+  border-radius: 8px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+
+.voice-picker-btn {
+  padding: 4px 9px !important;
+  height: 32px !important;
+  font-size: 11px !important;
+  border-radius: 8px !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.memory-badge {
+  padding: 4px 8px !important;
+  height: 32px !important;
+  font-size: 12px !important;
+  border-radius: 8px !important;
+  flex-shrink: 0 !important;
+}
+
+.user-profile-badge {
+  padding: 3px 7px !important;
+  height: 32px !important;
+  gap: 5px !important;
+  border-radius: 8px !important;
+  flex-shrink: 0 !important;
+}
+
+.user-avatar-circle {
+  width: 22px !important;
+  height: 22px !important;
+  font-size: 11px !important;
+}
+
+.user-name-label {
+  font-size: 11px !important;
+  max-width: 72px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.user-signout-btn {
+  padding: 2px 6px !important;
+  font-size: 11px !important;
+}
+
+/* ==========================================================================
+   🌙 PURE OBSIDIAN DARK MODE (`body.dark-mode`)
+   Deep AMOLED pitch-black stealth mode with crisp contrast & subtle neon edges
+   ========================================================================== */
+
+body.dark-mode {
+  background: #020409 !important;
+  background-color: #020409 !important;
+}
+
+body.dark-mode .industry-bg-stage {
+  background: radial-gradient(circle at 50% 25%, rgba(var(--ind-glow-rgb), 0.10) 0%, #020409 72%) !important;
+}
+
+body.dark-mode .ind-nebula-glow {
+  opacity: 0.25 !important;
+}
+
+body.dark-mode .ind-perspective-grid {
+  opacity: 0.30 !important;
+}
+
+body.dark-mode .ind-pattern-layer {
+  opacity: 0.22 !important;
+}
+
+body.dark-mode .ind-holo-art {
+  opacity: 0.38 !important;
+}
+
+body.dark-mode #particleCanvas {
+  opacity: 0.48 !important;
+}
+
+body.dark-mode .sidebar {
+  background: rgba(5, 8, 15, 0.94) !important;
+  border-right: 1px solid rgba(var(--ind-glow-rgb), 0.22) !important;
+}
+
+body.dark-mode .chat-header {
+  background: rgba(5, 8, 15, 0.94) !important;
+  border-bottom: 1px solid rgba(var(--ind-glow-rgb), 0.22) !important;
+}
+
+body.dark-mode .structured-welcome-card {
+  background: rgba(7, 11, 20, 0.90) !important;
+  border: 1px solid rgba(var(--ind-glow-rgb), 0.28) !important;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.85) !important;
+}
+
+body.dark-mode .welcome-pillar-card,
+body.dark-mode button.feature.starter-question-btn {
+  background: rgba(10, 15, 28, 0.88) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+body.dark-mode .message.assistant .bubble {
+  background: rgba(8, 12, 22, 0.92) !important;
+  border: 1px solid rgba(var(--ind-glow-rgb), 0.25) !important;
+  border-left: 4px solid var(--ind-primary) !important;
+}
+
+body.dark-mode .input-area {
+  background: rgba(4, 7, 14, 0.95) !important;
+}
+
+body.dark-mode .input-box {
+  background: rgba(9, 14, 26, 0.95) !important;
+  border: 1px solid rgba(var(--ind-glow-rgb), 0.30) !important;
+}

@@ -705,268 +705,346 @@ setTimeout(() => {
 }, 600);
 
 // ══════════════════════════════════════════════════════════════════════════════
-// FUTURISTIC MULTI-INDUSTRY HOLOGRAPHIC BACKGROUND ENGINE & PARTICLES
+// FUTURISTIC MULTI-INDUSTRY SCENIC GRAPHICS & LIQUID-GLASS ENGINE
 // ══════════════════════════════════════════════════════════════════════════════
 const INDUSTRY_BG_THEMES = {
   textile: {
-    sector: 'SECTOR // TEXTILE & APPAREL CYBER-WEAVE MATRIX',
-    specs: 'JACQUARD WARP/WEFT GRID · ASTM D5430 OPTICAL SCAN · PANTONE TCX SPECTROMETRY',
-    badgeText: '⚡ TEXO TEXTILE & APPAREL INTELLIGENCE • CYBER-LOOM CORE',
+    sector: 'SECTOR // HAUTE-COUTURE APPAREL & CYBER-LOOM STUDIO',
+    specs: '3D GARMENT DRAPE · JACQUARD WARP/WEFT · ASTM D5430 & PANTONE TCX',
+    badgeText: '🧵 TEXO TEXTILE & APPAREL INTELLIGENCE • COUTURE & LOOM CORE',
     colors: [
-      { fill: 'rgba(0, 245, 160,', glow: '#00F5A0' },   // Neon Mint Warp
-      { fill: 'rgba(6, 182, 212,', glow: '#06B6D4' },   // Cyber Cyan Weft
-      { fill: 'rgba(245, 158, 11,', glow: '#F59E0B' }   // Golden Silk Filament
+      { fill: 'rgba(0, 245, 212,', glow: '#00F5D4' },   // Electric Turquoise Silk
+      { fill: 'rgba(244, 63, 94,', glow: '#F43F5E' },   // Couture Rose Magenta
+      { fill: 'rgba(251, 191, 36,', glow: '#FBBF24' }   // Golden Thread
     ],
-    lineColor: '0, 245, 160',
-    mouseLineColor: '6, 182, 212',
+    lineColor: '0, 245, 212',
+    mouseLineColor: '244, 63, 94',
     mode: 'textile',
     holoLeft: `
-      <svg class="holo-svg-left" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Cyber Jacquard Loom & Spool Matrix -->
-        <circle cx="160" cy="160" r="138" stroke="#00F5A0" stroke-width="1" stroke-dasharray="8 6" class="holo-spin-slow" style="transform-origin:160px 160px;"/>
-        <circle cx="160" cy="160" r="108" stroke="#06B6D4" stroke-width="1.2" stroke-dasharray="18 10" class="holo-spin-reverse" style="transform-origin:160px 160px;"/>
-        <!-- Interlaced Warp & Weft Grid -->
-        <g stroke="#00F5A0" stroke-width="1.1" opacity="0.75">
-          <line x1="70" y1="90" x2="250" y2="90"/><line x1="70" y1="125" x2="250" y2="125"/>
-          <line x1="70" y1="160" x2="250" y2="160"/><line x1="70" y1="195" x2="250" y2="195"/>
-          <line x1="70" y1="230" x2="250" y2="230"/>
-        </g>
-        <g stroke="#06B6D4" stroke-width="1.1" opacity="0.75">
-          <line x1="90" y1="70" x2="90" y2="250"/><line x1="125" y1="70" x2="125" y2="250"/>
-          <line x1="160" y1="70" x2="160" y2="250"/><line x1="195" y1="70" x2="195" y2="250"/>
-          <line x1="230" y1="70" x2="230" y2="250"/>
-        </g>
-        <!-- Jacquard Intersections -->
-        <g fill="#F59E0B" class="holo-float-pulse">
-          <circle cx="90" cy="90" r="4"/><circle cx="160" cy="90" r="4"/><circle cx="230" cy="90" r="4"/>
-          <circle cx="125" cy="125" r="4"/><circle cx="195" cy="125" r="4"/>
-          <circle cx="90" cy="160" r="4"/><circle cx="160" cy="160" r="5.5"/><circle cx="230" cy="160" r="4"/>
-          <circle cx="125" cy="195" r="4"/><circle cx="195" cy="195" r="4"/>
-          <circle cx="90" cy="230" r="4"/><circle cx="160" cy="230" r="4"/><circle cx="230" cy="230" r="4"/>
-        </g>
-        <text x="160" y="295" text-anchor="middle" fill="#00F5A0" font-family="monospace" font-size="9" letter-spacing="2">LOOM MATRIX // EPI:120 PPI:96</text>
+      <svg class="holo-svg-left" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="texGownGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#00F5D4" stop-opacity="0.32"/>
+            <stop offset="50%" stop-color="#F43F5E" stop-opacity="0.28"/>
+            <stop offset="100%" stop-color="#FBBF24" stop-opacity="0.22"/>
+          </linearGradient>
+        </defs>
+        <!-- Illuminated Couture Runway Pedestal -->
+        <ellipse cx="170" cy="310" rx="110" ry="22" fill="rgba(0,245,212,0.10)" stroke="#00F5D4" stroke-width="2"/>
+        <ellipse cx="170" cy="310" rx="76" ry="13" stroke="#F43F5E" stroke-width="1.4" stroke-dasharray="6 4"/>
+        <!-- Couture Dress Mannequin Neck, Bodice & Flowing Silk Skirt -->
+        <rect x="163" y="42" width="14" height="24" rx="5" fill="rgba(251,191,36,0.25)" stroke="#FBBF24" stroke-width="1.8"/>
+        <path d="M132 72 Q170 84 208 72 L194 142 Q170 152 146 142 Z" fill="url(#texGownGrad)" stroke="#00F5D4" stroke-width="2.2"/>
+        <!-- Flowing Pleated Gown Silhouette -->
+        <path d="M146 142 L82 296 Q170 322 258 296 L194 142 Z" fill="url(#texGownGrad)" stroke="#F43F5E" stroke-width="2.2"/>
+        <!-- Pleat Drape Lines & Golden Waist Belt -->
+        <path d="M146 142 Q170 152 194 142" stroke="#FBBF24" stroke-width="3.5"/>
+        <path d="M156 146 L118 302 M170 148 L170 308 M184 146 L222 302" stroke="#00F5D4" stroke-width="1.4" opacity="0.8"/>
+        <!-- Floating Golden Needle & Silk Ribbon Swirl -->
+        <path d="M48 180 C95 110, 245 230, 292 135" stroke="#FBBF24" stroke-width="2.4" stroke-dasharray="8 4" class="holo-float-pulse"/>
+        <text x="170" y="346" text-anchor="middle" fill="#00F5D4" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">HAUTE COUTURE // DRAPE &amp; GSM</text>
       </svg>`,
     holoRight: `
-      <svg class="holo-svg-right" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Double Helix Polymer Fiber & Yarn Cone Blueprint -->
-        <polygon points="160,30 280,95 280,225 160,290 40,225 40,95" stroke="#06B6D4" stroke-width="1" stroke-dasharray="6 4" class="holo-spin-slow" style="transform-origin:160px 160px;"/>
-        <path d="M80 240 L135 65 L185 65 L240 240 Z" stroke="#00F5A0" stroke-width="1.5" fill="rgba(0,245,160,0.04)"/>
-        <ellipse cx="160" cy="65" rx="25" ry="8" stroke="#F59E0B" stroke-width="1.4"/>
-        <ellipse cx="160" cy="240" rx="80" ry="18" stroke="#00F5A0" stroke-width="1.4" stroke-dasharray="5 3"/>
-        <path d="M105 180 Q160 140 215 180 M95 210 Q160 165 225 210 M118 145 Q160 115 202 145 M128 110 Q160 90 192 110" stroke="#06B6D4" stroke-width="1.2"/>
-        <text x="160" y="285" text-anchor="middle" fill="#F59E0B" font-family="monospace" font-size="9" letter-spacing="2">YARN TENSILE // 40s COMBED</text>
+      <svg class="holo-svg-right" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- 3D Industrial Conical Yarn Spools & Woven Swatch -->
+        <!-- Left Bobbin Cone (Rose Magenta) -->
+        <ellipse cx="105" cy="250" rx="44" ry="14" fill="rgba(244,63,94,0.22)" stroke="#F43F5E" stroke-width="2"/>
+        <path d="M68 250 L90 115 L120 115 L142 250 Z" fill="rgba(244,63,94,0.18)" stroke="#F43F5E" stroke-width="2"/>
+        <ellipse cx="105" cy="115" rx="15" ry="6" fill="#FBBF24" stroke="#FBBF24" stroke-width="1.5"/>
+        <!-- Right Bobbin Cone (Turquoise Silk) -->
+        <ellipse cx="225" cy="265" rx="44" ry="14" fill="rgba(0,245,212,0.22)" stroke="#00F5D4" stroke-width="2"/>
+        <path d="M188 265 L210 130 L240 130 L262 265 Z" fill="rgba(0,245,212,0.18)" stroke="#00F5D4" stroke-width="2"/>
+        <ellipse cx="225" cy="130" rx="15" ry="6" fill="#FBBF24" stroke="#FBBF24" stroke-width="1.5"/>
+        <!-- Unwinding Glowing Threads Feeding Top Jacquard Swatch -->
+        <path d="M105 110 Q135 55 165 75 M225 125 Q195 60 175 75" stroke="#FBBF24" stroke-width="2.2" class="holo-float-pulse"/>
+        <rect x="115" y="38" width="105" height="56" rx="8" fill="rgba(0,245,212,0.14)" stroke="#00F5D4" stroke-width="2"/>
+        <line x1="115" y1="56" x2="220" y2="56" stroke="#F43F5E" stroke-width="1.6"/>
+        <line x1="115" y1="74" x2="220" y2="74" stroke="#FBBF24" stroke-width="1.6"/>
+        <line x1="150" y1="38" x2="150" y2="94" stroke="#00F5D4" stroke-width="1.6"/>
+        <line x1="185" y1="38" x2="185" y2="94" stroke="#00F5D4" stroke-width="1.6"/>
+        <text x="170" y="325" text-anchor="middle" fill="#FBBF24" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">JACQUARD BOBBINS // 40s COMBED</text>
       </svg>`
   },
   food: {
-    sector: 'SECTOR // FOOD & BEVERAGE BIO-KINETICS LAB',
-    specs: 'HTST PASTEURIZATION 72°C · HACCP CRITICAL CONTROL · MOLECULAR FLAVOR MATRIX',
-    badgeText: '🥣 TEXO FOOD & BEVERAGE INTELLIGENCE • HACCP BIO-SAFE CORE',
+    sector: 'SECTOR // CULINARY GASTRONOMY & BEVERAGE BIO-LAB',
+    specs: 'HTST PASTEURIZATION 72°C · BRIX BLENDING · HACCP CRITICAL CONTROL',
+    badgeText: '🥣 TEXO FOOD & BEVERAGE INTELLIGENCE • CULINARY & HACCP CORE',
     colors: [
-      { fill: 'rgba(249, 115, 22,', glow: '#F97316' },  // Citrus Amber
-      { fill: 'rgba(250, 204, 21,', glow: '#FACC15' },  // Honey Gold
-      { fill: 'rgba(16, 185, 129,', glow: '#10B981' }   // Botanical Mint
+      { fill: 'rgba(251, 191, 36,', glow: '#FBBF24' },  // Golden Honey
+      { fill: 'rgba(249, 115, 22,', glow: '#F97316' },  // Citrus Sunset
+      { fill: 'rgba(16, 185, 129,', glow: '#10B981' }   // Fresh Mint Leaf
     ],
-    lineColor: '249, 115, 22',
-    mouseLineColor: '250, 204, 21',
+    lineColor: '251, 191, 36',
+    mouseLineColor: '16, 185, 129',
     mode: 'food',
     holoLeft: `
-      <svg class="holo-svg-left" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Bio-Fermentation Bioreactor & Thermal Pasteurizer -->
-        <circle cx="160" cy="160" r="135" stroke="#F97316" stroke-width="1" stroke-dasharray="10 6" class="holo-spin-slow" style="transform-origin:160px 160px;"/>
-        <rect x="95" y="65" width="130" height="175" rx="35" stroke="#FACC15" stroke-width="1.6" fill="rgba(249,115,22,0.04)"/>
-        <!-- Impeller Shaft & Blades -->
-        <line x1="160" y1="45" x2="160" y2="210" stroke="#10B981" stroke-width="2"/>
-        <ellipse cx="160" cy="135" rx="42" ry="10" stroke="#10B981" stroke-width="1.5"/>
-        <ellipse cx="160" cy="185" rx="42" ry="10" stroke="#10B981" stroke-width="1.5"/>
-        <!-- Effervescent Bubbles -->
-        <g fill="#FACC15" class="holo-float-pulse">
-          <circle cx="125" cy="205" r="4"/><circle cx="190" cy="195" r="5"/><circle cx="140" cy="160" r="3.5"/>
-          <circle cx="180" cy="150" r="4.5"/><circle cx="130" cy="115" r="3"/><circle cx="185" cy="105" r="4"/>
-        </g>
-        <text x="160" y="285" text-anchor="middle" fill="#FACC15" font-family="monospace" font-size="9" letter-spacing="2">HTST CCP-1 // 72.5°C • 15 SEC</text>
+      <svg class="holo-svg-left" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Gourmet Chef Cloche Dome, Platter & Rising Aromatic Steam -->
+        <!-- Rising Steam Ribbons -->
+        <path d="M130 120 Q115 85 135 55 Q155 25 135 10" stroke="#FBBF24" stroke-width="3" stroke-linecap="round" class="holo-float-pulse"/>
+        <path d="M170 110 Q155 75 175 45 Q195 15 175 2" stroke="#F97316" stroke-width="3" stroke-linecap="round" class="holo-float-pulse"/>
+        <path d="M210 120 Q195 85 215 55 Q235 25 215 10" stroke="#10B981" stroke-width="3" stroke-linecap="round" class="holo-float-pulse"/>
+        <!-- Cloche Handle & Golden Dome -->
+        <circle cx="170" cy="136" r="12" fill="rgba(251,191,36,0.3)" stroke="#FBBF24" stroke-width="2.5"/>
+        <path d="M62 245 C62 165, 278 165, 278 245 Z" fill="rgba(249,115,22,0.18)" stroke="#FBBF24" stroke-width="2.5"/>
+        <!-- Platter Rim -->
+        <ellipse cx="170" cy="252" rx="124" ry="18" fill="rgba(16,185,129,0.16)" stroke="#10B981" stroke-width="2.2"/>
+        <!-- Botanical Mint Leaf & Golden Wheat Accent -->
+        <path d="M125 215 Q170 185 215 215 Q170 235 125 215 Z" fill="rgba(16,185,129,0.3)" stroke="#10B981" stroke-width="1.8"/>
+        <text x="170" y="315" text-anchor="middle" fill="#FBBF24" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">GASTRONOMY &amp; THERMAL CCP-1</text>
       </svg>`,
     holoRight: `
-      <svg class="holo-svg-right" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Organic Hexagonal Carbohydrate / Flavor Molecule -->
-        <circle cx="160" cy="160" r="130" stroke="#10B981" stroke-width="1" stroke-dasharray="6 8" class="holo-spin-reverse" style="transform-origin:160px 160px;"/>
-        <polygon points="160,75 215,107 215,172 160,205 105,172 105,107" stroke="#F97316" stroke-width="2" fill="rgba(250,204,21,0.05)"/>
-        <polygon points="215,172 265,200 265,255 215,280 165,255 165,200" stroke="#FACC15" stroke-width="1.5"/>
-        <polygon points="105,172 155,200 155,255 105,280 55,255 55,200" stroke="#10B981" stroke-width="1.5"/>
-        <g fill="#F97316">
-          <circle cx="160" cy="75" r="5"/><circle cx="215" cy="107" r="5"/><circle cx="215" cy="172" r="5"/>
-          <circle cx="160" cy="205" r="5"/><circle cx="105" cy="172" r="5"/><circle cx="105" cy="107" r="5"/>
+      <svg class="holo-svg-right" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Sparkling Beverage Chalice, Citrus Wheel & Effervescent Bubbles -->
+        <!-- Citrus Slice Wheel on Rim -->
+        <circle cx="228" cy="105" r="34" fill="rgba(249,115,22,0.25)" stroke="#FBBF24" stroke-width="2.4"/>
+        <circle cx="228" cy="105" r="6" fill="#FBBF24"/>
+        <line x1="228" y1="71" x2="228" y2="139" stroke="#FBBF24" stroke-width="1.4"/>
+        <line x1="194" y1="105" x2="262" y2="105" stroke="#FBBF24" stroke-width="1.4"/>
+        <!-- Beverage Glass Bowl, Liquid Level & Stem -->
+        <path d="M96 105 L244 105 L206 205 C190 228, 150 228, 134 205 Z" fill="rgba(251,191,36,0.18)" stroke="#00F5D4" stroke-width="2.2"/>
+        <path d="M106 135 Q140 125 170 135 T234 135 L206 205 C190 228, 150 228, 134 205 Z" fill="rgba(249,115,22,0.28)" stroke="#F97316" stroke-width="2"/>
+        <line x1="170" y1="222" x2="170" y2="288" stroke="#FBBF24" stroke-width="3.5"/>
+        <ellipse cx="170" cy="292" rx="52" ry="12" fill="rgba(251,191,36,0.22)" stroke="#FBBF24" stroke-width="2.2"/>
+        <!-- Sparkling Bubbles -->
+        <g fill="#FBBF24" class="holo-float-pulse">
+          <circle cx="150" cy="185" r="5"/><circle cx="185" cy="170" r="6"/><circle cx="165" cy="150" r="4.5"/>
+          <circle cx="145" cy="82" r="5"/><circle cx="178" cy="65" r="6.5"/><circle cx="162" cy="44" r="4"/>
         </g>
-        <text x="160" y="302" text-anchor="middle" fill="#10B981" font-family="monospace" font-size="9" letter-spacing="2">MAP SEAL // O2 &lt; 0.4% • BRIX 14.2</text>
+        <text x="170" y="332" text-anchor="middle" fill="#10B981" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">BEVERAGE BRIX // 11.8°Bx • MAP</text>
       </svg>`
   },
   pharma: {
-    sector: 'SECTOR // BIOPHARMA R&D & cGMP STERILE CLEANROOM',
-    specs: 'FDA 21 CFR PART 11 · USP <711> DISSOLUTION · GRADE-A LAMINAR CASCADE (+15 Pa)',
+    sector: 'SECTOR // BIOPHARMA R&D & CLINICAL FORMULATION LAB',
+    specs: 'FDA 21 CFR PART 11 · USP <711> DISSOLUTION · cGMP STERILE CASCADE',
     badgeText: '💊 TEXO BIOPHARMA & CLINICAL INTELLIGENCE • cGMP STERILE CORE',
     colors: [
       { fill: 'rgba(56, 189, 248,', glow: '#38BDF8' },  // Cryo Medical Blue
-      { fill: 'rgba(168, 85, 247,', glow: '#A855F7' },  // Genomic Violet
-      { fill: 'rgba(45, 212, 191,', glow: '#2DD4BF' }   // Sterile Teal
+      { fill: 'rgba(45, 212, 191,', glow: '#2DD4BF' },  // Sterile Aqua
+      { fill: 'rgba(192, 132, 252,', glow: '#C084FC' }  // Genomic Violet
     ],
     lineColor: '56, 189, 248',
-    mouseLineColor: '168, 85, 247',
+    mouseLineColor: '45, 212, 191',
     mode: 'pharma',
     holoLeft: `
-      <svg class="holo-svg-left" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Double Helix DNA & Cryo Helix Ring -->
-        <circle cx="160" cy="160" r="136" stroke="#38BDF8" stroke-width="1" stroke-dasharray="12 6" class="holo-spin-slow" style="transform-origin:160px 160px;"/>
-        <path d="M110 55 C210 95, 110 155, 210 195 C110 235, 210 265, 110 280" stroke="#38BDF8" stroke-width="2" fill="none"/>
-        <path d="M210 55 C110 95, 210 155, 110 195 C210 235, 110 265, 210 280" stroke="#A855F7" stroke-width="2" fill="none"/>
-        <g stroke="#2DD4BF" stroke-width="1.3">
-          <line x1="125" y1="75" x2="195" y2="75"/><line x1="142" y1="100" x2="178" y2="100"/>
-          <line x1="125" y1="130" x2="195" y2="130"/><line x1="135" y1="160" x2="185" y2="160"/>
-          <line x1="125" y1="190" x2="195" y2="190"/><line x1="140" y1="220" x2="180" y2="220"/>
-          <line x1="125" y1="250" x2="195" y2="250"/>
+      <svg class="holo-svg-left" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Medical Shield Cross + Floating 3D Two-Tone Capsule Pills -->
+        <path d="M170 40 L265 78 V165 C265 232, 222 278, 170 302 C118 278, 75 232, 75 165 V78 Z" fill="rgba(56,189,248,0.12)" stroke="#38BDF8" stroke-width="2.4"/>
+        <!-- Glowing Medical Cross Inside Shield -->
+        <path d="M152 105 H188 V145 H228 V181 H188 V221 H152 V181 H112 V145 H152 Z" fill="rgba(45,212,191,0.28)" stroke="#2DD4BF" stroke-width="2.2" class="holo-float-pulse"/>
+        <!-- Floating 3D Capsule Pill (Top Left) -->
+        <g transform="rotate(-32 85 75)">
+          <rect x="45" y="58" width="42" height="32" rx="16" fill="rgba(192,132,252,0.45)" stroke="#C084FC" stroke-width="2"/>
+          <rect x="72" y="58" width="42" height="32" rx="16" fill="rgba(56,189,248,0.45)" stroke="#38BDF8" stroke-width="2"/>
         </g>
-        <text x="160" y="300" text-anchor="middle" fill="#38BDF8" font-family="monospace" font-size="9" letter-spacing="2">GENOMIC HELIX // USP &lt;788&gt; PASS</text>
+        <!-- Floating 3D Capsule Pill (Bottom Right) -->
+        <g transform="rotate(28 265 265)">
+          <rect x="225" y="248" width="42" height="32" rx="16" fill="rgba(45,212,191,0.45)" stroke="#2DD4BF" stroke-width="2"/>
+          <rect x="252" y="248" width="42" height="32" rx="16" fill="rgba(192,132,252,0.45)" stroke="#C084FC" stroke-width="2"/>
+        </g>
+        <text x="170" y="336" text-anchor="middle" fill="#38BDF8" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">cGMP CLINICAL // USP &lt;711&gt; S1</text>
       </svg>`,
     holoRight: `
-      <svg class="holo-svg-right" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- HPLC Chromatogram & Molecular Crosshair -->
-        <circle cx="160" cy="160" r="128" stroke="#A855F7" stroke-width="1" stroke-dasharray="5 5" class="holo-spin-reverse" style="transform-origin:160px 160px;"/>
-        <polyline points="50,220 95,220 110,180 125,220 155,220 175,70 195,220 225,220 240,150 255,220 280,220" stroke="#2DD4BF" stroke-width="2" fill="rgba(45,212,191,0.06)"/>
-        <line x1="50" y1="220" x2="280" y2="220" stroke="#38BDF8" stroke-width="1"/>
-        <circle cx="175" cy="70" r="5" fill="#A855F7" class="holo-float-pulse"/>
-        <text x="160" y="280" text-anchor="middle" fill="#2DD4BF" font-family="monospace" font-size="9" letter-spacing="2">HPLC ASSAY // Rs &gt; 2.4 • 99.8%</text>
+      <svg class="holo-svg-right" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Biotech Erlenmeyer Lab Flask with Glowing Elixir & Molecular Ring -->
+        <rect x="142" y="52" width="56" height="14" rx="6" fill="rgba(56,189,248,0.25)" stroke="#38BDF8" stroke-width="2"/>
+        <path d="M150 66 V125 L82 268 C74 284, 86 300, 104 300 H236 C254 300, 266 284, 258 268 L190 125 V66 Z" fill="rgba(56,189,248,0.10)" stroke="#38BDF8" stroke-width="2.4"/>
+        <!-- Glowing Bio-Elixir Liquid Inside Flask -->
+        <path d="M114 202 Q145 192 170 202 T226 202 L254 264 C260 278, 250 292, 234 292 H106 C90 292, 80 278, 86 264 Z" fill="rgba(45,212,191,0.28)" stroke="#2DD4BF" stroke-width="2"/>
+        <!-- Bubbles & Hexagonal Molecule Above Flask -->
+        <g fill="#C084FC" class="holo-float-pulse">
+          <circle cx="145" cy="255" r="6"/><circle cx="185" cy="240" r="7.5"/><circle cx="165" cy="218" r="5"/>
+          <circle cx="170" cy="165" r="5.5"/><circle cx="162" cy="135" r="4"/>
+        </g>
+        <text x="170" y="336" text-anchor="middle" fill="#2DD4BF" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">HPLC ASSAY // PURITY 99.92%</text>
       </svg>`
   },
   auto: {
-    sector: 'SECTOR // AUTOMOTIVE & EV POWERTRAIN METROLOGY',
-    specs: 'IATF 16949 ZERO-DEFECT · CMM GD&T LASER SCAN · EV ULTRASONIC CELL TELEMETRY',
-    badgeText: '🚗 TEXO AUTOMOTIVE & EV INTELLIGENCE • IATF 16949 CORE',
+    sector: 'SECTOR // SUPERCAR AERODYNAMICS & EV POWERTRAIN LAB',
+    specs: 'IATF 16949 METROLOGY · 800V SOLID-STATE BATTERY · WIND-TUNNEL DOWNFORCE',
+    badgeText: '🚗 TEXO AUTOMOTIVE & EV INTELLIGENCE • SUPERCAR & EV CORE',
     colors: [
-      { fill: 'rgba(239, 68, 68,', glow: '#EF4444' },   // Racing Crimson
-      { fill: 'rgba(59, 130, 246,', glow: '#3B82F6' },  // EV Plasma Blue
-      { fill: 'rgba(245, 158, 11,', glow: '#F59E0B' }   // Spark Amber
+      { fill: 'rgba(239, 68, 68,', glow: '#EF4444' },   // Racing Red
+      { fill: 'rgba(59, 130, 246,', glow: '#3B82F6' },  // Nitrous Blue
+      { fill: 'rgba(249, 115, 22,', glow: '#F97316' }   // Turbo Orange
     ],
     lineColor: '59, 130, 246',
     mouseLineColor: '239, 68, 68',
     mode: 'auto',
     holoLeft: `
-      <svg class="holo-svg-left" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- EV Rotor Turbine & HUD Tachometer -->
-        <circle cx="160" cy="160" r="135" stroke="#EF4444" stroke-width="1.5" stroke-dasharray="20 8" class="holo-spin-slow" style="transform-origin:160px 160px;"/>
-        <circle cx="160" cy="160" r="105" stroke="#3B82F6" stroke-width="2" stroke-dasharray="40 15" class="holo-spin-reverse" style="transform-origin:160px 160px;"/>
-        <circle cx="160" cy="160" r="65" stroke="#F59E0B" stroke-width="1.2"/>
-        <circle cx="160" cy="160" r="22" stroke="#EF4444" stroke-width="2" fill="rgba(239,68,68,0.1)"/>
-        <g stroke="#3B82F6" stroke-width="1.4">
-          <line x1="160" y1="55" x2="160" y2="95"/><line x1="160" y1="225" x2="160" y2="265"/>
-          <line x1="55" y1="160" x2="95" y2="160"/><line x1="225" y1="160" x2="265" y2="160"/>
-          <line x1="86" y1="86" x2="114" y2="114"/><line x1="206" y1="206" x2="234" y2="234"/>
-        </g>
-        <text x="160" y="295" text-anchor="middle" fill="#EF4444" font-family="monospace" font-size="9" letter-spacing="2">EV TORQUE // Cpk 1.85 • 800V</text>
+      <svg class="holo-svg-left" viewBox="0 0 360 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Aerodynamic Wind-Tunnel Slipstream Lines Over Supercar -->
+        <path d="M18 145 Q110 135 165 102 Q235 68 342 108" stroke="#3B82F6" stroke-width="2" stroke-dasharray="10 5" class="holo-float-pulse"/>
+        <path d="M12 172 Q95 162 155 122 Q230 85 348 128" stroke="#EF4444" stroke-width="2.2"/>
+        <!-- Futuristic Supercar / EV Fastback Silhouette -->
+        <path d="M28 218 L48 182 L118 164 L178 124 L272 128 L332 168 L342 218 L298 222 A32 32 0 0 0 232 222 L132 222 A32 32 0 0 0 66 222 Z" fill="rgba(239,68,68,0.22)" stroke="#EF4444" stroke-width="2.6"/>
+        <!-- Cockpit Canopy Glass -->
+        <path d="M126 164 L176 132 L254 135 L278 164 Z" fill="rgba(59,130,246,0.32)" stroke="#3B82F6" stroke-width="2"/>
+        <!-- Front & Rear Forged Wheels -->
+        <circle cx="99" cy="222" r="28" fill="rgba(10,16,30,0.9)" stroke="#3B82F6" stroke-width="3"/>
+        <circle cx="99" cy="222" r="12" fill="#EF4444"/>
+        <circle cx="265" cy="222" r="28" fill="rgba(10,16,30,0.9)" stroke="#3B82F6" stroke-width="3"/>
+        <circle cx="265" cy="222" r="12" fill="#EF4444"/>
+        <!-- LED Laser Headlight Blade -->
+        <path d="M32 192 L64 185" stroke="#F97316" stroke-width="4" stroke-linecap="round"/>
+        <text x="180" y="295" text-anchor="middle" fill="#EF4444" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">AERO DOWNFORCE // Cd 0.20 • 800V EV</text>
       </svg>`,
     holoRight: `
-      <svg class="holo-svg-right" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Aerodynamic Wind-Tunnel & GD&T Datum Target -->
-        <polygon points="160,35 275,160 160,285 45,160" stroke="#3B82F6" stroke-width="1.2" stroke-dasharray="8 4"/>
-        <path d="M45 135 Q140 95 275 135 M35 160 Q150 130 285 160 M45 185 Q140 165 275 185" stroke="#EF4444" stroke-width="1.6"/>
-        <circle cx="160" cy="160" r="42" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="6 4" class="holo-spin-slow" style="transform-origin:160px 160px;"/>
-        <text x="160" y="295" text-anchor="middle" fill="#3B82F6" font-family="monospace" font-size="9" letter-spacing="2">GD&amp;T DATUM // ASME Y14.5 ±0.02mm</text>
+      <svg class="holo-svg-right" viewBox="0 0 340 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Digital Cockpit RPM Gauge Arc & Forged Brake Rotor Caliper -->
+        <path d="M55 245 A130 130 0 1 1 285 245" stroke="rgba(59,130,246,0.35)" stroke-width="14" stroke-linecap="round"/>
+        <path d="M55 245 A130 130 0 0 1 255 95" stroke="#EF4444" stroke-width="14" stroke-linecap="round" class="holo-float-pulse"/>
+        <!-- Inner Brake Disc & Red Caliper -->
+        <circle cx="170" cy="175" r="74" fill="rgba(59,130,246,0.10)" stroke="#3B82F6" stroke-width="2.5"/>
+        <path d="M215 118 A74 74 0 0 1 242 185 L220 190 A50 50 0 0 0 198 135 Z" fill="#EF4444" stroke="#F97316" stroke-width="2"/>
+        <!-- EV High-Voltage Lightning Bolt in Center Hub -->
+        <polygon points="176,132 146,178 170,178 162,218 196,168 172,168" fill="#F97316"/>
+        <text x="170" y="305" text-anchor="middle" fill="#3B82F6" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">IATF 16949 // Cpk 1.88 • ZERO PPM</text>
       </svg>`
   },
   construction: {
-    sector: 'SECTOR // STRUCTURAL BIM & CIVIL GEOTECHNICAL CAD',
-    specs: 'ACI 318 REINFORCED CONCRETE · ASTM C39 COMPRESSIVE · LIDAR TOPOGRAPHIC MESH',
-    badgeText: '🏗️ TEXO CIVIL & STRUCTURAL INTELLIGENCE • BIM CAD CORE',
+    sector: 'SECTOR // SMART SKYSCRAPER BIM & STRUCTURAL CIVIL ENGINEERING',
+    specs: 'ACI 318 REINFORCED CONCRETE · ASTM C39 · TOWER CRANE & BRIDGE CAD',
+    badgeText: '🏗️ TEXO CIVIL & STRUCTURAL INTELLIGENCE • BIM SKYLINE CORE',
     colors: [
-      { fill: 'rgba(245, 158, 11,', glow: '#F59E0B' },  // Safety Caution Gold
+      { fill: 'rgba(250, 204, 21,', glow: '#FACC15' },  // Caution Gold
       { fill: 'rgba(56, 189, 248,', glow: '#38BDF8' },  // Blueprint Cyan
-      { fill: 'rgba(148, 163, 184,', glow: '#94A3B8' }  // Structural Steel
+      { fill: 'rgba(251, 146, 60,', glow: '#FB923C' }   // Structural Orange
     ],
-    lineColor: '245, 158, 11',
-    mouseLineColor: '56, 189, 248',
+    lineColor: '56, 189, 248',
+    mouseLineColor: '250, 204, 21',
     mode: 'construction',
     holoLeft: `
-      <svg class="holo-svg-left" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Isometric Structural Steel Truss & Tower Frame -->
-        <polygon points="160,40 255,95 255,225 160,280 65,225 65,95" stroke="#38BDF8" stroke-width="1.4"/>
-        <line x1="160" y1="40" x2="160" y2="280" stroke="#F59E0B" stroke-width="1.6"/>
-        <line x1="65" y1="95" x2="255" y2="225" stroke="#38BDF8" stroke-width="1.1" stroke-dasharray="5 3"/>
-        <line x1="255" y1="95" x2="65" y2="225" stroke="#38BDF8" stroke-width="1.1" stroke-dasharray="5 3"/>
-        <polygon points="160,85 215,120 215,195 160,230 105,195 105,120" stroke="#F59E0B" stroke-width="1.3" fill="rgba(245,158,11,0.04)"/>
-        <text x="160" y="302" text-anchor="middle" fill="#F59E0B" font-family="monospace" font-size="9" letter-spacing="2">ASTM C39 // 45 MPa • ACI 318</text>
+      <svg class="holo-svg-left" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- 3D Skyscraper Tower & Giant Construction Tower Crane -->
+        <!-- Skyscraper Building Frame -->
+        <rect x="68" y="105" width="92" height="195" fill="rgba(56,189,248,0.15)" stroke="#38BDF8" stroke-width="2.2"/>
+        <line x1="98" y1="105" x2="98" y2="300" stroke="#38BDF8" stroke-width="1.2"/>
+        <line x1="130" y1="105" x2="130" y2="300" stroke="#38BDF8" stroke-width="1.2"/>
+        <line x1="68" y1="145" x2="160" y2="145" stroke="#38BDF8" stroke-width="1.2"/>
+        <line x1="68" y1="185" x2="160" y2="185" stroke="#38BDF8" stroke-width="1.2"/>
+        <line x1="68" y1="225" x2="160" y2="225" stroke="#38BDF8" stroke-width="1.2"/>
+        <!-- Tower Crane Mast & Jib Boom -->
+        <rect x="212" y="58" width="22" height="242" fill="rgba(250,204,21,0.15)" stroke="#FACC15" stroke-width="2.2"/>
+        <path d="M105 68 H292 L234 42 L105 68 Z" fill="rgba(250,204,21,0.22)" stroke="#FACC15" stroke-width="2.2"/>
+        <!-- Crane Hook & Suspended Steel I-Beam -->
+        <line x1="135" y1="68" x2="135" y2="112" stroke="#FB923C" stroke-width="2" class="holo-float-pulse"/>
+        <rect x="108" y="112" width="54" height="12" fill="#FACC15" stroke="#FB923C" stroke-width="1.8" class="holo-float-pulse"/>
+        <line x1="35" y1="300" x2="305" y2="300" stroke="#38BDF8" stroke-width="2.5"/>
+        <text x="170" y="335" text-anchor="middle" fill="#FACC15" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">BIM SKYLINE // ACI 318 • 45 MPa</text>
       </svg>`,
     holoRight: `
-      <svg class="holo-svg-right" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- LiDAR Surveying Theodolite Crosshair -->
-        <circle cx="160" cy="160" r="130" stroke="#F59E0B" stroke-width="1.2" stroke-dasharray="15 5" class="holo-spin-slow" style="transform-origin:160px 160px;"/>
-        <circle cx="160" cy="160" r="90" stroke="#38BDF8" stroke-width="1"/>
-        <circle cx="160" cy="160" r="45" stroke="#F59E0B" stroke-width="1" stroke-dasharray="4 4"/>
-        <line x1="20" y1="160" x2="300" y2="160" stroke="#38BDF8" stroke-width="1"/>
-        <line x1="160" y1="20" x2="160" y2="300" stroke="#38BDF8" stroke-width="1"/>
-        <text x="160" y="305" text-anchor="middle" fill="#38BDF8" font-family="monospace" font-size="9" letter-spacing="2">BIM SURVEY // ELEV +142.80m</text>
+      <svg class="holo-svg-right" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Cable-Stayed Suspension Bridge Span & Structural Pylons -->
+        <rect x="92" y="75" width="18" height="215" fill="rgba(250,204,21,0.25)" stroke="#FACC15" stroke-width="2.2"/>
+        <rect x="230" y="75" width="18" height="215" fill="rgba(250,204,21,0.25)" stroke="#FACC15" stroke-width="2.2"/>
+        <!-- Bridge Deck Truss -->
+        <rect x="24" y="218" width="292" height="16" fill="rgba(56,189,248,0.28)" stroke="#38BDF8" stroke-width="2.2"/>
+        <!-- Stay Cables -->
+        <g stroke="#38BDF8" stroke-width="1.5">
+          <line x1="101" y1="88" x2="32" y2="218"/><line x1="101" y1="115" x2="58" y2="218"/>
+          <line x1="101" y1="88" x2="168" y2="218"/><line x1="101" y1="115" x2="142" y2="218"/>
+          <line x1="239" y1="88" x2="172" y2="218"/><line x1="239" y1="115" x2="198" y2="218"/>
+          <line x1="239" y1="88" x2="308" y2="218"/><line x1="239" y1="115" x2="282" y2="218"/>
+        </g>
+        <text x="170" y="332" text-anchor="middle" fill="#38BDF8" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">STRUCTURAL SPAN // ASTM C39 PASS</text>
       </svg>`
   },
   logistics: {
-    sector: 'SECTOR // GLOBAL SUPPLY CHAIN & ORBITAL FLEET RADAR',
-    specs: 'OTIF 99.4% TELEMETRY · COLD-CHAIN MKT SENSOR · AUTONOMOUS CORRIDOR ROUTING',
-    badgeText: '🚚 TEXO GLOBAL LOGISTICS INTELLIGENCE • FLEET RADAR CORE',
+    sector: 'SECTOR // GLOBAL INTERMODAL FREIGHT, AIR CARGO & FLEET HUB',
+    specs: 'OTIF 99.4% SLA · COLD-CHAIN MKT REEFER · OCEAN & AIR CORRIDOR',
+    badgeText: '🚚 TEXO GLOBAL LOGISTICS INTELLIGENCE • FREIGHT & FLEET CORE',
     colors: [
-      { fill: 'rgba(20, 184, 166,', glow: '#14B8A6' },  // Radar Teal
-      { fill: 'rgba(132, 204, 22,', glow: '#84CC16' },  // Signal Lime
-      { fill: 'rgba(56, 189, 248,', glow: '#38BDF8' }   // Orbital Sky
+      { fill: 'rgba(0, 240, 255,', glow: '#00F0FF' },   // Orbital Cyan
+      { fill: 'rgba(16, 185, 129,', glow: '#10B981' },  // Emerald Fleet
+      { fill: 'rgba(163, 230, 53,', glow: '#A3E635' }   // Signal Lime
     ],
-    lineColor: '20, 184, 166',
-    mouseLineColor: '132, 204, 22',
+    lineColor: '0, 240, 255',
+    mouseLineColor: '16, 185, 129',
     mode: 'logistics',
     holoLeft: `
-      <svg class="holo-svg-left" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Global Geodesic Radar Globe & Orbital Arcs -->
-        <circle cx="160" cy="160" r="130" stroke="#14B8A6" stroke-width="1.5"/>
-        <ellipse cx="160" cy="160" rx="130" ry="50" stroke="#14B8A6" stroke-width="1" stroke-dasharray="6 4"/>
-        <ellipse cx="160" cy="160" rx="55" ry="130" stroke="#14B8A6" stroke-width="1" stroke-dasharray="6 4"/>
-        <circle cx="160" cy="160" r="144" stroke="#84CC16" stroke-width="1" stroke-dasharray="12 10" class="holo-spin-slow" style="transform-origin:160px 160px;"/>
-        <g fill="#84CC16" class="holo-float-pulse">
-          <circle cx="105" cy="120" r="4.5"/><circle cx="215" cy="145" r="4.5"/><circle cx="160" cy="210" r="4.5"/>
-        </g>
-        <path d="M105 120 Q160 75 215 145 Q195 190 160 210" stroke="#84CC16" stroke-width="1.6" stroke-dasharray="4 3"/>
-        <text x="160" y="302" text-anchor="middle" fill="#84CC16" font-family="monospace" font-size="9" letter-spacing="2">ORBITAL AIS // OTIF 99.4% LIVE</text>
+      <svg class="holo-svg-left" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Mega Container Cargo Ship & Stacked Intermodal TEU Containers -->
+        <!-- Stacked Containers on Deck -->
+        <rect x="68" y="155" width="58" height="32" fill="rgba(0,240,255,0.28)" stroke="#00F0FF" stroke-width="2"/>
+        <rect x="132" y="155" width="58" height="32" fill="rgba(16,185,129,0.28)" stroke="#10B981" stroke-width="2"/>
+        <rect x="98" y="118" width="58" height="32" fill="rgba(163,230,53,0.28)" stroke="#A3E635" stroke-width="2"/>
+        <!-- Ship Bridge Tower -->
+        <rect x="208" y="110" width="46" height="77" fill="rgba(0,240,255,0.20)" stroke="#00F0FF" stroke-width="2"/>
+        <!-- Ship Hull -->
+        <path d="M36 188 H304 L276 248 H64 Z" fill="rgba(16,185,129,0.26)" stroke="#00F0FF" stroke-width="2.5"/>
+        <!-- Ocean Waves -->
+        <path d="M20 262 Q55 248 90 262 T160 262 T230 262 T300 262" stroke="#00F0FF" stroke-width="2.5" class="holo-float-pulse"/>
+        <text x="170" y="325" text-anchor="middle" fill="#00F0FF" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">INTERMODAL FLEET // OTIF 99.4%</text>
       </svg>`,
     holoRight: `
-      <svg class="holo-svg-right" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Cold-Chain RFID & Fleet Routing Matrix -->
-        <circle cx="160" cy="160" r="125" stroke="#14B8A6" stroke-width="1" stroke-dasharray="8 6" class="holo-spin-reverse" style="transform-origin:160px 160px;"/>
-        <polygon points="160,65 245,112 245,208 160,255 75,208 75,112" stroke="#38BDF8" stroke-width="1.4"/>
-        <line x1="160" y1="160" x2="245" y2="112" stroke="#84CC16" stroke-width="2"/>
-        <circle cx="160" cy="160" r="6" fill="#84CC16"/>
-        <text x="160" y="295" text-anchor="middle" fill="#14B8A6" font-family="monospace" font-size="9" letter-spacing="2">REEFER MKT // +4.2°C NOMINAL</text>
+      <svg class="holo-svg-right" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Cargo Jet Aircraft & Global Trajectory Arc -->
+        <path d="M35 245 Q170 55 305 185" stroke="#10B981" stroke-width="2.2" stroke-dasharray="8 5"/>
+        <!-- Sleek Cargo Jet Silhouette -->
+        <path d="M170 72 L186 125 L268 165 L268 184 L186 168 L182 222 L212 242 L212 255 L170 244 L128 255 L128 242 L158 222 L154 168 L72 184 L72 165 L154 125 Z" fill="rgba(0,240,255,0.24)" stroke="#00F0FF" stroke-width="2.2" class="holo-float-pulse"/>
+        <text x="170" y="325" text-anchor="middle" fill="#A3E635" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">AIR &amp; COLD-CHAIN // MKT +4.2°C</text>
       </svg>`
   },
   general: {
-    sector: 'SECTOR // UNIVERSAL QUANTUM INDUSTRIAL INTELLIGENCE',
-    specs: 'ISO 9001:2015 QMS · SIX SIGMA DMAIC ENGINE · MULTILINGUAL NEURAL CORE',
+    sector: 'SECTOR // UNIVERSAL QUANTUM AI & SIX SIGMA CORE',
+    specs: 'ISO 9001:2015 QMS · SIX SIGMA DMAIC · MULTILINGUAL NEURAL ENGINE',
     badgeText: '⚡ TEXO UNIVERSAL INTELLIGENCE 2.0 • QUANTUM ENTERPRISE CORE',
     colors: [
-      { fill: 'rgba(139, 92, 246,', glow: '#8B5CF6' },  // Quantum Purple
+      { fill: 'rgba(0, 245, 160,', glow: '#00F5A0' },   // Neon Mint
       { fill: 'rgba(6, 182, 212,', glow: '#06B6D4' },   // Cyber Cyan
-      { fill: 'rgba(236, 72, 153,', glow: '#EC4899' }   // Plasma Magenta
+      { fill: 'rgba(168, 85, 247,', glow: '#A855F7' }   // Quantum Violet
     ],
-    lineColor: '139, 92, 246',
+    lineColor: '0, 245, 160',
     mouseLineColor: '6, 182, 212',
     mode: 'general',
     holoLeft: `
-      <svg class="holo-svg-left" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="160" cy="160" r="135" stroke="#8B5CF6" stroke-width="1.2" stroke-dasharray="14 6" class="holo-spin-slow" style="transform-origin:160px 160px;"/>
-        <circle cx="160" cy="160" r="102" stroke="#06B6D4" stroke-width="1.2" stroke-dasharray="8 8" class="holo-spin-reverse" style="transform-origin:160px 160px;"/>
-        <polygon points="160,60 246,110 246,210 160,260 74,210 74,110" stroke="#EC4899" stroke-width="1.3"/>
-        <circle cx="160" cy="160" r="28" stroke="#06B6D4" stroke-width="1.8" fill="rgba(139,92,246,0.08)"/>
-        <text x="160" y="300" text-anchor="middle" fill="#8B5CF6" font-family="monospace" font-size="9" letter-spacing="2">QUANTUM CORE // SIX SIGMA DMAIC</text>
+      <svg class="holo-svg-left" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- 3D Isometric Crystal Prism & Neural Constellation -->
+        <polygon points="170,42 276,125 232,272 108,272 64,125" fill="rgba(168,85,247,0.16)" stroke="#A855F7" stroke-width="2.2"/>
+        <polygon points="170,42 276,125 170,192 64,125" fill="rgba(6,182,212,0.20)" stroke="#06B6D4" stroke-width="2"/>
+        <line x1="170" y1="192" x2="170" y2="272" stroke="#00F5A0" stroke-width="2.2"/>
+        <circle cx="170" cy="145" r="18" fill="rgba(0,245,160,0.35)" stroke="#00F5A0" stroke-width="2" class="holo-float-pulse"/>
+        <text x="170" y="325" text-anchor="middle" fill="#00F5A0" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">NEURAL PRISM // SIX SIGMA DMAIC</text>
       </svg>`,
     holoRight: `
-      <svg class="holo-svg-right" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="160" cy="160" r="128" stroke="#06B6D4" stroke-width="1" stroke-dasharray="10 6" class="holo-spin-reverse" style="transform-origin:160px 160px;"/>
-        <rect x="85" y="85" width="150" height="150" stroke="#8B5CF6" stroke-width="1.2" transform="rotate(45 160 160)"/>
-        <rect x="85" y="85" width="150" height="150" stroke="#EC4899" stroke-width="1.2"/>
-        <text x="160" y="295" text-anchor="middle" fill="#06B6D4" font-family="monospace" font-size="9" letter-spacing="2">ISO 9001:2015 // CAPA VERIFIED</text>
+      <svg class="holo-svg-right" viewBox="0 0 340 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- 3D Isometric Hypercube Tesseract -->
+        <polygon points="170,52 268,108 268,220 170,276 72,220 72,108" fill="rgba(6,182,212,0.12)" stroke="#06B6D4" stroke-width="2.2"/>
+        <polygon points="170,98 228,132 228,198 170,232 112,198 112,132" fill="rgba(0,245,160,0.20)" stroke="#00F5A0" stroke-width="2.2" class="holo-float-pulse"/>
+        <line x1="170" y1="52" x2="170" y2="98" stroke="#A855F7" stroke-width="1.8"/>
+        <line x1="268" y1="108" x2="228" y2="132" stroke="#A855F7" stroke-width="1.8"/>
+        <line x1="72" y1="108" x2="112" y2="132" stroke="#A855F7" stroke-width="1.8"/>
+        <text x="170" y="325" text-anchor="middle" fill="#06B6D4" font-family="monospace" font-size="10" font-weight="bold" letter-spacing="2">ISO 9001:2015 // QUANTUM CUBE</text>
       </svg>`
   }
 };
+
+// ── DARK MODE / LIQUID-GLASS MODE TOGGLE ───────────────────────────────────
+window.toggleDarkModeTheme = function(forceState) {
+  const isCurrentlyDark = document.body.classList.contains('dark-mode');
+  const nextDark = typeof forceState === 'boolean' ? forceState : !isCurrentlyDark;
+  document.body.classList.toggle('dark-mode', nextDark);
+  try {
+    localStorage.setItem('texo_dark_mode', nextDark ? 'true' : 'false');
+  } catch (_) {}
+  const btn = document.getElementById('darkModeToggleBtn');
+  if (btn) {
+    btn.classList.toggle('active', nextDark);
+    btn.innerHTML = nextDark ? '💎 Glass Mode' : '🌙 Dark Mode';
+    btn.title = nextDark
+      ? 'Currently in Pure Obsidian Dark Mode (Click to switch to Vivid Industry Glass Mode)'
+      : 'Currently in Vivid Industry Glass Mode (Click to switch to Pure Obsidian Dark Mode)';
+  }
+  if (typeof playClick === 'function') playClick();
+};
+
+// Restore saved Dark Mode preference on load
+try {
+  if (localStorage.getItem('texo_dark_mode') === 'true') {
+    setTimeout(() => window.toggleDarkModeTheme(true), 50);
+  }
+} catch (_) {}
 
 let activeIndustryBgKey = 'textile';
 
@@ -1524,7 +1602,7 @@ if (ttsToggle) {
   ttsToggle.addEventListener('click', () => {
     ttsEnabled = !ttsEnabled;
     ttsToggle.classList.toggle('active', ttsEnabled);
-    ttsToggle.innerHTML = `<span class="speaker-cyber-badge">${ttsEnabled ? CYBER_SPEAKER_SVG : CYBER_SPEAKER_MUTED_SVG}</span> <span class="tts-label">Voice</span>`;
+    ttsToggle.innerHTML = `<span class="speaker-cyber-badge">${ttsEnabled ? CYBER_SPEAKER_SVG : CYBER_SPEAKER_MUTED_SVG}</span>`;
     ttsToggle.title = ttsEnabled ? 'Voice readout: ON (Click to mute)' : 'Voice readout: OFF (Click to unmute)';
     if (!ttsEnabled) {
       stopAudio();
@@ -2087,8 +2165,7 @@ function updateVoiceHeaderLabel() {
   const label = document.getElementById('currentVoiceLabel');
   const persona = getActivePersona();
   if (label && persona) {
-    const genderIcon = (persona.gender === 'female') ? '👩' : '👨';
-    label.textContent = `${persona.name} ${genderIcon} ✨`;
+    label.textContent = persona.name;
   }
 }
 
@@ -4654,7 +4731,7 @@ window.toggleDualBrainMode = function() {
   const btn = document.getElementById('dualBrainToggleBtn');
   if (btn) {
     btn.classList.toggle('active', window.__dualBrainModeActive);
-    btn.innerHTML = window.__dualBrainModeActive ? '⚔️ Dual-Brain: ON' : '⚔️ Dual-Brain: OFF';
+    btn.innerHTML = window.__dualBrainModeActive ? '⚔️ Split: ON' : '⚔️ Split';
   }
   if (typeof playClick === 'function') playClick();
   if (typeof showSentinelToast === 'function') {
