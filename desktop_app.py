@@ -148,7 +148,7 @@ def launch_pywebview() -> bool:
             icon_path = None
 
         window = webview.create_window(
-            title="APEX — Universal Intelligence",
+            title="TEXO — Universal Intelligence",
             url="http://127.0.0.1:5000",
             width=1360,
             height=900,

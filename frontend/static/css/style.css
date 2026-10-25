@@ -4867,3 +4867,279 @@ pre:has(code.language-json\:action) {
   color: #CBD5E1;
   font-weight: 600;
 }
+
+
+/* ==========================================================================
+   🔊 CYBER-SPEAKER & AUDIO LOGO SYSTEM (HIGH-TECH VECTOR & PULSE BARS)
+   ========================================================================== */
+
+.speaker-cyber-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.speaker-cyber-svg {
+  width: 17px;
+  height: 17px;
+  display: inline-block;
+  vertical-align: middle;
+  color: var(--mint-neon, #00F5A0);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: drop-shadow(0 0 5px rgba(0, 245, 160, 0.45));
+}
+
+.speaker-cyber-svg.muted {
+  color: #64748B;
+  filter: none;
+  opacity: 0.75;
+}
+
+.speaker-cyber-svg:hover {
+  transform: scale(1.08);
+  filter: drop-shadow(0 0 8px rgba(0, 245, 160, 0.75));
+}
+
+.speaker-cyber-svg .speaker-wave {
+  transform-origin: 11px 12px;
+}
+
+.speaker-cyber-svg.active .speaker-wave.wave-1 {
+  animation: acousticArc 1.4s ease-in-out infinite;
+}
+
+.speaker-cyber-svg.active .speaker-wave.wave-2 {
+  animation: acousticArc 1.4s ease-in-out infinite 0.25s;
+}
+
+@keyframes acousticArc {
+  0%, 100% {
+    opacity: 0.4;
+    stroke-width: 2px;
+  }
+  50% {
+    opacity: 1;
+    stroke-width: 2.6px;
+    filter: drop-shadow(0 0 6px var(--mint-neon, #00F5A0));
+  }
+}
+
+/* Dynamic Live Equalizer Bars */
+.audio-pulse-bars {
+  display: inline-flex;
+  align-items: center;
+  gap: 2.5px;
+  height: 14px;
+  vertical-align: middle;
+}
+
+.audio-pulse-bars .ap-bar {
+  width: 2.5px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--cyan-neon, #22D3EE), var(--mint-neon, #00F5A0));
+  border-radius: 2px;
+  box-shadow: 0 0 8px var(--mint-neon, #00F5A0);
+  animation: apBarBounce 0.75s ease-in-out infinite alternate;
+  transform-origin: bottom center;
+}
+
+.audio-pulse-bars .ap-bar.bar-1 { animation-delay: 0.0s; height: 50%; }
+.audio-pulse-bars .ap-bar.bar-2 { animation-delay: 0.2s; height: 100%; }
+.audio-pulse-bars .ap-bar.bar-3 { animation-delay: 0.1s; height: 75%; }
+.audio-pulse-bars .ap-bar.bar-4 { animation-delay: 0.3s; height: 85%; }
+
+.audio-pulse-bars.mini {
+  height: 11px;
+  gap: 2px;
+}
+.audio-pulse-bars.mini .ap-bar {
+  width: 2px;
+}
+
+@keyframes apBarBounce {
+  0% { transform: scaleY(0.2); opacity: 0.6; }
+  100% { transform: scaleY(1.0); opacity: 1; }
+}
+
+/* Spinner for Audio Loading */
+.audio-spinner-ring {
+  width: 13px;
+  height: 13px;
+  border: 2px solid rgba(56, 189, 248, 0.25);
+  border-top-color: #38BDF8;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align: middle;
+  animation: ringSpin 0.7s linear infinite;
+}
+
+.audio-spinner-ring.mini {
+  width: 10px;
+  height: 10px;
+  border-width: 1.8px;
+}
+
+@keyframes ringSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Header TTS Toggle Enhancement */
+.tts-toggle {
+  width: auto !important;
+  min-width: 82px;
+  height: 36px !important;
+  padding: 0 12px !important;
+  gap: 7px;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  border-radius: 9px !important;
+}
+
+.tts-toggle .tts-label {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tts-toggle.active {
+  background: rgba(0, 245, 160, 0.12) !important;
+  border-color: rgba(0, 245, 160, 0.45) !important;
+  color: var(--mint-neon, #00F5A0) !important;
+  box-shadow: 0 0 14px rgba(0, 245, 160, 0.25) !important;
+}
+
+/* Voice Picker Studio Button Upgrade */
+.voice-picker-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  background: rgba(139, 92, 246, 0.12);
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  border-radius: 9px;
+  color: #C4B5FD;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.voice-picker-btn:hover {
+  background: rgba(139, 92, 246, 0.22);
+  border-color: #A855F7;
+  color: #FFFFFF;
+  box-shadow: 0 0 16px rgba(168, 85, 247, 0.35);
+  transform: translateY(-1px);
+}
+
+.voice-studio-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #A855F7;
+}
+
+.voice-studio-svg {
+  width: 15px;
+  height: 15px;
+  filter: drop-shadow(0 0 4px rgba(168, 85, 247, 0.5));
+}
+
+/* Message Bubble Listen Button Styling */
+.msg-action-btn.listen-msg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: rgba(10, 20, 38, 0.85);
+  border: 1px solid rgba(0, 245, 160, 0.25);
+  border-radius: 8px;
+  color: #94A3B8;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.msg-action-btn.listen-msg-btn:hover {
+  background: rgba(0, 245, 160, 0.12);
+  border-color: var(--mint-neon, #00F5A0);
+  color: var(--mint-neon, #00F5A0);
+  box-shadow: 0 0 12px rgba(0, 245, 160, 0.28);
+}
+
+.msg-action-btn.listen-msg-btn.speaking {
+  background: rgba(239, 68, 68, 0.18) !important;
+  border-color: #EF4444 !important;
+  color: #FCA5A5 !important;
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.35) !important;
+}
+
+.msg-action-btn.listen-msg-btn.loading {
+  background: rgba(14, 165, 233, 0.18) !important;
+  border-color: #38BDF8 !important;
+  color: #7DD3FC !important;
+  box-shadow: 0 0 14px rgba(14, 165, 233, 0.35) !important;
+}
+
+.speaker-cyber-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modal Audio Header Badge */
+.voice-header-audio-badge {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(168, 85, 247, 0.14);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #C084FC;
+  box-shadow: 0 0 18px rgba(168, 85, 247, 0.3);
+}
+
+.voice-header-audio-svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Voice Card Preview Button Vector Play Icon */
+.preview-svg-icon {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+/* Welcome Screen Pillar Audio Icon */
+.pillar-icon-wrap.audio-pillar-icon {
+  background: rgba(0, 245, 160, 0.1);
+  border: 1px solid rgba(0, 245, 160, 0.3);
+  color: var(--mint-neon, #00F5A0);
+  box-shadow: 0 0 14px rgba(0, 245, 160, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pillar-audio-svg {
+  width: 22px;
+  height: 22px;
+  filter: drop-shadow(0 0 6px var(--mint-neon, #00F5A0));
+}
+
+.pillar-audio-svg .p-wave.p-wave-1 {
+  animation: acousticArc 1.6s ease-in-out infinite;
+}
+.pillar-audio-svg .p-wave.p-wave-2 {
+  animation: acousticArc 1.6s ease-in-out infinite 0.3s;
+}

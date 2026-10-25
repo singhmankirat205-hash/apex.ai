@@ -21,13 +21,13 @@
   <meta property="og:description" content="TEXO is the ultimate universal industrial AI assistant. Creates Claude-style presentations, spreadsheets, technical Word docs, and defect audits with real-time voice intelligence."/>
   <meta property="og:url" content="https://apex-ai-1-48wg.onrender.com/"/>
   <meta property="og:site_name" content="TEXO Intelligence"/>
-  <meta property="og:image" content="https://apex-ai-1-48wg.onrender.com/static/apex_logo.jpg"/>
+  <meta property="og:image" content="https://apex-ai-1-48wg.onrender.com/static/texo_logo.jpg"/>
 
   <!-- Twitter / X -->
   <meta name="twitter:card" content="summary_large_image"/>
   <meta name="twitter:title" content="TEXO — AI Textile & Industrial Intelligence Chatbot"/>
   <meta name="twitter:description" content="Next-gen AI assistant for textiles, industrial engineering, PPT presentations, Excel workbooks, Word docs, and voice automation."/>
-  <meta name="twitter:image" content="https://apex-ai-1-48wg.onrender.com/static/apex_logo.jpg"/>
+  <meta name="twitter:image" content="https://apex-ai-1-48wg.onrender.com/static/texo_logo.jpg"/>
 
   <!-- Google Structured Data (JSON-LD) for Search Indexing Priority -->
   <script type="application/ld+json">
@@ -63,17 +63,18 @@
         "@id": "https://apex-ai-1-48wg.onrender.com/#organization",
         "name": "TEXO Universal Intelligence",
         "url": "https://apex-ai-1-48wg.onrender.com/",
-        "logo": "https://apex-ai-1-48wg.onrender.com/static/apex_logo.jpg"
+        "logo": "https://apex-ai-1-48wg.onrender.com/static/texo_logo.jpg"
       }
     ]
   }
   </script>
-  <link rel="icon" type="image/jpeg" href="/static/apex_logo.jpg"/>
-  <link rel="apple-touch-icon" href="/static/apex_logo.jpg"/>
+  <link rel="icon" type="image/x-icon" href="/static/texo_logo.ico?v=6.0.0"/>
+  <link rel="icon" type="image/jpeg" href="/static/texo_logo.jpg?v=6.0.0"/>
+  <link rel="apple-touch-icon" href="/static/texo_logo.jpg?v=6.0.0"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Syne:wght@700;800;900&family=Orbitron:wght@600;700;900&family=Space+Grotesk:wght@600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/static/css/style.css?v=5.9.0"/>
+  <link rel="stylesheet" href="/static/css/style.css?v=6.0.0"/>
 </head>
 <body>
 
@@ -88,7 +89,7 @@
     <div class="splash-ring"></div>
     <div class="splash-ring"></div>
     <div class="splash-logo-inner">
-      <img src="/static/apex_logo.jpg" alt="TEXO"/>
+      <img src="/static/texo_logo.jpg?v=6.0.0" alt="TEXO"/>
     </div>
   </div>
   <div class="splash-title">TEXO</div>
@@ -104,7 +105,7 @@
 
     <div class="auth-header">
       <div class="auth-logo-wrap">
-        <img src="/static/apex_logo.jpg" alt="TEXO" class="auth-logo-img"/>
+        <img src="/static/texo_logo.jpg?v=6.0.0" alt="TEXO" class="auth-logo-img"/>
         <div class="auth-glow"></div>
       </div>
       <h2 class="auth-title">TEXO ACCESS PORTAL</h2>
@@ -253,7 +254,7 @@
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
     <div class="logo">
-      <img src="/static/apex_logo.jpg" alt="TEXO" class="logo-img"/>
+      <img src="/static/texo_logo.jpg?v=6.0.0" alt="TEXO" class="logo-img"/>
       <span class="logo-text">TEXO</span>
     </div>
     <button class="sidebar-toggle" id="sidebarToggle" title="Collapse sidebar">☰</button>
@@ -375,10 +376,26 @@
       </div>
       <div class="status-dot" id="statusDot"></div>
       <span class="status-label" id="statusLabel">Ready</span>
-      <button class="tts-toggle" id="ttsToggle" title="Voice readout on/off">🔊 Voice</button>
+      <button class="tts-toggle active" id="ttsToggle" title="Universal Neural Voice Readout (Click to toggle ON/OFF)">
+        <span class="speaker-cyber-badge" id="ttsToggleIcon">
+          <svg class="speaker-cyber-svg active" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path class="speaker-body" d="M11 4.5L6 9H2.5C2.22 9 2 9.22 2 9.5v5c0 .28.22.5.5.5H6l5 4.5V4.5z" fill="currentColor"/>
+            <path class="speaker-wave wave-1" d="M15.5 8.5a5 5 0 0 1 0 7" stroke-width="2.2" stroke-linecap="round"/>
+            <path class="speaker-wave wave-2" d="M18.8 5.2a9.5 9.5 0 0 1 0 13.6" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="tts-label">Voice</span>
+      </button>
       <button class="voice-picker-btn" id="voicePickerBtn" title="Choose Realistic AI Voice Persona">
-        <span class="voice-icon">🎙️</span>
-        <span class="voice-label" id="currentVoiceLabel">Voice: Aura ✨</span>
+        <span class="voice-studio-badge">
+          <svg class="voice-studio-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="2" width="6" height="11" rx="3" fill="currentColor" fill-opacity="0.25"/>
+            <path d="M5 10a7 7 0 0 0 14 0"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+            <line x1="8" y1="21" x2="16" y2="21"/>
+          </svg>
+        </span>
+        <span class="voice-label" id="currentVoiceLabel">Voice: Aura ⚡</span>
       </button>
       <button class="history-toggle-btn" id="historyToggle" title="Chat History">🕐</button>
       <button class="share-btn" id="shareBtn" title="Share TEXO with Others">🔗 Share</button>
@@ -402,7 +419,7 @@
         </div>
         
         <div class="welcome-logo-wrap celebration-interactive" title="Tap for celebration fireworks! 🎆🎉" style="cursor:pointer;">
-          <img src="/static/apex_logo.jpg" alt="TEXO" class="welcome-logo-img"/>
+          <img src="/static/texo_logo.jpg?v=6.0.0" alt="TEXO" class="welcome-logo-img"/>
           <div class="welcome-glow"></div>
         </div>
         
@@ -436,7 +453,13 @@
         </div>
 
         <div class="welcome-pillar-card" onclick="triggerMicVoiceListening()">
-          <div class="pillar-icon-wrap">🎙️</div>
+          <div class="pillar-icon-wrap audio-pillar-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" class="pillar-audio-svg">
+              <path d="M11 4.5L6 9H2.5C2.22 9 2 9.22 2 9.5v5c0 .28.22.5.5.5H6l5 4.5V4.5z" fill="currentColor"/>
+              <path class="p-wave p-wave-1" d="M15.5 8.5a5 5 0 0 1 0 7" stroke-width="2.2" stroke-linecap="round"/>
+              <path class="p-wave p-wave-2" d="M18.8 5.2a9.5 9.5 0 0 1 0 13.6" stroke-width="2.2" stroke-linecap="round"/>
+            </svg>
+          </div>
           <div class="pillar-content">
             <h4 class="pillar-title">Multilingual Voice AI</h4>
             <p class="pillar-desc">Listen in any world language with ultra-realistic human neural voice personas.</p>
@@ -554,7 +577,7 @@
     </div>
     <p class="input-hint">
       <kbd>Enter</kbd> send · <kbd>Shift+Enter</kbd> new line ·
-      🎤 voice · 🔊 speak answers · 🕐 history ·
+      🎤 speak input · ⚡ neural audio listen · 🕐 history ·
       Industry: <strong id="currentIndustryLabel">General</strong> · Role: <strong id="currentRoleLabel">Universal Consultant</strong> · Lang: <strong id="currentLangLabel">English</strong>
     </p>
   </div>
@@ -1034,7 +1057,14 @@
   <div class="voice-modal-content">
     <div class="voice-modal-header">
       <div class="voice-modal-title">
-        <span class="voice-header-icon">🎙️</span>
+        <div class="voice-header-audio-badge">
+          <svg class="voice-header-audio-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" fill="rgba(168, 85, 247, 0.28)"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2" stroke="currentColor"/>
+            <line x1="12" y1="19" x2="12" y2="22" stroke="currentColor"/>
+            <line x1="8" y1="22" x2="16" y2="22" stroke="currentColor"/>
+          </svg>
+        </div>
         <div>
           <h3>Realistic AI Voice Studio</h3>
           <span class="voice-header-sub">Universal Multilingual Neural Speech</span>
@@ -1080,7 +1110,7 @@
             <div class="voice-desc">Warm, articulate &amp; executive studio tone</div>
           </div>
         </div>
-        <button class="voice-preview-btn" type="button" onclick="previewVoice('aura', event)">▶ Preview</button>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('aura', event)"><svg class="preview-svg-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 5 19 12 7 19 7 5"/></svg> Preview</button>
       </div>
 
       <div class="voice-card" data-voice-id="nova" data-gender="female" onclick="selectVoicePersona('nova')">
@@ -1095,7 +1125,7 @@
             <div class="voice-desc">Energetic, engaging &amp; expressive voice</div>
           </div>
         </div>
-        <button class="voice-preview-btn" type="button" onclick="previewVoice('nova', event)">▶ Preview</button>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('nova', event)"><svg class="preview-svg-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 5 19 12 7 19 7 5"/></svg> Preview</button>
       </div>
 
       <div class="voice-card" data-voice-id="serena" data-gender="female" onclick="selectVoicePersona('serena')">
@@ -1110,7 +1140,7 @@
             <div class="voice-desc">Soft, empathetic &amp; natural conversational cadence</div>
           </div>
         </div>
-        <button class="voice-preview-btn" type="button" onclick="previewVoice('serena', event)">▶ Preview</button>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('serena', event)"><svg class="preview-svg-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 5 19 12 7 19 7 5"/></svg> Preview</button>
       </div>
 
       <div class="voice-card" data-voice-id="swara" data-gender="female" onclick="selectVoicePersona('swara')">
@@ -1125,7 +1155,7 @@
             <div class="voice-desc">Native Indian cadence for Hindi, Punjabi &amp; Indian English</div>
           </div>
         </div>
-        <button class="voice-preview-btn" type="button" onclick="previewVoice('swara', event)">▶ Preview</button>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('swara', event)"><svg class="preview-svg-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 5 19 12 7 19 7 5"/></svg> Preview</button>
       </div>
 
       <div class="voice-card" data-voice-id="elena" data-gender="female" onclick="selectVoicePersona('elena')">
@@ -1140,7 +1170,7 @@
             <div class="voice-desc">Warm, melodic cadence for Spanish, Portuguese &amp; Italian</div>
           </div>
         </div>
-        <button class="voice-preview-btn" type="button" onclick="previewVoice('elena', event)">▶ Preview</button>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('elena', event)"><svg class="preview-svg-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 5 19 12 7 19 7 5"/></svg> Preview</button>
       </div>
 
       <div class="voice-card" data-voice-id="amelie" data-gender="female" onclick="selectVoicePersona('amelie')">
@@ -1155,7 +1185,7 @@
             <div class="voice-desc">Polished European cadence for French, German &amp; Global</div>
           </div>
         </div>
-        <button class="voice-preview-btn" type="button" onclick="previewVoice('amelie', event)">▶ Preview</button>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('amelie', event)"><svg class="preview-svg-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 5 19 12 7 19 7 5"/></svg> Preview</button>
       </div>
 
       <div class="voice-card" data-voice-id="athena" data-gender="female" onclick="selectVoicePersona('athena')">
@@ -1170,7 +1200,7 @@
             <div class="voice-desc">Auto-adapts female voice to any detected world language</div>
           </div>
         </div>
-        <button class="voice-preview-btn" type="button" onclick="previewVoice('athena', event)">▶ Preview</button>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('athena', event)"><svg class="preview-svg-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 5 19 12 7 19 7 5"/></svg> Preview</button>
       </div>
 
       <!-- ── MALE AI VOICES ── -->
@@ -1186,7 +1216,7 @@
             <div class="voice-desc">Deep, authoritative &amp; confident industrial voice</div>
           </div>
         </div>
-        <button class="voice-preview-btn" type="button" onclick="previewVoice('orion', event)">▶ Preview</button>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('orion', event)"><svg class="preview-svg-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 5 19 12 7 19 7 5"/></svg> Preview</button>
       </div>
 
       <div class="voice-card" data-voice-id="echo" data-gender="male" onclick="selectVoicePersona('echo')">
@@ -1201,7 +1231,7 @@
             <div class="voice-desc">Crisp, analytical &amp; technical precision voice</div>
           </div>
         </div>
-        <button class="voice-preview-btn" type="button" onclick="previewVoice('echo', event)">▶ Preview</button>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('echo', event)"><svg class="preview-svg-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 5 19 12 7 19 7 5"/></svg> Preview</button>
       </div>
 
       <div class="voice-card" data-voice-id="marcus" data-gender="male" onclick="selectVoicePersona('marcus')">
@@ -1216,7 +1246,7 @@
             <div class="voice-desc">Rich, cinematic baritone for executive reports &amp; summaries</div>
           </div>
         </div>
-        <button class="voice-preview-btn" type="button" onclick="previewVoice('marcus', event)">▶ Preview</button>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('marcus', event)"><svg class="preview-svg-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 5 19 12 7 19 7 5"/></svg> Preview</button>
       </div>
 
       <div class="voice-card" data-voice-id="aarav" data-gender="male" onclick="selectVoicePersona('aarav')">
@@ -1231,7 +1261,7 @@
             <div class="voice-desc">Native Indian male cadence for Hindi, Punjabi &amp; Indian English</div>
           </div>
         </div>
-        <button class="voice-preview-btn" type="button" onclick="previewVoice('aarav', event)">▶ Preview</button>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('aarav', event)"><svg class="preview-svg-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 5 19 12 7 19 7 5"/></svg> Preview</button>
       </div>
 
       <div class="voice-card" data-voice-id="mateo" data-gender="male" onclick="selectVoicePersona('mateo')">
@@ -1246,7 +1276,7 @@
             <div class="voice-desc">Charismatic Latin male cadence for Spanish, Portuguese &amp; Italian</div>
           </div>
         </div>
-        <button class="voice-preview-btn" type="button" onclick="previewVoice('mateo', event)">▶ Preview</button>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('mateo', event)"><svg class="preview-svg-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 5 19 12 7 19 7 5"/></svg> Preview</button>
       </div>
 
       <div class="voice-card" data-voice-id="henri" data-gender="male" onclick="selectVoicePersona('henri')">
@@ -1261,7 +1291,7 @@
             <div class="voice-desc">Distinguished European male tone for French, German &amp; Continental</div>
           </div>
         </div>
-        <button class="voice-preview-btn" type="button" onclick="previewVoice('henri', event)">▶ Preview</button>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('henri', event)"><svg class="preview-svg-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 5 19 12 7 19 7 5"/></svg> Preview</button>
       </div>
 
       <div class="voice-card" data-voice-id="atlas" data-gender="male" onclick="selectVoicePersona('atlas')">
@@ -1276,7 +1306,7 @@
             <div class="voice-desc">Auto-adapts male voice to any detected world language</div>
           </div>
         </div>
-        <button class="voice-preview-btn" type="button" onclick="previewVoice('atlas', event)">▶ Preview</button>
+        <button class="voice-preview-btn" type="button" onclick="previewVoice('atlas', event)"><svg class="preview-svg-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 5 19 12 7 19 7 5"/></svg> Preview</button>
       </div>
     </div>
 
@@ -1299,6 +1329,6 @@
 
 <script src="/static/js/chart.min.js"></script>
 <script src="/static/js/marked.min.js"></script>
-<script src="/static/js/app.js?v=5.9.0"></script>
+<script src="/static/js/app.js?v=6.0.0"></script>
 </body>
 </html>

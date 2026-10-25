@@ -937,17 +937,64 @@ function stopAudio() {
   } catch (_) {}
   if (speechHeartbeatTimer) {
     clearInterval(speechHeartbeatTimer);
+const CYBER_SPEAKER_SVG = `
+<svg class="speaker-cyber-svg active" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+  <path class="speaker-body" d="M11 4.5L6 9H2.5C2.22 9 2 9.22 2 9.5v5c0 .28.22.5.5.5H6l5 4.5V4.5z" fill="currentColor"/>
+  <path class="speaker-wave wave-1" d="M15.5 8.5a5 5 0 0 1 0 7" stroke-width="2.2" stroke-linecap="round"/>
+  <path class="speaker-wave wave-2" d="M18.8 5.2a9.5 9.5 0 0 1 0 13.6" stroke-width="2.2" stroke-linecap="round"/>
+</svg>
+`;
+
+const CYBER_SPEAKER_MUTED_SVG = `
+<svg class="speaker-cyber-svg muted" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+  <path class="speaker-body" d="M11 4.5L6 9H2.5C2.22 9 2 9.22 2 9.5v5c0 .28.22.5.5.5H6l5 4.5V4.5z" fill="currentColor"/>
+  <line x1="22" y1="9" x2="16" y2="15" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="16" y1="9" x2="22" y2="15" stroke-width="2.2" stroke-linecap="round"/>
+</svg>
+`;
+
+const CYBER_PULSE_BARS_HTML = `
+<span class="audio-pulse-bars">
+  <span class="ap-bar bar-1"></span>
+  <span class="ap-bar bar-2"></span>
+  <span class="ap-bar bar-3"></span>
+  <span class="ap-bar bar-4"></span>
+</span>
+`;
+
+const CYBER_PREVIEW_PLAY_SVG = `
+<svg class="preview-svg-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 5 19 12 7 19 7 5"/></svg>
+`;
+
+function stopAudio() {
+  try {
+    if (currentAudioPlayer) {
+      currentAudioPlayer.pause();
+      currentAudioPlayer.currentTime = 0;
+      currentAudioPlayer = null;
+    }
+    if (currentBlobUrl) {
+      try { URL.revokeObjectURL(currentBlobUrl); } catch (_) {}
+      currentBlobUrl = null;
+    }
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.resume();
+    }
+  } catch (_) {}
+  if (speechHeartbeatTimer) {
+    clearInterval(speechHeartbeatTimer);
     speechHeartbeatTimer = null;
   }
   if (activeAudioBtn) {
     activeAudioBtn.classList.remove('speaking', 'loading');
-    activeAudioBtn.innerHTML = `<span class="btn-icon">🔊</span> Listen`;
+    activeAudioBtn.innerHTML = `<span class="speaker-cyber-icon">${CYBER_SPEAKER_SVG}</span> <span class="btn-label">Listen</span>`;
     activeAudioBtn.title = 'Read this answer aloud';
     activeAudioBtn = null;
   }
   if (activePreviewBtn) {
     activePreviewBtn.classList.remove('playing', 'loading');
-    activePreviewBtn.innerHTML = '▶ Preview';
+    activePreviewBtn.innerHTML = `${CYBER_PREVIEW_PLAY_SVG} Preview`;
     activePreviewBtn = null;
     activePreviewVoiceId = null;
   }
@@ -959,7 +1006,7 @@ if (ttsToggle) {
   ttsToggle.addEventListener('click', () => {
     ttsEnabled = !ttsEnabled;
     ttsToggle.classList.toggle('active', ttsEnabled);
-    ttsToggle.textContent = ttsEnabled ? '🔊' : '🔇';
+    ttsToggle.innerHTML = `<span class="speaker-cyber-badge">${ttsEnabled ? CYBER_SPEAKER_SVG : CYBER_SPEAKER_MUTED_SVG}</span> <span class="tts-label">Voice</span>`;
     ttsToggle.title = ttsEnabled ? 'Voice readout: ON (Click to mute)' : 'Voice readout: OFF (Click to unmute)';
     if (!ttsEnabled) {
       stopAudio();
@@ -1358,7 +1405,7 @@ function speakText(text, triggerBtn = null) {
     const resetTriggerBtn = () => {
       if (triggerBtn) {
         triggerBtn.classList.remove('speaking', 'loading');
-        triggerBtn.innerHTML = `<span class="btn-icon">🔊</span> Listen`;
+        triggerBtn.innerHTML = `<span class="speaker-cyber-icon">${CYBER_SPEAKER_SVG}</span> <span class="btn-label">Listen</span>`;
         triggerBtn.title = 'Read this answer aloud';
         if (activeAudioBtn === triggerBtn) activeAudioBtn = null;
       }
@@ -1373,7 +1420,7 @@ function speakText(text, triggerBtn = null) {
         if (triggerBtn) {
           activeAudioBtn = triggerBtn;
           triggerBtn.classList.add('loading');
-          triggerBtn.innerHTML = `<span class="btn-icon">⏳</span> Loading...`;
+          triggerBtn.innerHTML = `<span class="audio-spinner-ring"></span> <span class="btn-label">Loading...</span>`;
         }
       },
       () => {
@@ -1381,8 +1428,7 @@ function speakText(text, triggerBtn = null) {
         if (triggerBtn) {
           triggerBtn.classList.remove('loading');
           triggerBtn.classList.add('speaking');
-          const genderIcon = (persona.gender === 'female') ? '👩' : '👨';
-          triggerBtn.innerHTML = `<span class="btn-icon">⏹️</span> Stop (${persona.name} ${genderIcon})`;
+          triggerBtn.innerHTML = `${CYBER_PULSE_BARS_HTML} <span class="btn-label">Stop (${persona.name})</span>`;
           triggerBtn.title = `Reading aloud with ${persona.name} (${persona.gender}) in ${detectedLang}. Tap to stop.`;
         }
       },
@@ -1468,7 +1514,7 @@ window.previewVoice = function(voiceId, e) {
   const resetBtn = () => {
     if (btn) {
       btn.classList.remove('playing', 'loading');
-      btn.innerHTML = '▶ Preview';
+      btn.innerHTML = `${CYBER_PREVIEW_PLAY_SVG} Preview`;
     }
     if (activePreviewBtn === btn) {
       activePreviewBtn = null;
@@ -1486,7 +1532,7 @@ window.previewVoice = function(voiceId, e) {
       activePreviewVoiceId = voiceId;
       if (btn) {
         btn.classList.add('loading');
-        btn.innerHTML = '⏳ Loading...';
+        btn.innerHTML = `<span class="audio-spinner-ring mini"></span> Loading...`;
       }
     },
     () => {
@@ -1494,7 +1540,7 @@ window.previewVoice = function(voiceId, e) {
       if (btn) {
         btn.classList.remove('loading');
         btn.classList.add('playing');
-        btn.innerHTML = '⏹️ Stop';
+        btn.innerHTML = `${CYBER_PULSE_BARS_HTML} Stop`;
       }
     },
     () => {
@@ -3908,7 +3954,7 @@ function addMessageActions(col, rawText, bubble) {
   listenBtn.className = 'msg-action-btn listen-msg-btn';
   listenBtn.type = 'button';
   listenBtn.title = 'Read this answer aloud (Click again to stop)';
-  listenBtn.innerHTML = `<span class="btn-icon">🔊</span> Listen`;
+  listenBtn.innerHTML = `<span class="speaker-cyber-icon">${CYBER_SPEAKER_SVG}</span> <span class="btn-label">Listen</span>`;
 
   listenBtn.addEventListener('click', (e) => {
     e.stopPropagation();
