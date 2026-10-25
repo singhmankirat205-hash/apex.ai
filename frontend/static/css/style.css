@@ -5146,9 +5146,8 @@ pre:has(code.language-json\:action) {
 
 
 /* ==========================================================================
-   ✨ GOLDEN HORIZON & LIVE ASCENDING LIGHT-LINES BACKGROUND ENGINE
-   Uses the user's golden horizon & rising light-beams backdrop with a live
-   60FPS upward-moving vertical light-lines & starlight bokeh animation!
+   ✨ ULTRA-SMOOTH ZERO-LAG GOLDEN HORIZON & ASCENDING LIGHT-LINES ENGINE
+   GPU-accelerated compositing with zero backdrop-filter scroll lag!
    ========================================================================== */
 
 :root,
@@ -5166,17 +5165,15 @@ body[data-industry="logistics"] {
   --ind-sec-rgb: 245, 158, 11;
   --ind-acc-rgb: 254, 240, 138;
   --ind-bg-base: #120A02;
-  --ind-bg-grad: radial-gradient(ellipse 75% 28% at 50% 82%, rgba(251, 191, 36, 0.42) 0%, rgba(217, 119, 6, 0.18) 45%, transparent 75%),
-                 linear-gradient(180deg, #0D0701 0%, #1C0F02 52%, #2E1904 80%, #1A0E02 100%);
+  --ind-bg-grad: linear-gradient(180deg, #0D0701 0%, #1C0F02 55%, #2E1904 82%, #1A0E02 100%);
 }
 
 body {
-  background: var(--ind-bg-grad) !important;
-  background-color: var(--ind-bg-base) !important;
-  transition: background 0.6s ease;
+  background: #120A02 !important;
+  background-color: #120A02 !important;
 }
 
-/* Main Stage Container */
+/* Main Stage Container (Hardware-Accelerated Layer) */
 .industry-bg-stage,
 .golden-beams-stage {
   position: fixed;
@@ -5185,6 +5182,8 @@ body {
   z-index: 0;
   overflow: hidden;
   background: #120A02;
+  transform: translateZ(0);
+  contain: strict;
 }
 
 /* 1. User's Golden Horizon & Rising Light-Beams Base Image Layer */
@@ -5196,75 +5195,79 @@ body {
   background-position: center bottom;
   background-repeat: no-repeat;
   opacity: 0.92;
-  filter: contrast(1.06) saturate(1.12);
+  transform: translateZ(0);
 }
 
-/* 2. Breathing Golden Horizon Core Flare Layer */
+/* 2. Static Zero-Cost Golden Horizon Core Flare Layer */
 .golden-horizon-flare-layer {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    radial-gradient(ellipse 68% 14% at 50% 81.5%, rgba(254, 249, 195, 0.50) 0%, rgba(251, 191, 36, 0.32) 38%, rgba(217, 119, 6, 0.12) 68%, transparent 88%),
-    radial-gradient(ellipse 90% 45% at 50% 65%, rgba(245, 158, 11, 0.14) 0%, transparent 70%);
-  animation: goldenHorizonPulse 5s ease-in-out infinite alternate;
-}
-
-@keyframes goldenHorizonPulse {
-  0%   { opacity: 0.78; transform: scaleY(0.96); }
-  100% { opacity: 1.00; transform: scaleY(1.06); }
+  background: radial-gradient(ellipse 65% 14% at 50% 81.5%, rgba(254, 249, 195, 0.42) 0%, rgba(251, 191, 36, 0.24) 40%, transparent 80%);
 }
 
 .ind-holo-art {
   display: none !important;
 }
 
+#particleCanvas {
+  transform: translateZ(0);
+  pointer-events: none;
+}
+
+/* Disable heavy infinite blur/glow animations that cause scroll/input jank */
+.welcome-glow,
+.badge-pulse-glow,
+.cyber-aurora,
+.cyber-grid-overlay {
+  animation: none !important;
+}
+
 /* ==========================================================================
-   ✨ LUXURY SMOKED-GOLD CRYSTAL GLASS UI
-   Translucent warm smoked-amber glass so the upward-moving golden light lines
-   shine vividly through the sidebar, header, welcome card, and chat bubbles!
+   ✨ ZERO-LAG TRANSLUCENT SMOKED-GOLD GLASS UI
+   Uses hardware-accelerated RGBA gradients without expensive per-frame
+   backdrop-filter Gaussian blur recalculations during scrolling or typing!
    ========================================================================== */
 
 .sidebar {
-  background: linear-gradient(180deg, rgba(22, 13, 3, 0.56) 0%, rgba(12, 7, 1, 0.66) 55%, rgba(28, 16, 3, 0.60) 100%) !important;
-  backdrop-filter: blur(18px) saturate(165%) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(165%) !important;
+  background: linear-gradient(180deg, rgba(20, 12, 3, 0.84) 0%, rgba(12, 7, 1, 0.88) 55%, rgba(24, 14, 3, 0.86) 100%) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   border-right: 1px solid rgba(251, 191, 36, 0.36) !important;
-  box-shadow: 8px 0 36px rgba(0, 0, 0, 0.65), inset -1px 0 0 rgba(254, 240, 138, 0.18) !important;
+  box-shadow: 6px 0 24px rgba(0, 0, 0, 0.60) !important;
 }
 
 .chat-header {
-  background: linear-gradient(90deg, rgba(24, 14, 3, 0.58) 0%, rgba(14, 8, 2, 0.64) 50%, rgba(26, 15, 3, 0.58) 100%) !important;
-  backdrop-filter: blur(18px) saturate(165%) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(165%) !important;
+  background: linear-gradient(90deg, rgba(22, 13, 3, 0.86) 0%, rgba(14, 8, 2, 0.88) 50%, rgba(22, 13, 3, 0.86) 100%) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   border-bottom: 1px solid rgba(251, 191, 36, 0.40) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55), 0 1px 16px rgba(251, 191, 36, 0.15) !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.50) !important;
 }
 
 .structured-welcome-card {
-  background: linear-gradient(145deg, rgba(26, 15, 3, 0.44) 0%, rgba(14, 8, 2, 0.52) 52%, rgba(32, 18, 4, 0.46) 100%) !important;
-  border: 1px solid rgba(251, 191, 36, 0.48) !important;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.72), 0 0 48px rgba(251, 191, 36, 0.20), inset 0 1px 1px rgba(254, 249, 195, 0.25) !important;
-  backdrop-filter: blur(14px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
+  background: linear-gradient(145deg, rgba(24, 14, 3, 0.68) 0%, rgba(14, 8, 2, 0.74) 52%, rgba(28, 16, 4, 0.68) 100%) !important;
+  border: 1px solid rgba(251, 191, 36, 0.45) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(254, 249, 195, 0.20) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 .welcome-pillar-card,
 button.feature.starter-question-btn {
-  background: linear-gradient(135deg, rgba(32, 18, 4, 0.48) 0%, rgba(16, 9, 2, 0.58) 68%, rgba(42, 24, 5, 0.46) 100%) !important;
-  border: 1px solid rgba(251, 191, 36, 0.36) !important;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(254, 249, 195, 0.18) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  background: linear-gradient(135deg, rgba(30, 17, 4, 0.72) 0%, rgba(16, 9, 2, 0.78) 100%) !important;
+  border: 1px solid rgba(251, 191, 36, 0.34) !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transition: transform 0.18s ease, border-color 0.18s ease !important;
 }
 
 .welcome-pillar-card:hover,
 button.feature.starter-question-btn:hover {
-  background: linear-gradient(135deg, rgba(180, 83, 9, 0.42) 0%, rgba(28, 16, 3, 0.65) 65%, rgba(217, 119, 6, 0.38) 100%) !important;
+  background: linear-gradient(135deg, rgba(146, 64, 14, 0.55) 0%, rgba(28, 16, 3, 0.82) 100%) !important;
   border-color: #FBBF24 !important;
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.72), 0 0 28px rgba(251, 191, 36, 0.40) !important;
-  transform: translateY(-3px) !important;
+  transform: translateY(-2px) !important;
 }
 
 .pillar-action,
@@ -5274,16 +5277,16 @@ button.feature.starter-question-btn:hover {
 
 .quick-btn,
 .role-select {
-  background: rgba(18, 10, 2, 0.56) !important;
+  background: rgba(18, 10, 2, 0.78) !important;
   border: 1px solid rgba(251, 191, 36, 0.32) !important;
-  backdrop-filter: blur(12px) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 .quick-btn:hover {
-  background: rgba(245, 158, 11, 0.28) !important;
+  background: rgba(245, 158, 11, 0.32) !important;
   border-color: #FBBF24 !important;
   color: #FFFBEB !important;
-  box-shadow: 0 0 18px rgba(251, 191, 36, 0.38) !important;
 }
 
 .new-chat-btn {
@@ -5291,39 +5294,39 @@ button.feature.starter-question-btn:hover {
   color: #1C0F02 !important;
   font-weight: 800 !important;
   border: 1px solid rgba(254, 249, 195, 0.55) !important;
-  box-shadow: 0 0 24px rgba(251, 191, 36, 0.50) !important;
 }
 
 .message.assistant .bubble {
-  background: linear-gradient(135deg, rgba(28, 16, 3, 0.60) 0%, rgba(14, 8, 2, 0.70) 65%, rgba(36, 20, 4, 0.58) 100%) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  border: 1px solid rgba(251, 191, 36, 0.38) !important;
+  background: linear-gradient(135deg, rgba(26, 15, 3, 0.82) 0%, rgba(14, 8, 2, 0.86) 100%) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid rgba(251, 191, 36, 0.36) !important;
   border-left: 4px solid #FBBF24 !important;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65), 0 0 24px rgba(251, 191, 36, 0.15) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55) !important;
 }
 
 .message.user .bubble {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.88) 0%, rgba(180, 83, 9, 0.92) 100%) !important;
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.92) 0%, rgba(146, 64, 14, 0.94) 100%) !important;
   color: #FFFBEB !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
-  border: 1px solid rgba(254, 249, 195, 0.45) !important;
-  box-shadow: 0 8px 28px rgba(251, 191, 36, 0.38) !important;
-  backdrop-filter: blur(14px) !important;
+  border: 1px solid rgba(254, 249, 195, 0.42) !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 .input-area {
-  background: linear-gradient(180deg, rgba(12, 7, 1, 0.28) 0%, rgba(24, 13, 2, 0.62) 100%) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  border-top: 1px solid rgba(251, 191, 36, 0.36) !important;
+  background: linear-gradient(180deg, rgba(12, 7, 1, 0.45) 0%, rgba(20, 11, 2, 0.82) 100%) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-top: 1px solid rgba(251, 191, 36, 0.34) !important;
 }
 
 .input-box {
-  background: rgba(16, 9, 2, 0.58) !important;
+  background: rgba(16, 9, 2, 0.84) !important;
   border: 1px solid rgba(251, 191, 36, 0.45) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.65), 0 0 20px rgba(251, 191, 36, 0.18) !important;
-  backdrop-filter: blur(16px) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 /* 7. Header Quick Industry Switcher Pill & Glass Feature Buttons */

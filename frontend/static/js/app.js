@@ -876,261 +876,137 @@ window.switchIndustryEnvironment = function(indKey) {
 function initParticles() {
   const canvas = document.getElementById('particleCanvas');
   if (!canvas) return;
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d', { alpha: true, desynchronized: true });
   let W = (canvas.width = window.innerWidth || 1280);
   let H = (canvas.height = window.innerHeight || 800);
-  let frameTick = 0;
 
   function resize() {
     W = canvas.width = window.innerWidth || 1280;
     H = canvas.height = window.innerHeight || 800;
   }
-  window.addEventListener('resize', resize);
+  window.addEventListener('resize', resize, { passive: true });
 
-  const mouse = { x: -2000, y: -2000, radius: 160 };
-  window.addEventListener('mousemove', e => {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-  });
-  window.addEventListener('mouseleave', () => {
-    mouse.x = -2000;
-    mouse.y = -2000;
-  });
+  // ── PRE-RENDERED GPU SPRITE FOR RISING GOLDEN LIGHT BEAMS ──────────────────
+  // Pre-renders the glowing star-tip + vertical gradient tail ONCE onto a tiny
+  // offscreen canvas so each frame uses hardware-accelerated drawImage() with
+  // ZERO per-frame gradient allocations or shadowBlur overhead!
+  const spriteW = 24;
+  const spriteH = 260;
+  const beamSprite = document.createElement('canvas');
+  beamSprite.width = spriteW;
+  beamSprite.height = spriteH;
+  const sCtx = beamSprite.getContext('2d');
+  const cx = spriteW / 2;
+  const tipY = 12;
 
-  // 1. LIVE UPWARD-MOVING GOLDEN VERTICAL LIGHT LINES (88 beams)
-  // Matches the exact glowing vertical lines with bright white-gold star tips from the image
+  // 1. Vertical golden tail on sprite
+  const tailGrad = sCtx.createLinearGradient(cx, tipY, cx, spriteH);
+  tailGrad.addColorStop(0, 'rgba(254, 249, 195, 0.96)');
+  tailGrad.addColorStop(0.16, 'rgba(251, 191, 36, 0.88)');
+  tailGrad.addColorStop(0.60, 'rgba(217, 119, 6, 0.36)');
+  tailGrad.addColorStop(1, 'rgba(180, 83, 9, 0)');
+  sCtx.fillStyle = tailGrad;
+  sCtx.fillRect(cx - 1, tipY, 2, spriteH - tipY);
+
+  // 2. Golden halo glow at tip on sprite
+  const haloGrad = sCtx.createRadialGradient(cx, tipY, 0, cx, tipY, 10);
+  haloGrad.addColorStop(0, 'rgba(255, 251, 235, 0.95)');
+  haloGrad.addColorStop(0.35, 'rgba(251, 191, 36, 0.55)');
+  haloGrad.addColorStop(1, 'rgba(245, 158, 11, 0)');
+  sCtx.beginPath();
+  sCtx.arc(cx, tipY, 10, 0, Math.PI * 2);
+  sCtx.fillStyle = haloGrad;
+  sCtx.fill();
+
+  // 3. White-gold core star point on sprite
+  sCtx.beginPath();
+  sCtx.arc(cx, tipY, 2.2, 0, Math.PI * 2);
+  sCtx.fillStyle = '#FFFFFF';
+  sCtx.fill();
+
+  // ── 34 UPWARD-MOVING GOLDEN LIGHT LINES (Ultra-fast GPU Sprite Blit) ──────
   const risingLines = [];
-  const lineCount = 88;
-  function createRisingLine(initialRandomY) {
-    const horizonY = H * 0.815;
-    // Concentrate slightly more around center while spanning full width
-    const xRatio = Math.random();
-    const tailLen = 110 + Math.random() * 290;
-    const minY = H * (0.03 + Math.random() * 0.45);
-    const headY = initialRandomY
-      ? (minY + Math.random() * (horizonY - minY))
-      : (horizonY - Math.random() * 18);
-    return {
-      xRatio: xRatio,
-      headY: headY,
-      minY: minY,
-      tailLen: tailLen,
-      speed: 0.65 + Math.random() * 1.65,
-      lineWidth: 1.0 + Math.random() * 1.6,
-      starRadius: 1.6 + Math.random() * 2.2,
-      haloRadius: 7 + Math.random() * 11,
-      twinklePhase: Math.random() * Math.PI * 2,
-      twinkleSpeed: 0.04 + Math.random() * 0.06,
-      isBrightHero: Math.random() < 0.28
-    };
-  }
+  const lineCount = 34;
   for (let i = 0; i < lineCount; i++) {
-    risingLines.push(createRisingLine(true));
-  }
-
-  // 2. VERTICAL BEADED / DOTTED PARTICLE STREAMS MOVING UPWARDS (46 columns)
-  const dottedStreams = [];
-  for (let d = 0; d < 46; d++) {
-    dottedStreams.push({
-      xRatio: (d + 0.2 + Math.random() * 0.6) / 46,
-      yOffset: Math.random() * H,
-      speed: 0.55 + Math.random() * 1.15,
-      dotSpacing: 7 + Math.floor(Math.random() * 5),
-      dotCount: 16 + Math.floor(Math.random() * 18),
-      alpha: 0.28 + Math.random() * 0.42
+    const horizonY = H * 0.815;
+    const minY = H * (0.04 + Math.random() * 0.42);
+    risingLines.push({
+      xRatio: (i + 0.15 + Math.random() * 0.7) / lineCount,
+      headY: minY + Math.random() * (horizonY - minY),
+      minYRatio: 0.04 + Math.random() * 0.42,
+      tailLen: 120 + Math.random() * 220,
+      speed: 0.75 + Math.random() * 1.35,
+      scale: 0.75 + Math.random() * 0.55
     });
   }
 
-  // 3. FLOATING SOFT GOLDEN BOKEH ORBS & RISING SPARKLES (55 particles)
+  // ── 22 FLOATING GOLDEN BOKEH DOTS (Drawn in 1 single batched path) ────────
   const particles = [];
-  for (let i = 0; i < 55; i++) {
+  for (let i = 0; i < 22; i++) {
     particles.push({
-      x: Math.random() * W,
-      y: Math.random() * (H * 0.82),
-      vx: (Math.random() - 0.5) * 0.22,
-      vy: -(0.30 + Math.random() * 0.75), // Moving upwards
-      r: Math.random() < 0.28 ? (3.2 + Math.random() * 4.2) : (1.1 + Math.random() * 1.8),
-      baseAlpha: Math.random() * 0.48 + 0.22,
-      phase: Math.random() * Math.PI * 2,
-      color: { fill: 'rgba(253, 224, 71,', glow: '#FBBF24' }
-    });
-  }
-
-  // 4. GLITTERING GOLDEN SAND-DUNE HORIZON SPARKLES (150 sparkles below horizon)
-  const duneSparkles = [];
-  for (let s = 0; s < 150; s++) {
-    duneSparkles.push({
       xRatio: Math.random(),
-      yRatio: 0.815 + Math.random() * 0.18,
-      r: 0.8 + Math.random() * 1.7,
-      phase: Math.random() * Math.PI * 2,
-      speed: 0.03 + Math.random() * 0.06
+      y: Math.random() * (H * 0.80),
+      vy: -(0.35 + Math.random() * 0.65),
+      r: 1.4 + Math.random() * 2.2,
+      color: { fill: 'rgba(253, 224, 71,', glow: '#FBBF24' }
     });
   }
 
   const startKey = (typeof industrySelect !== 'undefined' && industrySelect && industrySelect.value) ? industrySelect.value : 'textile';
   applyIndustryBackgroundTheme(startKey);
 
-  function drawIndustryCanvasSignature() {
-    frameTick += 0.018;
-    const horizonY = H * 0.815;
-    ctx.save();
-
-    // A. RADIANT GOLDEN HORIZON LINE & CENTER SOLAR BLOOM
-    const horizonGlow = ctx.createLinearGradient(0, horizonY - 22, 0, horizonY + 26);
-    horizonGlow.addColorStop(0, 'rgba(251, 191, 36, 0)');
-    horizonGlow.addColorStop(0.5, 'rgba(254, 240, 138, 0.38)');
-    horizonGlow.addColorStop(1, 'rgba(217, 119, 6, 0)');
-    ctx.fillStyle = horizonGlow;
-    ctx.fillRect(0, horizonY - 22, W, 48);
-
-    // B. VERTICAL BEADED / DOTTED GOLDEN TRAILS MOVING UPWARDS
-    for (let d = 0; d < dottedStreams.length; d++) {
-      const ds = dottedStreams[d];
-      ds.yOffset -= ds.speed;
-      const totalColHeight = ds.dotCount * ds.dotSpacing;
-      if (ds.yOffset < H * 0.05) {
-        ds.yOffset = horizonY;
-      }
-      const dx = ds.xRatio * W;
-      ctx.fillStyle = `rgba(253, 224, 71, ${ds.alpha})`;
-      for (let k = 0; k < ds.dotCount; k++) {
-        const dy = ds.yOffset + k * ds.dotSpacing;
-        if (dy > H * 0.04 && dy < horizonY) {
-          const fade = Math.min(1, (horizonY - dy) / 70) * (1 - k / ds.dotCount);
-          ctx.globalAlpha = fade * ds.alpha;
-          ctx.fillRect(dx, dy, 1.3, 1.8);
-        }
-      }
+  function draw() {
+    if (document.hidden) {
+      requestAnimationFrame(draw);
+      return;
     }
-    ctx.globalAlpha = 1;
 
-    // C. PRIMARY GLOWING VERTICAL LIGHT-LINES SHOOTING / MOVING UPWARDS
-    for (let i = 0; i < risingLines.length; i++) {
+    ctx.clearRect(0, 0, W, H);
+    const horizonY = H * 0.815;
+
+    // 1. Draw upward-moving vertical golden light lines via pre-rendered GPU sprite
+    for (let i = 0; i < lineCount; i++) {
       const ln = risingLines[i];
       ln.headY -= ln.speed;
-      ln.twinklePhase += ln.twinkleSpeed;
+      const minY = H * ln.minYRatio;
 
-      // Respawn at the golden horizon once the line reaches its upper peak
-      if (ln.headY < ln.minY) {
-        ln.headY = horizonY + Math.random() * 12;
-        ln.xRatio = Math.random();
+      if (ln.headY < minY) {
+        ln.headY = horizonY;
       }
 
       const x = ln.xRatio * W;
       const topY = ln.headY;
-      const bottomY = Math.min(horizonY, topY + ln.tailLen);
+      const availTail = Math.max(8, Math.min(ln.tailLen, horizonY - topY));
 
-      if (bottomY > topY) {
-        // Smooth fade-in near horizon and fade-out near peak altitude
-        const distFromTop = Math.max(0, (topY - ln.minY) / 95);
-        const distFromHorizon = Math.max(0, (horizonY - topY) / 35);
-        const visibility = Math.min(1, distFromTop, distFromHorizon);
+      // Smooth fade-in at horizon and fade-out at peak
+      const fadeTop = Math.min(1, (topY - minY) / 80);
+      const fadeBottom = Math.min(1, (horizonY - topY) / 30);
+      ctx.globalAlpha = Math.max(0.05, Math.min(1, fadeTop, fadeBottom));
 
-        // 1. Vertical Glowing Golden Line Tail
-        const lineGrad = ctx.createLinearGradient(x, topY, x, bottomY);
-        lineGrad.addColorStop(0, `rgba(254, 249, 195, ${0.95 * visibility})`);
-        lineGrad.addColorStop(0.18, `rgba(251, 191, 36, ${0.85 * visibility})`);
-        lineGrad.addColorStop(0.65, `rgba(217, 119, 6, ${0.38 * visibility})`);
-        lineGrad.addColorStop(1, 'rgba(180, 83, 9, 0)');
-
-        ctx.beginPath();
-        ctx.moveTo(x, topY);
-        ctx.lineTo(x, bottomY);
-        ctx.strokeStyle = lineGrad;
-        ctx.lineWidth = ln.lineWidth;
-        ctx.stroke();
-
-        // 2. Soft Golden-Amber Halo Bloom at the Top Tip of the Line
-        const pulseScale = 1 + Math.sin(ln.twinklePhase) * 0.18;
-        const haloR = ln.haloRadius * pulseScale;
-        const haloGrad = ctx.createRadialGradient(x, topY, 0, x, topY, haloR);
-        haloGrad.addColorStop(0, `rgba(255, 251, 235, ${0.92 * visibility})`);
-        haloGrad.addColorStop(0.35, `rgba(251, 191, 36, ${0.58 * visibility})`);
-        haloGrad.addColorStop(1, 'rgba(245, 158, 11, 0)');
-
-        ctx.beginPath();
-        ctx.arc(x, topY, haloR, 0, Math.PI * 2);
-        ctx.fillStyle = haloGrad;
-        ctx.fill();
-
-        // 3. Brilliant White-Gold Star Point at the Tip
-        ctx.beginPath();
-        ctx.arc(x, topY, ln.starRadius * pulseScale, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${0.98 * visibility})`;
-        ctx.fill();
-
-        // Optional horizontal star-cross flare on hero beams
-        if (ln.isBrightHero && visibility > 0.4) {
-          ctx.strokeStyle = `rgba(254, 243, 199, ${0.55 * visibility})`;
-          ctx.lineWidth = 0.9;
-          ctx.beginPath();
-          ctx.moveTo(x - haloR * 0.75, topY);
-          ctx.lineTo(x + haloR * 0.75, topY);
-          ctx.stroke();
-        }
-      }
+      const drawW = spriteW * ln.scale;
+      ctx.drawImage(
+        beamSprite,
+        x - drawW * 0.5,
+        topY - tipY * ln.scale,
+        drawW,
+        availTail + tipY * ln.scale
+      );
     }
 
-    // D. TWINKLING GOLDEN SAND-DUNE SPARKLES & UNDULATING WAVE RIDGES AT BOTTOM
-    for (let w = 0; w < 2; w++) {
-      ctx.beginPath();
-      const waveBaseY = H * (0.855 + w * 0.055);
-      for (let x = 0; x <= W; x += 24) {
-        const wy = waveBaseY + Math.sin(x * 0.008 + frameTick * 1.1 + w * 2) * 7;
-        if (x === 0) ctx.moveTo(x, wy);
-        else ctx.lineTo(x, wy);
-      }
-      ctx.strokeStyle = w === 0 ? 'rgba(254, 240, 138, 0.26)' : 'rgba(245, 158, 11, 0.22)';
-      ctx.lineWidth = 1.4;
-      ctx.stroke();
-    }
-
-    for (let s = 0; s < duneSparkles.length; s++) {
-      const sp = duneSparkles[s];
-      sp.phase += sp.speed;
-      const sx = sp.xRatio * W + Math.sin(frameTick + s) * 2.5;
-      const sy = sp.yRatio * H;
-      const sAlpha = 0.25 + (Math.sin(sp.phase) * 0.5 + 0.5) * 0.65;
-      ctx.beginPath();
-      ctx.arc(sx, sy, sp.r, 0, Math.PI * 2);
-      ctx.fillStyle = s % 3 === 0 ? `rgba(255, 251, 235, ${sAlpha})` : `rgba(251, 191, 36, ${sAlpha})`;
-      ctx.fill();
-    }
-
-    ctx.restore();
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-    const theme = INDUSTRY_BG_THEMES[activeIndustryBgKey] || INDUSTRY_BG_THEMES.textile;
-
-    // Draw live upward-moving golden vertical lines, beaded trails & horizon sparkles
-    drawIndustryCanvasSignature(theme);
-
-    // Draw floating golden bokeh orbs moving gently upwards
+    // 2. Draw all rising golden bokeh dots in ONE single batched path call
+    ctx.globalAlpha = 0.62;
+    ctx.fillStyle = '#FDE047';
+    ctx.beginPath();
     for (let i = 0; i < particles.length; i++) {
       const p = particles[i];
-      p.x += p.vx + Math.sin(p.phase * 0.6) * 0.15;
       p.y += p.vy;
-      p.phase += 0.022;
-
-      if (p.x < -10) p.x = W + 10;
-      if (p.x > W + 10) p.x = -10;
-      if (p.y < -10) p.y = H * 0.81;
-      if (p.y > H * 0.82) p.y = H * 0.80;
-
-      const currentAlpha = p.baseAlpha + Math.sin(p.phase) * 0.16;
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `${p.color.fill}${Math.max(0.10, currentAlpha)})`;
-      ctx.shadowBlur = p.r > 2.8 ? 14 : 7;
-      ctx.shadowColor = p.color.glow;
-      ctx.fill();
-      ctx.restore();
+      if (p.y < 10) p.y = horizonY;
+      const px = p.xRatio * W;
+      ctx.moveTo(px + p.r, p.y);
+      ctx.arc(px, p.y, p.r, 0, Math.PI * 2);
     }
+    ctx.fill();
+    ctx.globalAlpha = 1;
 
     requestAnimationFrame(draw);
   }
