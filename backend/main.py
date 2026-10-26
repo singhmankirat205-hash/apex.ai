@@ -143,6 +143,7 @@ class ImageGenerateRequest(BaseModel):
     prompt: str = Field(..., description="Prompt or query describing the desired visual")
     user_q: str = Field("", description="Optional original user question")
     apex_reply: str = Field("", description="Optional assistant answer text for contextual relevance")
+    base_subject: str = Field("", description="Optional remembered base subject from active image session")
 
 class VideoGenerateRequest(BaseModel):
     prompt: str = Field(..., description="Prompt or query describing the desired video")
@@ -230,7 +231,7 @@ async def generate_image_endpoint(req: ImageGenerateRequest):
         if _IG_MTIME and cur_mtime != _IG_MTIME:
             importlib.reload(_ig)
         _IG_MTIME = cur_mtime
-        res = _ig.generate_image_dossier(req.prompt, req.user_q, req.apex_reply)
+        res = _ig.generate_image_dossier(req.prompt, req.user_q, req.apex_reply, base_subject_hint=req.base_subject)
         return res
     except Exception as e:
         logger.error("Image generation error: %s", e)
@@ -363,7 +364,7 @@ async def report_client_glitch(req: Request):
 
 @app.get("/api/health")
 async def health():
-    return {"status": "ok", "service": "TEXO Universal AI Intelligence", "version": "6.9.0"}
+    return {"status": "ok", "service": "TEXO Universal AI Intelligence", "version": "7.0.0"}
 
 
 @app.get("/api/knowledge")

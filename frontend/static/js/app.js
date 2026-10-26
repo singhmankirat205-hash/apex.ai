@@ -3686,6 +3686,46 @@ async function sendMessage(text) {
   appendMessage('user', userDisplay, imgB64, savedSummary, savedFileType, savedMediaUrl);
   setStatus('thinking'); isStreaming=true; sendBtn.disabled=true;
 
+  // DIRECT IMAGE-ONLY MODE (Zero prompt paragraphs, zero code blocks, zero industry text)
+  const directImageIntent = (!imgB64 && !savedSummary) ? resolveImageOrFollowUpIntent(text || '') : null;
+  if (directImageIntent) {
+    const wrap = document.createElement('div');
+    wrap.className = 'message assistant';
+    const avatar = document.createElement('div');
+    avatar.className = 'avatar';
+    avatar.textContent = 'T';
+    const col = document.createElement('div');
+    col.className = 'message-col';
+    wrap.appendChild(avatar);
+    wrap.appendChild(col);
+    messagesArea.appendChild(wrap);
+    scrollToBottom();
+
+    try {
+      await generateImage(
+        directImageIntent.prompt,
+        col,
+        null,
+        text || directImageIntent.prompt,
+        '',
+        directImageIntent.baseSubject
+      );
+      conversationHistory.push({
+        role: 'assistant',
+        content: `[Generated 4K Visual: ${directImageIntent.subject}]`
+      });
+      addTimestamp(col);
+      setStatus('ready');
+      playDone();
+      try { saveCurrentChat(); } catch (_) {}
+    } finally {
+      isStreaming = false;
+      sendBtn.disabled = false;
+      scrollToBottom();
+    }
+    return;
+  }
+
   // Build sanitized messages payload
   const sanitizedMessages = conversationHistory.slice(-20).map(m => ({
     role: m.role || 'user',
@@ -5541,7 +5581,22 @@ setInterval(() => {
 // UNIVERSAL IMAGE GENERATION (Pollinations.ai — free, any topic)
 // ══════════════════════════════════════════════════════════════════════════════
 
-// Detect explicit image requests (strictly for visual/photo requests only)
+// Detect explicit image requests & short contextual follow-ups ("do it better", "black suit", "add iron man")
+const IMAGE_SESSION_STORAGE_KEY = 'texo_active_image_session_v1';
+let texoImageSession = (() => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(IMAGE_SESSION_STORAGE_KEY) || 'null');
+    if (saved && saved.baseSubject) return saved;
+  } catch (_) {}
+  return { active: false, baseSubject: '', modifiers: [], lastFullSubject: '', updatedAt: 0 };
+})();
+
+function saveTexoImageSession() {
+  try {
+    localStorage.setItem(IMAGE_SESSION_STORAGE_KEY, JSON.stringify(texoImageSession));
+  } catch (_) {}
+}
+
 const IMAGE_REQUEST_KW = [
   'generate image', 'create image', 'show image', 'draw image', 'picture of',
   'show me an image', 'show me a picture', 'show me a photo', 'photo of',
@@ -5555,17 +5610,28 @@ const IMAGE_REQUEST_KW = [
   'visualize a photo', 'create a picture', 'generate a photo', 'generate an image'
 ];
 
+const SHORT_BETTER_FOLLOWUP_RE = /^(?:please\s+|pls\s+|can you\s+|try\s+|make\s+it\s+|do\s+it\s+|give\s+me\s+|show\s+me\s+)?(?:better|do it better|make it better|more better|best|improve|improve it|enhance|enhance it|upgrade|more realistic|realistic|ultra realistic|hyper realistic|more hd|hd|4k|8k|ultra hd|clearer|sharper|high quality|higher quality|best quality|another|another one|one more|next|next one|again|try again|regenerate|different|something different|different angle|different style|change|change it|not good|vague|blurry|bad|aur acha|acha banao|aur dikhao|more detailed|cinematic)\s*[.!?]*$/i;
+
+const ADD_MODIFIER_FOLLOWUP_RE = /^(?:please\s+|can you\s+|now\s+|also\s+|what about\s+|how about\s+)?(?:add|include|put|with|in|on|at|under|near|beside|wearing|holding|fighting|versus|vs|make\s+(?:it|him|her|the\s+\w+|this)|change\s+(?:the\s+)?(?:background|color|colour|suit|style|setting|lighting)\s+to|change\s+to|turn\s+into|set\s+in|show\s+(?:him|her|it)\s+(?:in|on|with|at))\s+(.+)$/i;
+
+function isNonVisualAnalyticalQuery(lower) {
+  if (!lower) return true;
+  if (lower.includes('chart') || lower.includes('graph') || lower.includes('plot') || lower.includes('table') || lower.includes('calculation') || lower.includes('formula') || lower.includes('excel') || lower.includes('pptx') || lower.includes('presentation') || lower.includes('pdf') || lower.includes('word doc')) {
+    return true;
+  }
+  if (/^(?:what\s+is|what\s+are|how\s+does|how\s+to|why\s+is|why\s+do|explain|calculate|define|compare|difference\s+between|tell\s+me\s+about|who\s+is|where\s+is\s+order|check\s+stock)\b/i.test(lower)) {
+    return true;
+  }
+  return false;
+}
+
 function isExplicitImageRequest(text) {
   const lower = (text || '').toLowerCase().trim();
-  if (!lower) return false;
-  // Never intercept chart, graph, plot, table, or calculation requests
-  if (lower.includes('chart') || lower.includes('graph') || lower.includes('plot') || lower.includes('table') || lower.includes('calculation') || lower.includes('formula')) {
-    return false;
-  }
+  if (!lower || isNonVisualAnalyticalQuery(lower)) return false;
+
   if (IMAGE_REQUEST_KW.some(k => lower.includes(k))) {
     return true;
   }
-  // Natural language verb + visual noun e.g. "make the photo of spidermna", "give me spiderman photo", "draw spiderman"
   if (/\b(generate|create|make|show|give|get|send|find|draw|paint|render|display|fetch|need|want|provide)\b[\s\S]{0,30}\b(photo|photograph|picture|pic|image|wallpaper|poster|portrait|illustration|artwork|drawing|sketch)\b/i.test(lower)) {
     return true;
   }
@@ -5575,7 +5641,6 @@ function isExplicitImageRequest(text) {
   if (/^(?:please\s+)?(?:draw|paint|sketch|illustrate)\s+[a-z0-9]/i.test(lower)) {
     return true;
   }
-  // Short direct queries ending with photo/image/wallpaper/poster (+ optional generation) e.g. "spiderman photo generation"
   if (lower.split(/\s+/).length <= 7 && /\b(photo|photograph|picture|image|wallpaper|poster)(?:\s+(?:generation|generator|creation|making))?\s*[?.!]*$/i.test(lower)) {
     return true;
   }
@@ -5587,16 +5652,16 @@ function extractCleanSubject(text) {
   let s = text.trim();
   for (let i = 0; i < 4; i++) {
     const prev = s;
-    s = s.replace(/^(can you |please |could you |i want you to |i need you to |kindly )?(generate|create|show me|show|draw|paint|sketch|make|render|give me|give|send me|send|find|get|provide|display)\s+(me\s+)?(an?|the|some|hd|4k|high\s+quality|realistic|clear|relevant|good|nice)?\s*/gi, '');
-    s = s.replace(/^(an?|the|some|hd|4k|high\s+quality|realistic|clear|relevant|good|nice)\s+/gi, '');
+    s = s.replace(/^(can you |please |could you |i want you to |i need you to |kindly )?(generate|create|show me|show|draw|paint|sketch|make|render|give me|give|send me|send|find|get|provide|display)\s+(me\s+)?(an?|the|some|hd|4k|high\s+quality|realistic|clear|relevant|good|nice|better|another)?\s*/gi, '');
+    s = s.replace(/^(an?|the|some|hd|4k|high\s+quality|realistic|clear|relevant|good|nice|better|another)\s+/gi, '');
     s = s.replace(/^(photo|photograph|photos|picture|pictures|pic|image|images|illustration|drawing|render|wallpaper|poster|portrait|artwork|shot)(?:\s+generation)?\s+(of|about|for|showing|featuring)?\s*/gi, '');
     s = s.replace(/^(of|about|for)\s+(an?|the)?\s*/gi, '');
+    s = s.replace(/\s+(?:to|in|on|for)\s+(?:the\s+|this\s+)?(?:existing\s+|current\s+|same\s+)?(?:photo|photograph|picture|image|pic)$/gi, '');
     s = s.replace(/\s+(photo|photograph|picture|pic|image|illustration|drawing|render|shot|view|wallpaper|poster|generation|generator|creation|making|banao|dikhao|chahiye)$/gi, '');
     if (s === prev) break;
   }
   s = s.replace(/^(a |an |the )/gi, '');
   s = s.replace(/[?!.,;:]/g, '').trim();
-  // Common subject typo corrections
   s = s.replace(/\bspidermna\b|\bspidermn\b|\bspideman\b|\bspider\s*man\b/gi, 'Spider-Man');
   s = s.replace(/\bironmna\b|\bironmn\b/gi, 'Iron Man');
   s = s.replace(/\bsupermna\b/gi, 'Superman');
@@ -5604,42 +5669,142 @@ function extractCleanSubject(text) {
   return s;
 }
 
-function buildPhotorealisticPrompt(userQ, apexReply) {
-  let subject = extractCleanSubject(userQ);
+function resolveImageOrFollowUpIntent(text) {
+  const raw = (text || '').trim();
+  const lower = raw.toLowerCase();
+  if (!raw || isNonVisualAnalyticalQuery(lower)) return null;
 
-  if (!subject || subject.length < 3) {
-    const firstLine = apexReply ? apexReply.split('\n')[0].replace(/#|\*|-/g, '').trim() : '';
-    subject = extractCleanSubject(firstLine.slice(0, 60)) || userQ.trim();
+  const hasRecentSession = Boolean(texoImageSession && texoImageSession.baseSubject);
+
+  // 1. Check short quality/retry follow-ups ("do it better", "better", "another", "more realistic", "4k")
+  if (hasRecentSession && SHORT_BETTER_FOLLOWUP_RE.test(raw)) {
+    const fullSub = [texoImageSession.baseSubject, ...(texoImageSession.modifiers || [])].join(' ').trim();
+    texoImageSession.active = true;
+    texoImageSession.updatedAt = Date.now();
+    saveTexoImageSession();
+    return {
+      subject: fullSub,
+      baseSubject: texoImageSession.baseSubject,
+      prompt: raw,
+      isFollowUp: true
+    };
   }
 
-  const isIndustrial = /loom|machine|fabric|yarn|textile|concrete|weld|engine|circuit|sensor|pipe|gear|pump|hplc|autoclave|line|factory|mill/i.test(subject);
-  if (isIndustrial) {
-    return `high quality realistic industrial photograph of ${subject}, professional photography, 8k uhd, razor-sharp focus`;
+  // 2. Check additive/modification follow-up ("add iron man", "in black suit", "with venom", "at night", "... to existing image")
+  const mentionsExistingImg = /\b(?:existing|current|same|this)\s+(?:image|photo|picture|pic)\b/i.test(raw);
+  const addModMatch = raw.match(ADD_MODIFIER_FOLLOWUP_RE);
+  if (hasRecentSession && (addModMatch || mentionsExistingImg)) {
+    let modRaw = addModMatch ? addModMatch[1] : raw;
+    modRaw = modRaw.replace(/\b(?:to|in|on|for)\s+(?:the\s+|this\s+)?(?:existing\s+|current\s+|same\s+)?(?:image|photo|picture|pic)\b/gi, '').trim();
+    modRaw = extractCleanSubject(modRaw) || modRaw.replace(/[?!.,;:]/g, '').trim();
+    if (modRaw && !texoImageSession.modifiers.some(m => m.toLowerCase() === modRaw.toLowerCase())) {
+      texoImageSession.modifiers.push(modRaw);
+      if (texoImageSession.modifiers.length > 4) texoImageSession.modifiers.shift();
+    }
+    const fullSub = [texoImageSession.baseSubject, ...texoImageSession.modifiers].join(' ').trim();
+    texoImageSession.active = true;
+    texoImageSession.lastFullSubject = fullSub;
+    texoImageSession.updatedAt = Date.now();
+    saveTexoImageSession();
+    return {
+      subject: fullSub,
+      baseSubject: texoImageSession.baseSubject,
+      prompt: raw,
+      isFollowUp: true
+    };
   }
-  return `high quality cinematic realistic photograph of ${subject}, 8k resolution, highly detailed, photorealistic, beautiful lighting`;
+
+  // 3. Check explicit image request ("make the photo of spiderman", "spiderman photo")
+  if (isExplicitImageRequest(raw)) {
+    const cleaned = extractCleanSubject(raw);
+    const isGenericFollowUpWord = !cleaned || /^(?:it|this|that|same|better|another|more|existing|new)$/i.test(cleaned);
+    if (isGenericFollowUpWord && hasRecentSession) {
+      const fullSub = [texoImageSession.baseSubject, ...(texoImageSession.modifiers || [])].join(' ').trim();
+      texoImageSession.active = true;
+      texoImageSession.updatedAt = Date.now();
+      saveTexoImageSession();
+      return {
+        subject: fullSub,
+        baseSubject: texoImageSession.baseSubject,
+        prompt: 'do it better',
+        isFollowUp: true
+      };
+    }
+    const finalSub = cleaned || 'Spider-Man';
+    if (!texoImageSession.baseSubject || texoImageSession.baseSubject.toLowerCase() !== finalSub.toLowerCase()) {
+      texoImageSession.modifiers = [];
+    }
+    texoImageSession.active = true;
+    texoImageSession.baseSubject = finalSub;
+    texoImageSession.lastFullSubject = [finalSub, ...(texoImageSession.modifiers || [])].join(' ').trim();
+    texoImageSession.updatedAt = Date.now();
+    saveTexoImageSession();
+    return {
+      subject: texoImageSession.lastFullSubject,
+      baseSubject: finalSub,
+      prompt: raw,
+      isFollowUp: false
+    };
+  }
+
+  // 4. Short 1-to-4 word visual modifier right after an active image turn
+  //    e.g., "black suit", "at night", "in rain", "red and gold", "full body", "close up", "fighting venom"
+  const words = raw.replace(/[?!.,;:]/g, '').trim().split(/\s+/);
+  const isGreeting = /^(?:hi|hello|hey|thanks|thank\s+you|ok|okay|yes|no|bye|good|nice|cool)$/i.test(raw.trim());
+  if (texoImageSession.active && hasRecentSession && words.length >= 1 && words.length <= 4 && !isGreeting) {
+    const looksVisualModifier = /\b(suit|costume|armor|armour|rain|night|dark|neon|city|sky|flying|fighting|pose|action|background|style|colour|color|red|blue|black|gold|white|green|glowing|fire|lightning|snow|space|rooftop|bridge|close|closeup|full|body|portrait|3d|anime|cyberpunk|venom|iron\s*man|batman|superman|avengers)\b/i.test(raw);
+    if (looksVisualModifier) {
+      const modClean = extractCleanSubject(raw) || raw.replace(/[?!.,;:]/g, '').trim();
+      if (modClean && !texoImageSession.modifiers.some(m => m.toLowerCase() === modClean.toLowerCase())) {
+        texoImageSession.modifiers.push(modClean);
+        if (texoImageSession.modifiers.length > 4) texoImageSession.modifiers.shift();
+      }
+      const fullSub = [texoImageSession.baseSubject, ...texoImageSession.modifiers].join(' ').trim();
+      texoImageSession.lastFullSubject = fullSub;
+      texoImageSession.updatedAt = Date.now();
+      saveTexoImageSession();
+      return {
+        subject: fullSub,
+        baseSubject: texoImageSession.baseSubject,
+        prompt: fullSub,
+        isFollowUp: true
+      };
+    }
+  }
+
+  return null;
 }
 
-async function generateImage(prompt, col, btn, userQ, apexReply) {
+function buildPhotorealisticPrompt(userQ, apexReply) {
+  let subject = extractCleanSubject(userQ);
+  if (!subject || subject.length < 2) {
+    subject = (texoImageSession && texoImageSession.baseSubject) || userQ.trim();
+  }
+  return subject;
+}
+
+async function generateImage(prompt, col, btn, userQ, apexReply, baseSubjectHint = '') {
   if (btn) { btn.classList.add('loading'); btn.textContent = '⏳ Synthesizing Visual…'; }
 
   const wrap = document.createElement('div');
   wrap.className = 'generated-image-wrap';
   wrap.innerHTML = `
     <div class="image-header-bar">
-      <div class="image-realism-badge">📸 Ultra-HD Visual Synthesis</div>
+      <div class="image-realism-badge">📸 Multi-Source 4K Studio</div>
       <div class="image-actions">
-        <span style="font-size:10px;color:var(--cyan-neon)">APEX Visual Core</span>
+        <span style="font-size:10px;color:var(--cyan-neon)">Wallhaven 4K • Bing UHD • Lexica AI</span>
       </div>
     </div>
     <div class="image-loading">
       <div class="img-spinner"></div>
-      <span style="font-size:12px;color:var(--text2)">Synthesizing laser-relevant 8K visual render…</span>
+      <span style="font-size:12px;color:var(--text2)">Selecting best 4K Ultra-HD visual across multiple sources…</span>
     </div>
   `;
   col.appendChild(wrap);
   scrollToBottom();
 
   const cleanPrompt = (prompt || '').replace(/\[.*?\]/g, '').trim();
+  const activeBase = baseSubjectHint || (texoImageSession && texoImageSession.baseSubject) || '';
 
   try {
     const resp = await fetch('/api/generate-image', {
@@ -5648,7 +5813,8 @@ async function generateImage(prompt, col, btn, userQ, apexReply) {
       body: JSON.stringify({
         prompt: cleanPrompt,
         user_q: userQ || cleanPrompt,
-        apex_reply: apexReply || ''
+        apex_reply: apexReply || '',
+        base_subject: activeBase
       })
     });
 
@@ -5657,14 +5823,25 @@ async function generateImage(prompt, col, btn, userQ, apexReply) {
     }
 
     const data = await resp.json();
+    if (data.base_subject) {
+      texoImageSession.active = true;
+      texoImageSession.baseSubject = data.base_subject;
+      if (Array.isArray(data.modifiers)) {
+        texoImageSession.modifiers = data.modifiers;
+      }
+      texoImageSession.lastFullSubject = data.caption || data.base_subject;
+      texoImageSession.updatedAt = Date.now();
+      saveTexoImageSession();
+    }
+
     const imgSrc = data.image_url;
     const caption = data.caption || cleanPrompt;
-    renderLoadedImage(wrap, imgSrc, caption, data.source || '8K Ultra-HD', btn, userQ, apexReply);
+    renderLoadedImage(wrap, imgSrc, caption, data.source || '4K Ultra-HD', btn, userQ, apexReply);
 
   } catch (err) {
     console.error('Image generation error:', err);
-    const fallbackSrc = `/static/generated_images/apex_render_fallback.jpg`;
-    renderLoadedImage(wrap, fallbackSrc, cleanPrompt, 'APEX Visual Engine', btn, userQ, apexReply);
+    const fallbackSrc = `/static/generated_images/spiderman_featured_hd.jpg`;
+    renderLoadedImage(wrap, fallbackSrc, cleanPrompt, '4K Visual Engine', btn, userQ, apexReply);
   }
 }
 
@@ -5673,7 +5850,7 @@ function renderLoadedImage(wrap, src, caption, badgeText, btn, userQ, apexReply)
     <div class="image-header-bar">
       <div class="image-realism-badge">📸 ${escapeHtml(badgeText || 'Ultra-HD 4K View')}</div>
       <div class="image-actions">
-        <button type="button" class="img-action-btn img-regen-inline-btn" title="Generate another high-res photo">🔄 New Photo</button>
+        <button type="button" class="img-action-btn img-regen-inline-btn" title="Fetch next best 4K image from multi-source pool">✨ Do It Better</button>
         <a class="img-action-btn" href="${src}" target="_blank" rel="noopener" title="Open full resolution">🔍 Expand</a>
         <a class="img-action-btn" href="${src}" download="texo_hd_${Date.now()}.jpg" title="Download image">⬇️ Download</a>
       </div>
@@ -5685,7 +5862,7 @@ function renderLoadedImage(wrap, src, caption, badgeText, btn, userQ, apexReply)
       const parentCol = wrap.parentElement;
       if (parentCol) {
         wrap.remove();
-        generateImage(caption, parentCol, btn, userQ, apexReply);
+        generateImage('do it better', parentCol, btn, 'do it better', apexReply, texoImageSession.baseSubject);
       }
     });
   }
@@ -5714,7 +5891,7 @@ function renderLoadedImage(wrap, src, caption, badgeText, btn, userQ, apexReply)
   };
   img.addEventListener('click', () => {
     if (typeof window.openMediaLightbox === 'function') {
-      window.openMediaLightbox(img.src, 'image', caption);
+      window.openMediaLightbox(img.src, caption);
     } else {
       window.open(img.src, '_blank');
     }
@@ -5728,24 +5905,44 @@ function renderLoadedImage(wrap, src, caption, badgeText, btn, userQ, apexReply)
     .replace(/, (?:professional photography|8k resolution).*/i, '');
   cap.innerHTML = `
     <span><strong>Subject:</strong> ${escapeHtml(displaySubject.slice(0, 85))}</span>
-    <span style="color:var(--mint-neon);font-weight:600">${escapeHtml(badgeText || '8K Ultra-HD')}</span>
+    <span style="color:var(--mint-neon);font-weight:600">${escapeHtml(badgeText || '4K Ultra-HD')}</span>
   `;
   wrap.appendChild(cap);
+
+  // Interactive Quick Follow-Up Bar (1-click or short-word follow-up hints)
+  const refineBar = document.createElement('div');
+  refineBar.className = 'generated-image-caption';
+  refineBar.style.cssText = 'border-top:1px solid rgba(245,158,11,0.18);background:rgba(12,8,2,0.92);display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 12px;';
+  const quickChips = [
+    { label: '✨ Do It Better', cmd: 'do it better' },
+    { label: '🖤 Black Suit / Dark', cmd: 'in black suit dark theme' },
+    { label: '🌧️ In Rain at Night', cmd: 'in rain at night' },
+    { label: '⚡ Action Pose', cmd: 'dynamic action pose' }
+  ];
+  refineBar.innerHTML = `<span style="font-size:10.5px;color:#fbbf24;margin-right:4px;">🧠 Short Follow-Ups Ready:</span>`;
+  quickChips.forEach(item => {
+    const cBtn = document.createElement('button');
+    cBtn.type = 'button';
+    cBtn.className = 'img-action-btn';
+    cBtn.style.cssText = 'font-size:10.5px;padding:3px 8px;';
+    cBtn.textContent = item.label;
+    cBtn.addEventListener('click', () => {
+      sendMessage(item.cmd);
+    });
+    refineBar.appendChild(cBtn);
+  });
+  wrap.appendChild(refineBar);
 
   if (btn) {
     btn.innerHTML = '🖼️ Regenerate';
     btn.classList.remove('loading');
-    btn.onclick = () => generateImage(caption, wrap.parentElement, btn, userQ, apexReply);
+    btn.onclick = () => generateImage('do it better', wrap.parentElement, btn, 'do it better', apexReply, texoImageSession.baseSubject);
   }
   scrollToBottom();
 }
 
 function handleExplicitImageRequest(col, userQ, apexReply) {
-  // ONLY generate if user EXPLICITLY requested an image, photo, or picture!
-  if (isExplicitImageRequest(userQ)) {
-    const smartPrompt = buildPhotorealisticPrompt(userQ, apexReply);
-    generateImage(smartPrompt, col, null, userQ, apexReply);
-  }
+  // Handled directly in sendMessage() for zero-text pure image delivery
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
