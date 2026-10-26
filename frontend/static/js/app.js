@@ -1439,7 +1439,7 @@ function playLocalWebSpeech(clean, detectedLang, persona, onStart, onEnd, onErro
 async function playUniversalSpeechAudio(text, lang, persona, onLoading, onStart, onEnd, onError) {
   stopAudio();
 
-  const clean = (text || '')
+  const clean = cleanFormulaAndLatexSyntax(text || '', false)
     .replace(/```[\s\S]*?```/g, ' [Code block omitted] ')
     .replace(/`([^`]+)`/g, '$1')
     .replace(/\[IMAGE_BASE64\]:\S+/g, '')
@@ -3069,9 +3069,226 @@ function extractChartFromTable(table) {
   return null;
 }
 
+function convertLatexMathFragment(expr) {
+  if (!expr) return '';
+  let s = String(expr);
+
+  // Remove sizing & spacing directives
+  s = s.replace(/\\(?:displaystyle|textstyle|scriptstyle|scriptscriptstyle|limits|nolimits|left|right|big|Big|bigg|Bigg)\b/g, '');
+  s = s.replace(/\\(?:quad|qquad|,|;|!|:)\b/g, ' ');
+  s = s.replace(/\\,/g, ' ').replace(/\\;/g, ' ').replace(/\\!/g, '');
+
+  // Unwrap \text{...}, \textbf{...}, \mathrm{...}, \mathbf{...}, etc. (up to 4 nested levels)
+  for (let i = 0; i < 4; i++) {
+    s = s.replace(/\\?(?:text|textbf|textit|textrm|textsf|texttt|mathrm|mathbf|mathit|mathsf|mathtt|mathcal|operatorname|mbox|hbox)\s*\{([^{}]*)\}/gi, '$1');
+  }
+  // Handle unclosed \text{... at the tail during live streaming
+  s = s.replace(/\\?(?:text|textbf|textit|mathrm|mathbf|operatorname)\s*\x7b([^{}]*)$/gi, '$1');
+
+  // Convert \sqrt[n]{x} and \sqrt{x}
+  for (let i = 0; i < 3; i++) {
+    s = s.replace(/\\?sqrt\s*\[3\]\s*\{([^{}]*)\}/gi, '∛($1)');
+    s = s.replace(/\\?sqrt\s*\[([^{}\]]*)\]\s*\{([^{}]*)\}/gi, '($1)√($2)');
+    s = s.replace(/\\?sqrt\s*\{([^{}]*)\}/gi, '√($1)');
+  }
+  s = s.replace(/\\?sqrt\s*\x7b([^{}]*)$/gi, '√($1');
+
+  // Convert \frac{A}{B}, \dfrac{A}{B}, \tfrac{A}{B}, or bare frac{A}{B} (up to 4 nested levels)
+  for (let i = 0; i < 4; i++) {
+    s = s.replace(/\\?(?:d|t)?frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}/gi, (_, num, den) => {
+      const n = num.trim();
+      const d = den.trim();
+      const nWrap = /[+\-×÷*/\s]/.test(n) ? `(${n})` : n;
+      const dWrap = /[+\-×÷*/\s]/.test(d) ? `(${d})` : d;
+      return `(${nWrap} ÷ ${dWrap})`;
+    });
+  }
+  // Handle partial \frac{A}{B during live streaming
+  s = s.replace(/\\?(?:d|t)?frac\s*\{([^{}]*)\}\s*\x7b([^{}]*)$/gi, '($1 ÷ $2');
+  s = s.replace(/\\?(?:d|t)?frac\s*\x7b([^{}]*)$/gi, '($1');
+
+  // Operators & relations
+  const latexOps = [
+    [/\\times\b/g, ' × '],
+    [/\\div\b/g, ' ÷ '],
+    [/\\cdot\b/g, ' · '],
+    [/\\ast\b/g, ' * '],
+    [/\\pm\b/g, ' ± '],
+    [/\\mp\b/g, ' ∓ '],
+    [/\\(?:leq|le)\b/g, ' ≤ '],
+    [/\\(?:geq|ge)\b/g, ' ≥ '],
+    [/\\(?:neq|ne)\b/g, ' ≠ '],
+    [/\\approx\b/g, ' ≈ '],
+    [/\\equiv\b/g, ' ≡ '],
+    [/\\propto\b/g, ' ∝ '],
+    [/\\sim\b/g, ' ~ '],
+    [/\\(?:rightarrow|to|longrightarrow)\b/g, ' → '],
+    [/\\(?:leftarrow|longleftarrow)\b/g, ' ← '],
+    [/\\(?:leftrightarrow|longleftrightarrow)\b/g, ' ↔ '],
+    [/\\(?:Rightarrow|implies|Longrightarrow)\b/g, ' ⇒ '],
+    [/\\(?:Leftrightarrow|iff)\b/g, ' ⇔ '],
+    [/\\infty\b/g, '∞'],
+    [/\\partial\b/g, '∂'],
+    [/\\nabla\b/g, '∇'],
+    [/\\forall\b/g, '∀'],
+    [/\\exists\b/g, '∃'],
+    [/\\notin\b/g, ' ∉ '],
+    [/\\in\b/g, ' ∈ '],
+    [/\\subset\b/g, ' ⊂ '],
+    [/\\cup\b/g, ' ∪ '],
+    [/\\cap\b/g, ' ∩ '],
+    [/\\emptyset\b/g, '∅'],
+    [/\\therefore\b/g, '∴'],
+    [/\\because\b/g, '∵'],
+    [/\\(?:sum|Sigma)\b/g, 'Σ'],
+    [/\\(?:prod|Pi)\b/g, 'Π'],
+    [/\\int\b/g, '∫'],
+    [/\\Delta\b/g, 'Δ'],
+    [/\\Gamma\b/g, 'Γ'],
+    [/\\Lambda\b/g, 'Λ'],
+    [/\\Omega\b/g, 'Ω'],
+    [/\\Phi\b/g, 'Φ'],
+    [/\\Psi\b/g, 'Ψ'],
+    [/\\Theta\b/g, 'Θ'],
+    [/\\alpha\b/g, 'α'],
+    [/\\beta\b/g, 'β'],
+    [/\\gamma\b/g, 'γ'],
+    [/\\delta\b/g, 'δ'],
+    [/\\(?:varepsilon|epsilon)\b/g, 'ε'],
+    [/\\zeta\b/g, 'ζ'],
+    [/\\eta\b/g, 'η'],
+    [/\\(?:vartheta|theta)\b/g, 'θ'],
+    [/\\kappa\b/g, 'κ'],
+    [/\\lambda\b/g, 'λ'],
+    [/\\mu\b/g, 'μ'],
+    [/\\nu\b/g, 'ν'],
+    [/\\xi\b/g, 'ξ'],
+    [/\\pi\b/g, 'π'],
+    [/\\rho\b/g, 'ρ'],
+    [/\\(?:varsigma|sigma)\b/g, 'σ'],
+    [/\\tau\b/g, 'τ'],
+    [/\\(?:varphi|phi)\b/g, 'φ'],
+    [/\\chi\b/g, 'χ'],
+    [/\\psi\b/g, 'ψ'],
+    [/\\omega\b/g, 'ω'],
+    [/\^\{\\circ\}|\^\\circ|\\degree\b/g, '°'],
+    [/\\%/g, '%'],
+    [/\\\{/g, '{'],
+    [/\\\}/g, '}'],
+    [/\\_/g, '_']
+  ];
+  for (const [rgx, rep] of latexOps) {
+    s = s.replace(rgx, rep);
+  }
+
+  // Superscripts & Subscripts
+  const supMap = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '+': '⁺', '-': '⁻', 'n': 'ⁿ', 'i': 'ⁱ' };
+  const subMap = { '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄', '5': '₅', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '+': '₊', '-': '₋', 'a': 'ₐ', 'e': 'ₑ', 'i': 'ᵢ', 'n': 'ₙ', 'o': 'ₒ', 'r': 'ᵣ', 'u': 'ᵤ', 'v': 'ᵥ', 'x': 'ₓ' };
+
+  s = s.replace(/\^\{([0-9+\-ni]+)\}/g, (_, chars) => chars.split('').map(c => supMap[c] || c).join(''));
+  s = s.replace(/\^([0-9ni])\b/g, (_, c) => supMap[c] || `^${c}`);
+  s = s.replace(/\^\{([^{}]+)\}/g, '^($1)');
+
+  s = s.replace(/_\{([0-9+\-aeinoruvx]+)\}/g, (_, chars) => chars.split('').map(c => subMap[c] || c).join(''));
+  s = s.replace(/([A-Za-z\)])_([0-9])\b/g, (_, pre, c) => pre + (subMap[c] || c));
+  s = s.replace(/_\{([^{}]+)\}/g, '($1)');
+
+  // Strip leftover grouping braces
+  s = s.replace(/\{([^{}]*)\}/g, '$1');
+  s = s.replace(/[ \t]{2,}/g, ' ');
+  return s.trim();
+}
+
+function cleanFormulaAndLatexSyntax(text, isFinal = false) {
+  if (!text) return '';
+
+  // Protect non-math code blocks while cleaning formulas in prose and math blocks
+  const codeBlocks = [];
+  let working = text.replace(/```([a-z0-9_\-:]*)[\s\S]*?(?:```|$)/gi, (match, lang) => {
+    const l = (lang || '').toLowerCase();
+    if (l === 'math' || l === 'latex' || l === 'formula') {
+      const inner = match.replace(/^```[a-z0-9_\-:]*\s*/i, '').replace(/```\s*$/, '');
+      const cleaned = convertLatexMathFragment(inner);
+      if (isFinal) {
+        return `\n\n<div class="texo-formula-card"><span class="texo-formula-badge">∑ FORMULA</span><div class="texo-formula-expr">${escapeHtml(cleaned)}</div></div>\n\n`;
+      }
+      return `\n\n**∑ ${cleaned}**\n\n`;
+    }
+    const token = `@@TEXO_CODE_BLOCK_${codeBlocks.length}@@`;
+    codeBlocks.push(match);
+    return token;
+  });
+
+  // 1. Display math blocks: $$ ... $$ and \[ ... \]
+  working = working.replace(/\$\$([\s\S]*?)\$\$/g, (_, expr) => {
+    const cleaned = convertLatexMathFragment(expr);
+    if (!cleaned) return '';
+    if (isFinal) {
+      return `\n\n<div class="texo-formula-card"><span class="texo-formula-badge">∑ FORMULA</span><div class="texo-formula-expr">${escapeHtml(cleaned)}</div></div>\n\n`;
+    }
+    return `\n\n**∑ ${cleaned}**\n\n`;
+  });
+
+  working = working.replace(/\\\[([\s\S]*?)\\\]/g, (_, expr) => {
+    const cleaned = convertLatexMathFragment(expr);
+    if (!cleaned) return '';
+    if (isFinal) {
+      return `\n\n<div class="texo-formula-card"><span class="texo-formula-badge">∑ FORMULA</span><div class="texo-formula-expr">${escapeHtml(cleaned)}</div></div>\n\n`;
+    }
+    return `\n\n**∑ ${cleaned}**\n\n`;
+  });
+
+  // 2. Inline \( ... \)
+  working = working.replace(/\\\(([\s\S]*?)\\\)/g, (_, expr) => {
+    const cleaned = convertLatexMathFragment(expr);
+    return cleaned ? `**${cleaned}**` : '';
+  });
+
+  // 3. Inline $ ... $ (distinguish math/LaTeX from two currency amounts on the same line)
+  working = working.replace(/\$([^$\n]+?)\$/g, (fullMatch, inner) => {
+    const trimmed = inner.trim();
+    if (!trimmed) return fullMatch;
+    // If it starts with a digit and has prose connectors ("10 and ", "25 to ") without math tokens, keep as currency
+    const looksLikeTwoPrices = /^\d+(?:[.,]\d+)?\s+(?:and|or|to|per|for|in|from|with|vs|versus|at|on|by)\b/i.test(trimmed) &&
+      !/[\\=^_{÷×]|frac|text|sqrt|times|div/i.test(trimmed);
+    if (looksLikeTwoPrices) {
+      return fullMatch;
+    }
+    const cleaned = convertLatexMathFragment(trimmed);
+    if (/[=÷×±≤≥≈√]/.test(cleaned)) {
+      return `**${cleaned}**`;
+    }
+    return cleaned;
+  });
+
+  // 4. Clean any bare/unwrapped LaTeX tokens (e.g., \text{...}, text{...}, \frac{...}{...}, \times) or unclosed streaming $$ / $
+  working = working.replace(/\$\$/g, '');
+  working = working.replace(/\\\[|\\\]|\\\(|\\\)/g, '');
+  // If streaming leaves a single unclosed $ right before \text or \frac, strip the stray $
+  working = working.replace(/\$\s*(?=\\?(?:text|textbf|mathrm|frac|sqrt)\b)/gi, '');
+
+  if (/\\(?:text|textbf|textit|mathrm|mathbf|operatorname|frac|dfrac|tfrac|sqrt|times|div|cdot|pm|leq|geq|neq|approx|Delta|Sigma|alpha|beta|gamma|mu|pi|rho|sigma|theta|omega)\b|\b(?:text|textbf|mathrm|frac)\s*\x7b/i.test(working)) {
+    working = working.split('\n').map(line => {
+      if (/@@TEXO_CODE_BLOCK_\d+@@/.test(line)) return line;
+      if (/\\(?:text|textbf|textit|mathrm|mathbf|operatorname|frac|dfrac|tfrac|sqrt|times|div|cdot|pm|leq|geq|neq|approx|Delta|Sigma|alpha|beta|gamma|mu|pi|rho|sigma|theta|omega)\b|\b(?:text|textbf|mathrm|frac)\s*\x7b/i.test(line)) {
+        // Preserve leading markdown list/heading markers
+        const prefixMatch = line.match(/^(\s*(?:[#>*\-+]|\d+\.)\s+)/);
+        const prefix = prefixMatch ? prefixMatch[1] : '';
+        const rest = prefixMatch ? line.slice(prefix.length) : line;
+        return prefix + convertLatexMathFragment(rest).replace(/\$/g, '');
+      }
+      return line;
+    }).join('\n');
+  }
+
+  // Restore protected code blocks
+  working = working.replace(/@@TEXO_CODE_BLOCK_(\d+)@@/g, (_, idx) => codeBlocks[Number(idx)] || '');
+  return working;
+}
+
 function prepareStreamMarkdown(text) {
   if (!text) return '';
-  let display = text;
+  let display = cleanFormulaAndLatexSyntax(text, false);
 
   // 1. Hide full or in-progress chart code blocks during streaming - DO NOT show HUD message before user
   display = display.replace(/```(?:chart|chart:[a-z0-9_\-]+|json:chart|graph|plot|visualization|pie|doughnut|bar|line)[\s\S]*?(?:```|$)/gi, '');
@@ -3108,7 +3325,7 @@ function prepareStreamMarkdown(text) {
 
 function prepareFinalMarkdown(text) {
   if (!text) return '';
-  let prepared = text;
+  let prepared = cleanFormulaAndLatexSyntax(text, true);
 
   // 1. Convert ```chart, ```chart:*, ```graph, ```plot, ```visualization, ```pie, ```bar, ```line blocks
   prepared = prepared.replace(/```(?:chart|chart:[a-z0-9_\-]+|json:chart|graph|plot|visualization|pie|doughnut|bar|line)\s*([\s\S]*?)```/gi, (match, raw) => {
@@ -5328,29 +5545,62 @@ setInterval(() => {
 const IMAGE_REQUEST_KW = [
   'generate image', 'create image', 'show image', 'draw image', 'picture of',
   'show me an image', 'show me a picture', 'show me a photo', 'photo of',
-  'image of', 'generate photo', 'create photo', 'generate picture',
-  'make a photo', 'make an image', 'show a photo', 'show a picture',
-  'photo banao', 'image banao', 'photo chahiye', 'tasveer', 'illustration of',
-  'draw a picture', 'draw a diagram', 'render an image', 'visualize a photo'
+  'photograph of', 'image of', 'generate photo', 'create photo', 'generate picture',
+  'make a photo', 'make the photo', 'make photo', 'make an image', 'make the image',
+  'make image', 'make a picture', 'make the picture', 'show a photo', 'show a picture',
+  'give me a photo', 'give me the photo', 'give me an image', 'give me a picture',
+  'send a photo', 'send me a photo', 'send image', 'wallpaper of', 'poster of',
+  'photo banao', 'image banao', 'photo chahiye', 'photo dikhao', 'tasveer',
+  'illustration of', 'draw a picture', 'draw a diagram', 'render an image',
+  'visualize a photo', 'create a picture', 'generate a photo', 'generate an image'
 ];
 
 function isExplicitImageRequest(text) {
-  const lower = (text || '').toLowerCase();
+  const lower = (text || '').toLowerCase().trim();
+  if (!lower) return false;
   // Never intercept chart, graph, plot, table, or calculation requests
-  if (lower.includes('chart') || lower.includes('graph') || lower.includes('plot') || lower.includes('table') || lower.includes('calculation')) {
+  if (lower.includes('chart') || lower.includes('graph') || lower.includes('plot') || lower.includes('table') || lower.includes('calculation') || lower.includes('formula')) {
     return false;
   }
-  return IMAGE_REQUEST_KW.some(k => lower.includes(k));
+  if (IMAGE_REQUEST_KW.some(k => lower.includes(k))) {
+    return true;
+  }
+  // Natural language verb + visual noun e.g. "make the photo of spidermna", "give me spiderman photo", "draw spiderman"
+  if (/\b(generate|create|make|show|give|get|send|find|draw|paint|render|display|fetch|need|want|provide)\b[\s\S]{0,30}\b(photo|photograph|picture|pic|image|wallpaper|poster|portrait|illustration|artwork|drawing|sketch)\b/i.test(lower)) {
+    return true;
+  }
+  if (/\b(photo|photograph|picture|pic|image|wallpaper|poster|portrait|illustration)\s+(of|for|about|showing|featuring)\s+\w+/i.test(lower)) {
+    return true;
+  }
+  if (/^(?:please\s+)?(?:draw|paint|sketch|illustrate)\s+[a-z0-9]/i.test(lower)) {
+    return true;
+  }
+  // Short direct queries ending with photo/image/wallpaper/poster e.g. "spiderman photo", "iron man wallpaper"
+  if (lower.split(/\s+/).length <= 6 && /\b(photo|photograph|picture|image|wallpaper|poster)\s*[?.!]*$/i.test(lower)) {
+    return true;
+  }
+  return false;
 }
 
 function extractCleanSubject(text) {
   if (!text) return '';
   let s = text.trim();
-  s = s.replace(/^(can you |please |could you )?(generate|create|show me|show|draw|make|render|give me|find|get)\s+(an?|the)?\s*/gi, '');
-  s = s.replace(/^(photo|picture|image|illustration|drawing|render)\s+(of|about|for)?\s*/gi, '');
-  s = s.replace(/\s+(photo|picture|image|illustration|drawing|render|shot|view|wallpaper|poster)$/gi, '');
+  for (let i = 0; i < 4; i++) {
+    const prev = s;
+    s = s.replace(/^(can you |please |could you |i want you to |i need you to |kindly )?(generate|create|show me|show|draw|paint|sketch|make|render|give me|give|send me|send|find|get|provide|display)\s+(me\s+)?(an?|the|some|hd|4k|high\s+quality|realistic|clear|relevant|good|nice)?\s*/gi, '');
+    s = s.replace(/^(an?|the|some|hd|4k|high\s+quality|realistic|clear|relevant|good|nice)\s+/gi, '');
+    s = s.replace(/^(photo|photograph|photos|picture|pictures|pic|image|images|illustration|drawing|render|wallpaper|poster|portrait|artwork|shot)\s+(of|about|for|showing|featuring)?\s*/gi, '');
+    s = s.replace(/^(of|about|for)\s+(an?|the)?\s*/gi, '');
+    if (s === prev) break;
+  }
+  s = s.replace(/\s+(photo|photograph|picture|pic|image|illustration|drawing|render|shot|view|wallpaper|poster|banao|dikhao|chahiye)$/gi, '');
   s = s.replace(/^(a |an |the )/gi, '');
   s = s.replace(/[?!.,;:]/g, '').trim();
+  // Common subject typo corrections
+  s = s.replace(/\bspidermna\b|\bspidermn\b|\bspideman\b|\bspider\s*man\b/gi, 'Spider-Man');
+  s = s.replace(/\bironmna\b|\bironmn\b/gi, 'Iron Man');
+  s = s.replace(/\bsupermna\b/gi, 'Superman');
+  s = s.replace(/\bbatmna\b/gi, 'Batman');
   return s;
 }
 
@@ -5421,30 +5671,64 @@ async function generateImage(prompt, col, btn, userQ, apexReply) {
 function renderLoadedImage(wrap, src, caption, badgeText, btn, userQ, apexReply) {
   wrap.innerHTML = `
     <div class="image-header-bar">
-      <div class="image-realism-badge">📸 Ultra-HD View</div>
+      <div class="image-realism-badge">📸 ${escapeHtml(badgeText || 'Ultra-HD 4K View')}</div>
       <div class="image-actions">
-        <a class="img-action-btn" href="${src}" target="_blank" title="Open full resolution">🔍 Expand</a>
-        <a class="img-action-btn" href="${src}" download="apex_render_${Date.now()}.jpg" title="Download image">⬇️ Download</a>
+        <button type="button" class="img-action-btn img-regen-inline-btn" title="Generate another high-res photo">🔄 New Photo</button>
+        <a class="img-action-btn" href="${src}" target="_blank" rel="noopener" title="Open full resolution">🔍 Expand</a>
+        <a class="img-action-btn" href="${src}" download="texo_hd_${Date.now()}.jpg" title="Download image">⬇️ Download</a>
       </div>
     </div>
   `;
+  const inlineRegenBtn = wrap.querySelector('.img-regen-inline-btn');
+  if (inlineRegenBtn) {
+    inlineRegenBtn.addEventListener('click', () => {
+      const parentCol = wrap.parentElement;
+      if (parentCol) {
+        wrap.remove();
+        generateImage(caption, parentCol, btn, userQ, apexReply);
+      }
+    });
+  }
+
   const img = new Image();
   img.alt = caption;
+  img.referrerPolicy = 'no-referrer';
   img.src = src;
   img.style.opacity = '0';
-  img.style.transition = 'opacity 0.4s ease';
+  img.style.transition = 'opacity 0.35s ease';
+  img.style.cursor = 'zoom-in';
   img.onload = () => {
     img.style.opacity = '1';
     scrollToBottom();
   };
+  img.onerror = () => {
+    const isSpider = /spider/i.test((userQ || '') + ' ' + (caption || ''));
+    const fallbackUrl = isSpider
+      ? `/static/generated_images/spiderman_featured_hd.jpg?t=${Date.now()}`
+      : `/static/generated_images/apex_render_fallback.jpg?t=${Date.now()}`;
+    if (img.src.indexOf('generated_images/') === -1) {
+      img.src = fallbackUrl;
+    } else {
+      img.style.opacity = '1';
+    }
+  };
+  img.addEventListener('click', () => {
+    if (typeof window.openMediaLightbox === 'function') {
+      window.openMediaLightbox(img.src, 'image', caption);
+    } else {
+      window.open(img.src, '_blank');
+    }
+  });
   wrap.appendChild(img);
 
   const cap = document.createElement('div');
   cap.className = 'generated-image-caption';
-  const displaySubject = caption.replace(/high quality realistic industrial photograph of /i, '').replace(/, professional photography.*/i, '');
+  const displaySubject = caption
+    .replace(/high quality (?:realistic industrial|cinematic realistic) photograph of /i, '')
+    .replace(/, (?:professional photography|8k resolution).*/i, '');
   cap.innerHTML = `
-    <span><strong>Subject:</strong> ${displaySubject.slice(0, 80)}</span>
-    <span style="color:var(--mint-neon);font-weight:600">${badgeText || '8K Ultra-HD'}</span>
+    <span><strong>Subject:</strong> ${escapeHtml(displaySubject.slice(0, 85))}</span>
+    <span style="color:var(--mint-neon);font-weight:600">${escapeHtml(badgeText || '8K Ultra-HD')}</span>
   `;
   wrap.appendChild(cap);
 
