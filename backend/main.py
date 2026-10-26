@@ -213,14 +213,24 @@ class OrigamiGarmentRequest(BaseModel):
 
 
 # ── Routes ────────────────────────────────────────────────────────────────────
+_IG_MTIME: float = 0.0
+
 @app.post("/api/generate-image")
 async def generate_image_endpoint(req: ImageGenerateRequest):
     """
     Synthesize and serve ultra-high-definition photorealistic industrial imagery on demand.
+    Auto-reloads backend.image_generator if updated on disk.
     """
+    global _IG_MTIME
     try:
-        from backend.image_generator import generate_image_dossier
-        res = generate_image_dossier(req.prompt, req.user_q, req.apex_reply)
+        import importlib
+        import backend.image_generator as _ig
+        ig_path = os.path.abspath(_ig.__file__)
+        cur_mtime = os.path.getmtime(ig_path)
+        if _IG_MTIME and cur_mtime != _IG_MTIME:
+            importlib.reload(_ig)
+        _IG_MTIME = cur_mtime
+        res = _ig.generate_image_dossier(req.prompt, req.user_q, req.apex_reply)
         return res
     except Exception as e:
         logger.error("Image generation error: %s", e)
@@ -353,7 +363,7 @@ async def report_client_glitch(req: Request):
 
 @app.get("/api/health")
 async def health():
-    return {"status": "ok", "service": "TEXO Universal AI Intelligence"}
+    return {"status": "ok", "service": "TEXO Universal AI Intelligence", "version": "6.9.0"}
 
 
 @app.get("/api/knowledge")

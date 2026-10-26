@@ -32,24 +32,18 @@ def kill_stale_port_5000():
 
 def is_server_ready() -> bool:
     try:
+        import json
         conn = http.client.HTTPConnection("127.0.0.1", 5000, timeout=0.8)
         conn.request("GET", "/api/health")
         resp = conn.getresponse()
         status = resp.status
+        body = resp.read().decode("utf-8", errors="ignore")
         conn.close()
         if status != 200:
             return False
-
-        # Verify /api/tts is also registered on this instance (confirm updated build)
-        conn2 = http.client.HTTPConnection("127.0.0.1", 5000, timeout=0.8)
-        conn2.request("POST", "/api/tts", body=b'{"text":"ping","voice":"aura"}', headers={"Content-Type": "application/json"})
-        resp2 = conn2.getresponse()
-        tts_status = resp2.status
-        conn2.close()
-        # If /api/tts returns 404, the running server is outdated and needs restart
-        if tts_status == 404:
+        data = json.loads(body)
+        if data.get("version") != "6.9.0":
             return False
-
         return True
     except Exception:
         return False

@@ -124,19 +124,19 @@ def extract_clean_subject(text: str) -> str:
     if not text:
         return "Subject"
     s = clean_image_prompt(text)
-    # Strip repeated command + media prefixes ("make the photo of", "show me a picture of", etc.)
-    for _ in range(2):
+    # Strip repeated command + media prefixes & suffixes ("make the photo of", "spiderman photo generation", etc.)
+    for _ in range(4):
         s = _COMMAND_RE.sub("", s)
         s = re.sub(
-            rf"^(?:an?\s+|the\s+)?(?:\w+\s+)?{_MEDIA_WORDS}\s+(?:of|about|for|showing|with)\s+(?:an?\s+|the\s+)?",
+            rf"^(?:an?\s+|the\s+)?(?:\w+\s+)?{_MEDIA_WORDS}\s+(?:generation\s+)?(?:of|about|for|showing|with)\s+(?:an?\s+|the\s+)?",
             "",
             s,
             flags=re.IGNORECASE,
         )
-        s = re.sub(rf"^{_MEDIA_WORDS}\s+", "", s, flags=re.IGNORECASE)
-        s = re.sub(rf"\s+{_MEDIA_WORDS}$", "", s, flags=re.IGNORECASE)
+        s = re.sub(rf"^{_MEDIA_WORDS}\s+(?:generation\s+)?", "", s, flags=re.IGNORECASE)
+        s = re.sub(rf"\s+(?:{_MEDIA_WORDS}|generation|generator|creation|synthesis|making|request)s?$", "", s, flags=re.IGNORECASE)
     s = re.sub(r"\s+(?:banao|bana do|chahiye|dikhao)$", "", s, flags=re.IGNORECASE)
-    s = re.sub(r"^(?:an?\s+|the\s+)", "", s, flags=re.IGNORECASE)
+    s = re.sub(r"^(?:an?\s+|the\s+|of\s+|for\s+)", "", s, flags=re.IGNORECASE)
     s = s.strip(" ?!.,;:")
 
     # Normalize common pop-culture / superhero typos & compound names
@@ -291,7 +291,10 @@ def fetch_bing_async_hd_image(subject: str, search_query: str, call_idx: int = 0
     if fallback_q.lower() != safe_q.lower():
         queries_to_try.append(fallback_q)
 
-    bad_domains = ("bilibili.com", "tiktok.com", "fbsbx.com", "svg", "icon", "logo")
+    bad_domains = (
+        "bilibili.com", "tiktok.com", "fbsbx.com", "svg", "icon", "logo",
+        "toy", "brick", "trebl", "lego", "ebay", "aliexpress", "etsy", "cosplay"
+    )
 
     for q in queries_to_try:
         try:

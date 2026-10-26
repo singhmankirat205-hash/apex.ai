@@ -5575,8 +5575,8 @@ function isExplicitImageRequest(text) {
   if (/^(?:please\s+)?(?:draw|paint|sketch|illustrate)\s+[a-z0-9]/i.test(lower)) {
     return true;
   }
-  // Short direct queries ending with photo/image/wallpaper/poster e.g. "spiderman photo", "iron man wallpaper"
-  if (lower.split(/\s+/).length <= 6 && /\b(photo|photograph|picture|image|wallpaper|poster)\s*[?.!]*$/i.test(lower)) {
+  // Short direct queries ending with photo/image/wallpaper/poster (+ optional generation) e.g. "spiderman photo generation"
+  if (lower.split(/\s+/).length <= 7 && /\b(photo|photograph|picture|image|wallpaper|poster)(?:\s+(?:generation|generator|creation|making))?\s*[?.!]*$/i.test(lower)) {
     return true;
   }
   return false;
@@ -5589,11 +5589,11 @@ function extractCleanSubject(text) {
     const prev = s;
     s = s.replace(/^(can you |please |could you |i want you to |i need you to |kindly )?(generate|create|show me|show|draw|paint|sketch|make|render|give me|give|send me|send|find|get|provide|display)\s+(me\s+)?(an?|the|some|hd|4k|high\s+quality|realistic|clear|relevant|good|nice)?\s*/gi, '');
     s = s.replace(/^(an?|the|some|hd|4k|high\s+quality|realistic|clear|relevant|good|nice)\s+/gi, '');
-    s = s.replace(/^(photo|photograph|photos|picture|pictures|pic|image|images|illustration|drawing|render|wallpaper|poster|portrait|artwork|shot)\s+(of|about|for|showing|featuring)?\s*/gi, '');
+    s = s.replace(/^(photo|photograph|photos|picture|pictures|pic|image|images|illustration|drawing|render|wallpaper|poster|portrait|artwork|shot)(?:\s+generation)?\s+(of|about|for|showing|featuring)?\s*/gi, '');
     s = s.replace(/^(of|about|for)\s+(an?|the)?\s*/gi, '');
+    s = s.replace(/\s+(photo|photograph|picture|pic|image|illustration|drawing|render|shot|view|wallpaper|poster|generation|generator|creation|making|banao|dikhao|chahiye)$/gi, '');
     if (s === prev) break;
   }
-  s = s.replace(/\s+(photo|photograph|picture|pic|image|illustration|drawing|render|shot|view|wallpaper|poster|banao|dikhao|chahiye)$/gi, '');
   s = s.replace(/^(a |an |the )/gi, '');
   s = s.replace(/[?!.,;:]/g, '').trim();
   // Common subject typo corrections
