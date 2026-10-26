@@ -149,6 +149,7 @@ class VideoGenerateRequest(BaseModel):
     prompt: str = Field(..., description="Prompt or query describing the desired video")
     user_q: str = Field("", description="Optional original user question")
     apex_reply: str = Field("", description="Optional assistant answer text for contextual relevance")
+    base_subject: str = Field("", description="Optional remembered base subject from active session")
 
 class OperationExecuteRequest(BaseModel):
     tool: str = Field(..., description="update_record | book_system | run_workflow | log_incident")
@@ -247,14 +248,24 @@ async def generate_image_endpoint(req: ImageGenerateRequest):
         }
 
 
+_VG_MTIME: float = 0.0
+
 @app.post("/api/generate-video")
 async def generate_video_endpoint(req: VideoGenerateRequest):
     """
-    Synthesize and serve ultra-high-definition cinematic MP4 video clips on demand.
+    Synthesize and serve 22-second 5-scene HD cinematic MP4 video clips on demand.
+    Auto-reloads backend.video_generator if updated on disk.
     """
+    global _VG_MTIME
     try:
-        from backend.video_generator import generate_video_dossier
-        res = generate_video_dossier(req.prompt, req.user_q, req.apex_reply)
+        import importlib
+        import backend.video_generator as _vg
+        vg_path = os.path.abspath(_vg.__file__)
+        cur_mtime = os.path.getmtime(vg_path)
+        if _VG_MTIME and cur_mtime != _VG_MTIME:
+            importlib.reload(_vg)
+        _VG_MTIME = cur_mtime
+        res = _vg.generate_video_dossier(req.prompt, req.user_q, req.apex_reply, base_subject_hint=req.base_subject)
         return res
     except Exception as e:
         logger.error("Video generation error: %s", e)
@@ -364,7 +375,7 @@ async def report_client_glitch(req: Request):
 
 @app.get("/api/health")
 async def health():
-    return {"status": "ok", "service": "TEXO Universal AI Intelligence", "version": "7.0.0"}
+    return {"status": "ok", "service": "TEXO Universal AI Intelligence", "version": "7.1.0"}
 
 
 @app.get("/api/knowledge")

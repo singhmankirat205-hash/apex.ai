@@ -3686,7 +3686,47 @@ async function sendMessage(text) {
   appendMessage('user', userDisplay, imgB64, savedSummary, savedFileType, savedMediaUrl);
   setStatus('thinking'); isStreaming=true; sendBtn.disabled=true;
 
-  // DIRECT IMAGE-ONLY MODE (Zero prompt paragraphs, zero code blocks, zero industry text)
+  // 1. DIRECT VIDEO-ONLY MODE (22-Second 5-Scene HD Cinema — zero prompt/code/industry text)
+  const directVideoIntent = (!imgB64 && !savedSummary) ? resolveVideoOrFollowUpIntent(text || '') : null;
+  if (directVideoIntent) {
+    const wrap = document.createElement('div');
+    wrap.className = 'message assistant';
+    const avatar = document.createElement('div');
+    avatar.className = 'avatar';
+    avatar.textContent = 'T';
+    const col = document.createElement('div');
+    col.className = 'message-col';
+    wrap.appendChild(avatar);
+    wrap.appendChild(col);
+    messagesArea.appendChild(wrap);
+    scrollToBottom();
+
+    try {
+      await generateVideo(
+        directVideoIntent.prompt,
+        col,
+        null,
+        text || directVideoIntent.prompt,
+        '',
+        directVideoIntent.baseSubject
+      );
+      conversationHistory.push({
+        role: 'assistant',
+        content: `[Generated 22s HD Video: ${directVideoIntent.subject}]`
+      });
+      addTimestamp(col);
+      setStatus('ready');
+      playDone();
+      try { saveCurrentChat(); } catch (_) {}
+    } finally {
+      isStreaming = false;
+      sendBtn.disabled = false;
+      scrollToBottom();
+    }
+    return;
+  }
+
+  // 2. DIRECT IMAGE-ONLY MODE (Zero prompt paragraphs, zero code blocks, zero industry text)
   const directImageIntent = (!imgB64 && !savedSummary) ? resolveImageOrFollowUpIntent(text || '') : null;
   if (directImageIntent) {
     const wrap = document.createElement('div');
@@ -5825,6 +5865,7 @@ async function generateImage(prompt, col, btn, userQ, apexReply, baseSubjectHint
     const data = await resp.json();
     if (data.base_subject) {
       texoImageSession.active = true;
+      texoImageSession.lastMode = 'image';
       texoImageSession.baseSubject = data.base_subject;
       if (Array.isArray(data.modifiers)) {
         texoImageSession.modifiers = data.modifiers;
@@ -5917,7 +5958,7 @@ function renderLoadedImage(wrap, src, caption, badgeText, btn, userQ, apexReply)
     { label: '✨ Do It Better', cmd: 'do it better' },
     { label: '🖤 Black Suit / Dark', cmd: 'in black suit dark theme' },
     { label: '🌧️ In Rain at Night', cmd: 'in rain at night' },
-    { label: '⚡ Action Pose', cmd: 'dynamic action pose' }
+    { label: '🎬 Make 22s Video', cmd: 'make a 20 second video of this' }
   ];
   refineBar.innerHTML = `<span style="font-size:10.5px;color:#fbbf24;margin-right:4px;">🧠 Short Follow-Ups Ready:</span>`;
   quickChips.forEach(item => {
@@ -5946,28 +5987,135 @@ function handleExplicitImageRequest(col, userQ, apexReply) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// VIDEO GENERATION (High-Performance 24 FPS Cinematic Motion Engine)
+// VIDEO GENERATION (22-Second 5-Scene Multi-Source HD Cinema Engine)
 // ══════════════════════════════════════════════════════════════════════════════
 
 const VIDEO_REQUEST_KW = [
   'generate video', 'create video', 'make video', 'render video', 'show video',
   'video of', 'clip of', 'animation of', 'video clip', 'motion video',
-  'cinematic video', 'video banao', 'video chahiye', 'make a video',
-  'generate a video', 'create a video', 'show me a video', 'produce a video'
+  'cinematic video', 'video banao', 'video chahiye', 'video dikhao', 'make a video',
+  'make the video', 'generate a video', 'generate the video', 'create a video',
+  'show me a video', 'produce a video', 'give me a video', 'send a video',
+  'turn into video', 'turn this into a video', 'video generation'
 ];
 
 function isExplicitVideoRequest(text) {
-  const lower = (text || '').toLowerCase();
-  if (lower.includes('chart') || lower.includes('graph') || lower.includes('plot') || lower.includes('table')) {
-    return false;
+  const lower = (text || '').toLowerCase().trim();
+  if (!lower || isNonVisualAnalyticalQuery(lower)) return false;
+  if (VIDEO_REQUEST_KW.some(k => lower.includes(k))) {
+    return true;
   }
-  return VIDEO_REQUEST_KW.some(k => lower.includes(k));
+  if (/\b(generate|create|make|show|give|get|send|render|produce|turn)\b[\s\S]{0,35}\b(video|clip|animation|movie|footage)\b/i.test(lower)) {
+    return true;
+  }
+  if (/\b(video|clip|animation|footage)\s+(of|for|about|showing|featuring)\s+\w+/i.test(lower)) {
+    return true;
+  }
+  if (lower.split(/\s+/).length <= 7 && /\b(video|video\s+clip|animation)(?:\s+(?:generation|generator|creation|making))?\s*[?.!]*$/i.test(lower)) {
+    return true;
+  }
+  return false;
 }
 
-async function generateVideo(prompt, col, btn, userQ, apexReply) {
+function extractCleanVideoSubject(text) {
+  if (!text) return '';
+  let s = text.trim();
+  s = s.replace(/\b(?:\d+\s*(?:sec|secs|second|seconds|s|min|minutes)|long|full|hd|4k|8k|high\s+quality|relevant|good|clear)\b/gi, ' ');
+  for (let i = 0; i < 4; i++) {
+    const prev = s;
+    s = s.replace(/^(can you |please |could you |i want you to |kindly )?(generate|create|show me|show|make|render|produce|give me|give|send|turn(?:\s+this|\s+it)?\s+into)\s+(me\s+)?(an?|the|some)?\s*/gi, '');
+    s = s.replace(/^(an?|the|some)\s+/gi, '');
+    s = s.replace(/^(video|clip|animation|motion\s+clip|cinematic\s+video|movie|film|footage)(?:\s+generation)?\s*(of|about|for|showing|featuring)?\s*/gi, '');
+    s = s.replace(/^(of|about|for)\s+(an?|the)?\s*/gi, '');
+    s = s.replace(/\s+(video|clip|animation|film|motion|footage|generation|generator|banao|dikhao|chahiye)$/gi, '');
+    if (s === prev) break;
+  }
+  return extractCleanSubject(s);
+}
+
+function resolveVideoOrFollowUpIntent(text) {
+  const raw = (text || '').trim();
+  const lower = raw.toLowerCase();
+  if (!raw || isNonVisualAnalyticalQuery(lower)) return null;
+
+  const hasRecentSession = Boolean(texoImageSession && texoImageSession.baseSubject);
+
+  // 1. Explicit video request ("generate video of spiderman", "make a 20s video of spiderman", "make a video of this")
+  if (isExplicitVideoRequest(raw)) {
+    const cleaned = extractCleanVideoSubject(raw);
+    const isGeneric = !cleaned || /^(?:it|this|that|same|better|another|more|existing|current)$/i.test(cleaned);
+    if (isGeneric && hasRecentSession) {
+      const fullSub = [texoImageSession.baseSubject, ...(texoImageSession.modifiers || [])].join(' ').trim();
+      texoImageSession.active = true;
+      texoImageSession.lastMode = 'video';
+      texoImageSession.updatedAt = Date.now();
+      saveTexoImageSession();
+      return {
+        subject: fullSub,
+        baseSubject: texoImageSession.baseSubject,
+        prompt: fullSub,
+        isFollowUp: true
+      };
+    }
+    const finalSub = cleaned || (hasRecentSession ? texoImageSession.baseSubject : 'Spider-Man');
+    if (!texoImageSession.baseSubject || texoImageSession.baseSubject.toLowerCase() !== finalSub.toLowerCase()) {
+      texoImageSession.modifiers = [];
+    }
+    texoImageSession.active = true;
+    texoImageSession.lastMode = 'video';
+    texoImageSession.baseSubject = finalSub;
+    texoImageSession.lastFullSubject = [finalSub, ...(texoImageSession.modifiers || [])].join(' ').trim();
+    texoImageSession.updatedAt = Date.now();
+    saveTexoImageSession();
+    return {
+      subject: texoImageSession.lastFullSubject,
+      baseSubject: finalSub,
+      prompt: raw,
+      isFollowUp: false
+    };
+  }
+
+  // 2. If the user's LAST action was generating a VIDEO (`lastMode === 'video'`),
+  //    route short follow-ups ("do it better", "black suit", "in rain") to generate a new 22s video!
+  if (hasRecentSession && texoImageSession.lastMode === 'video') {
+    if (SHORT_BETTER_FOLLOWUP_RE.test(raw)) {
+      const fullSub = [texoImageSession.baseSubject, ...(texoImageSession.modifiers || [])].join(' ').trim();
+      texoImageSession.updatedAt = Date.now();
+      saveTexoImageSession();
+      return {
+        subject: fullSub,
+        baseSubject: texoImageSession.baseSubject,
+        prompt: 'do it better',
+        isFollowUp: true
+      };
+    }
+    const addModMatch = raw.match(ADD_MODIFIER_FOLLOWUP_RE);
+    if (addModMatch) {
+      const modClean = extractCleanVideoSubject(addModMatch[1]) || addModMatch[1].trim();
+      if (modClean && !texoImageSession.modifiers.some(m => m.toLowerCase() === modClean.toLowerCase())) {
+        texoImageSession.modifiers.push(modClean);
+        if (texoImageSession.modifiers.length > 4) texoImageSession.modifiers.shift();
+      }
+      const fullSub = [texoImageSession.baseSubject, ...texoImageSession.modifiers].join(' ').trim();
+      texoImageSession.lastFullSubject = fullSub;
+      texoImageSession.updatedAt = Date.now();
+      saveTexoImageSession();
+      return {
+        subject: fullSub,
+        baseSubject: texoImageSession.baseSubject,
+        prompt: fullSub,
+        isFollowUp: true
+      };
+    }
+  }
+
+  return null;
+}
+
+async function generateVideo(prompt, col, btn, userQ, apexReply, baseSubjectHint = '') {
   if (btn) {
     btn.classList.add('loading');
-    btn.textContent = '⏳ Rendering Motion…';
+    btn.textContent = '⏳ Rendering 22s Video…';
   }
 
   const wrap = document.createElement('div');
@@ -5975,24 +6123,25 @@ async function generateVideo(prompt, col, btn, userQ, apexReply) {
   wrap.innerHTML = `
     <div class="apex-cyber-video-header">
       <div class="apex-video-title-wrap">
-        <span class="apex-video-badge">🎬 4K UHD CINEMA</span>
-        <span style="font-family:var(--font-mono);font-size:11.5px;color:#fff;font-weight:600">APEX Motion Synthesizer</span>
+        <span class="apex-video-badge">🎬 22s 5-SCENE HD CINEMA</span>
+        <span style="font-family:var(--font-mono);font-size:11.5px;color:#fff;font-weight:600">Multi-Source 4K Storyboard Engine</span>
       </div>
       <div class="apex-video-telemetry">
         <span style="color:#ef4444">● REC</span>
-        <span style="color:var(--text3)">// 24 FPS // H.264</span>
+        <span style="color:var(--text3)">// 22.0s // H.264</span>
       </div>
     </div>
     <div class="image-loading" style="padding:28px 16px;">
       <div class="img-spinner"></div>
-      <span style="font-size:12px;color:var(--cyan-neon);margin-top:8px">Synthesizing high-definition cinematic motion frames…</span>
-      <span style="font-size:11px;color:var(--text3);margin-top:4px">Applying Ken Burns camera pan, lens telemetry, and 24fps MP4 encoding</span>
+      <span style="font-size:12px;color:var(--cyan-neon);margin-top:8px">Harvesting 5 distinct 4K scenes & encoding 22-second HD video…</span>
+      <span style="font-size:11px;color:var(--text3);margin-top:4px">Multi-scene camera choreography, cross-dissolve transitions & H.264 stream</span>
     </div>
   `;
   col.appendChild(wrap);
   scrollToBottom();
 
   const cleanPrompt = (prompt || '').replace(/\[.*?\]/g, '').trim();
+  const activeBase = baseSubjectHint || (texoImageSession && texoImageSession.baseSubject) || '';
 
   try {
     const resp = await fetch('/api/generate-video', {
@@ -6001,7 +6150,8 @@ async function generateVideo(prompt, col, btn, userQ, apexReply) {
       body: JSON.stringify({
         prompt: cleanPrompt,
         user_q: userQ || cleanPrompt,
-        apex_reply: apexReply || ''
+        apex_reply: apexReply || '',
+        base_subject: activeBase
       })
     });
 
@@ -6010,6 +6160,17 @@ async function generateVideo(prompt, col, btn, userQ, apexReply) {
     }
 
     const data = await resp.json();
+    if (data.base_subject || data.title) {
+      texoImageSession.active = true;
+      texoImageSession.lastMode = 'video';
+      texoImageSession.baseSubject = data.base_subject || data.title;
+      if (Array.isArray(data.modifiers)) {
+        texoImageSession.modifiers = data.modifiers;
+      }
+      texoImageSession.lastFullSubject = data.title || data.base_subject;
+      texoImageSession.updatedAt = Date.now();
+      saveTexoImageSession();
+    }
     renderLoadedVideo(wrap, data, btn, userQ, apexReply);
 
   } catch (err) {
@@ -6033,19 +6194,19 @@ async function generateVideo(prompt, col, btn, userQ, apexReply) {
 function renderLoadedVideo(wrap, data, btn, userQ, apexReply) {
   const vidUrl = data.video_url;
   const title = data.title || 'Cinematic Scene';
-  const caption = data.caption || '24 FPS AI Motion Synthesis';
-  const duration = data.duration ? `${data.duration}s` : '2.5s';
-  const filename = data.filename || `apex_video_${Date.now()}.mp4`;
+  const caption = data.caption || '22s 5-Scene Multi-Source HD Synthesis';
+  const duration = data.duration ? `${data.duration}s` : '22.0s';
+  const filename = data.filename || `texo_cinema_${Date.now()}.mp4`;
 
   wrap.innerHTML = `
     <div class="apex-cyber-video-header">
       <div class="apex-video-title-wrap">
-        <span class="apex-video-badge">🎬 4K UHD VIDEO</span>
+        <span class="apex-video-badge">🎬 22s HD CINEMA</span>
         <span style="font-family:var(--font-mono);font-size:12px;color:#fff;font-weight:700">${escapeHtml(title)}</span>
       </div>
       <div class="apex-video-telemetry">
-        <span style="color:var(--mint-neon)">● READY</span>
-        <span style="color:var(--text2)">${duration} // 24 FPS</span>
+        <span style="color:var(--mint-neon)">● 5 SCENES</span>
+        <span style="color:var(--text2)">${duration} // 16:9 HD</span>
       </div>
     </div>
     <div class="apex-cyber-video-player-box">
@@ -6055,11 +6216,12 @@ function renderLoadedVideo(wrap, data, btn, userQ, apexReply) {
       </video>
     </div>
     <div class="apex-cyber-video-caption">
-      <div style="display:flex;flex-direction:column;gap:3px;max-width:70%;">
+      <div style="display:flex;flex-direction:column;gap:3px;max-width:65%;">
         <span style="font-weight:600;color:var(--text1)">${escapeHtml(title)}</span>
         <span style="font-size:11px;color:var(--text3)">${escapeHtml(caption)}</span>
       </div>
       <div style="display:flex;align-items:center;gap:8px;">
+        <button type="button" class="apex-video-action-btn vid-regen-inline-btn" title="Generate a fresh 22s 5-scene video">✨ Do It Better</button>
         <a class="apex-video-action-btn" href="${vidUrl}" download="${filename}" title="Download MP4 Video file">
           <span>⬇️ Download MP4</span>
         </a>
@@ -6067,18 +6229,27 @@ function renderLoadedVideo(wrap, data, btn, userQ, apexReply) {
     </div>
   `;
 
+  const regenVidBtn = wrap.querySelector('.vid-regen-inline-btn');
+  if (regenVidBtn) {
+    regenVidBtn.addEventListener('click', () => {
+      const parentCol = wrap.parentElement;
+      if (parentCol) {
+        wrap.remove();
+        generateVideo('do it better', parentCol, btn, 'do it better', apexReply, texoImageSession.baseSubject);
+      }
+    });
+  }
+
   if (btn) {
     btn.innerHTML = '🎬 Re-render';
     btn.classList.remove('loading');
-    btn.onclick = () => generateVideo(data.prompt || title, wrap.parentElement, btn, userQ, apexReply);
+    btn.onclick = () => generateVideo('do it better', wrap.parentElement, btn, 'do it better', apexReply, texoImageSession.baseSubject);
   }
   scrollToBottom();
 }
 
 function handleExplicitVideoRequest(col, userQ, apexReply) {
-  if (isExplicitVideoRequest(userQ)) {
-    generateVideo(userQ, col, null, userQ, apexReply);
-  }
+  // Handled directly in sendMessage() for zero-text pure 22s video delivery
 }
 
 if (quickVideoBtn) {
