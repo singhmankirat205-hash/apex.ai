@@ -375,7 +375,7 @@ async def report_client_glitch(req: Request):
 
 @app.get("/api/health")
 async def health():
-    return {"status": "ok", "service": "TEXO Universal AI Intelligence", "version": "7.1.0"}
+    return {"status": "ok", "service": "TEXO Universal AI Intelligence", "version": "7.2.0"}
 
 
 @app.get("/api/knowledge")
@@ -764,8 +764,23 @@ async def textile_zero_waste_origami_endpoint(req: OrigamiGarmentRequest):
     return generate_zero_waste_origami_plan(req.garment_type, req.dimensions)
 
 
+_AGENT_MTIME: float = 0.0
+
 @app.post("/api/chat/stream")
 async def chat_stream(req: ChatRequest):
+    global _AGENT_MTIME
+    try:
+        import importlib
+        import backend.agent as _ag
+        ag_path = os.path.abspath(_ag.__file__)
+        cur_mtime = os.path.getmtime(ag_path)
+        if _AGENT_MTIME and cur_mtime != _AGENT_MTIME:
+            importlib.reload(_ag)
+        _AGENT_MTIME = cur_mtime
+        active_stream_fn = _ag.stream_response
+    except Exception:
+        active_stream_fn = stream_response
+
     # Sentinel Pre-Flight Anomaly Inspection & Client Data Shield
     from backend.ai_sentinel import inspect_and_sanitize_payload
     raw_payload = {
@@ -779,7 +794,7 @@ async def chat_stream(req: ChatRequest):
     shielded_payload = inspect_and_sanitize_payload(raw_payload)
 
     return StreamingResponse(
-        stream_response(
+        active_stream_fn(
             messages=shielded_payload["messages"],
             user_role=shielded_payload.get("user_role", req.user_role),
             language=shielded_payload.get("language", req.language),

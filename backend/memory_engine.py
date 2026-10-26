@@ -1,8 +1,9 @@
 """
-APEX Memory Engine — Continuous Long-Term Cross-Session Memory & Profile
-========================================================================
-Maintains continuous enterprise and operational memory across chat sessions:
-- User profile & operating role
+APEX Memory Engine — Continuous Long-Term Cross-Session Memory & Self-Evolving AI Brain
+=======================================================================================
+Maintains continuous enterprise, encyclopedic, and operational memory across chat sessions:
+- User profile, operating role & human command preferences
+- Autonomous self-learned topics from every prompt, multi-source web harvest, and answer
 - Active manufacturing facilities & production lines
 - Monitored batches & quality history
 - Key machinery & calibration states
@@ -28,11 +29,11 @@ _LOCK = threading.Lock()
 
 _DEFAULT_MEMORY: Dict[str, Any] = {
     "user_profile": {
-        "title": "Industrial Operations & Quality Director",
+        "title": "Industrial Operations & Universal Intelligence Director",
         "current_industry": "textile",
         "preferred_role": "OPERATOR",
-        "tone_preference": "Action-oriented, authoritative, highly precise, concise when appropriate",
-        "last_active": "2026-10-03T11:45:00Z"
+        "tone_preference": "Action-oriented, authoritative, deeply knowledgeable across all domains, strictly obedient to human commands",
+        "last_active": "2026-10-26T10:30:00Z"
     },
     "enterprise_context": {
         "primary_facility": "Apex Mills — Plant 1 (Weaving & Wet Finishing Complex)",
@@ -97,11 +98,25 @@ _DEFAULT_MEMORY: Dict[str, Any] = {
         }
     ],
     "learned_preferences": [
-        "Prefers proactive autonomous tool execution and record commits over generic passive text advice.",
-        "Expects direct root-cause identification and ASTM / ISO technical precision.",
-        "Requires immediate containment protocol and escalation HUD during operational distress or line halts."
+        "Strictly obey the human user's exact command boundaries while applying universal knowledge of everything.",
+        "Continuously self-learn after every prompt and answer to deliver deeper, improved answers next time.",
+        "Use clean Unicode mathematical formulas without raw LaTeX symbols ($ or \\text)."
     ],
-    "learned_facts": []
+    "learned_facts": [],
+    "self_learned_topics": [],
+    "brain_telemetry": {
+        "total_prompts_learned": 0,
+        "total_answer_evolutions": 0,
+        "active_knowledge_sources": [
+            "Wikipedia REST & Search Encyclopedia",
+            "DuckDuckGo Instant Knowledge Graph",
+            "Google News Live Global RSS",
+            "ArXiv Peer-Reviewed Scientific Papers",
+            "StackExchange Technical & Coding Q&A",
+            "HackerNews Algolia Tech Intelligence",
+            "TEXO Post-Answer Self-Reflection Engine"
+        ]
+    }
 }
 
 
@@ -114,7 +129,12 @@ def _ensure_memory() -> Dict[str, Any]:
         return _DEFAULT_MEMORY.copy()
     try:
         with open(_MEMORY_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
+            data = json.load(f)
+            if "self_learned_topics" not in data:
+                data["self_learned_topics"] = []
+            if "brain_telemetry" not in data:
+                data["brain_telemetry"] = _DEFAULT_MEMORY["brain_telemetry"].copy()
+            return data
     except Exception as e:
         logger.error("Error reading memory file, reverting to default: %s", e)
         return _DEFAULT_MEMORY.copy()
@@ -123,8 +143,10 @@ def _ensure_memory() -> Dict[str, Any]:
 def _save_memory(data: Dict[str, Any]) -> None:
     """Save memory atomically to disk."""
     _MEMORY_DIR.mkdir(parents=True, exist_ok=True)
-    with open(_MEMORY_FILE, "w", encoding="utf-8") as f:
+    tmp_path = _MEMORY_FILE.with_suffix(".json.tmp")
+    with open(tmp_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, default=str)
+    tmp_path.replace(_MEMORY_FILE)
 
 
 def get_memory() -> Dict[str, Any]:
@@ -157,7 +179,6 @@ def record_session_milestone(action_note: str) -> None:
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "note": action_note
         })
-        # Keep last 50 milestones
         if len(milestones) > 50:
             mem["session_milestones"] = milestones[-50:]
         _save_memory(mem)
@@ -179,18 +200,26 @@ def update_batch_memory(batch_id: str, updates: Dict[str, Any]) -> None:
         _save_memory(mem)
 
 
-def auto_learn_from_dialogue(user_text: str, assistant_text: str) -> None:
+def auto_learn_from_dialogue(
+    user_text: str,
+    assistant_text: str,
+    multi_source_dossier: str = "",
+    learned_turn_meta: Optional[Dict[str, Any]] = None
+) -> None:
     """
-    Extract dynamic operational facts, rules, and user knowledge mentioned in chat turns
-    and persist permanently to long-term memory and the persistent Knowledge Vault.
-    Enables APEX to learn facts on its own without requiring repetitive prompt instructions.
+    Autonomous Self-Learning Pipeline (Post-Turn Brain Consolidation):
+    1. Extracts operational entities, preferences, and human command rules from `user_text`.
+    2. Distills key facts and topic mastery from `assistant_text` and `multi_source_dossier`
+       into `self_learned_topics` and `learned_facts`.
+    3. Updates `brain_telemetry` counters so TEXO continuously evolves after every single prompt.
     """
-    if not user_text or len(user_text.strip()) < 5:
+    if not user_text or len(user_text.strip()) < 3:
         return
 
     with _LOCK:
         mem = _ensure_memory()
         dirty = False
+        now_iso = datetime.now(timezone.utc).isoformat()
 
         # 1. Batch ID extraction
         batch_matches = re.findall(r'\b(?:Batch|Lot|Roll)\s*#?\s*([A-Za-z0-9\-]{3,12})\b', user_text, re.IGNORECASE)
@@ -201,7 +230,7 @@ def auto_learn_from_dialogue(user_text: str, assistant_text: str) -> None:
                 batches.append({
                     "batch_id": b_norm,
                     "status": "ACTIVE_MONITORING",
-                    "noted_at": datetime.now(timezone.utc).isoformat(),
+                    "noted_at": now_iso,
                     "source": "Discovered from user dialogue"
                 })
                 dirty = True
@@ -220,9 +249,9 @@ def auto_learn_from_dialogue(user_text: str, assistant_text: str) -> None:
                 })
                 dirty = True
 
-        # 3. Explicit preferences & operational rules
+        # 3. Explicit preferences & human command rules
         pref_matches = re.findall(
-            r'\b(?:we prefer|always remember|our tolerance is|my name is|from now on|our rule is|in our mill|in our company|we always|never forget|note that|keep in mind)\s+([^.!?\n]+)',
+            r'\b(?:we prefer|always remember|our tolerance is|my name is|from now on|our rule is|in our mill|in our company|we always|never forget|note that|keep in mind|dont show|do not show|just give|always give)\s+([^.!?\n]+)',
             user_text,
             re.IGNORECASE
         )
@@ -231,8 +260,8 @@ def auto_learn_from_dialogue(user_text: str, assistant_text: str) -> None:
             clean_pm = pm.strip()
             if len(clean_pm) > 4 and clean_pm not in prefs:
                 prefs.append(clean_pm)
-                if len(prefs) > 30:
-                    mem["learned_preferences"] = prefs[-30:]
+                if len(prefs) > 35:
+                    mem["learned_preferences"] = prefs[-35:]
                 dirty = True
 
         # 4. Declarative organizational facts & enterprise knowledge
@@ -246,59 +275,121 @@ def auto_learn_from_dialogue(user_text: str, assistant_text: str) -> None:
             matches = re.findall(pat, user_text, re.IGNORECASE)
             for m in matches:
                 clean_f = m.strip() if isinstance(m, str) else m[0].strip()
-                # Clean up any leading conjunctions
                 clean_f = re.sub(r'^(?:and|also|that|plus)\s+', '', clean_f, flags=re.IGNORECASE).strip()
                 if len(clean_f) > 8:
                     fact_entry = {
                         "fact": clean_f,
-                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                        "timestamp": now_iso,
                         "source": "Autonomous dialogue capture"
                     }
-                    if not any(f.get("fact").lower() == clean_f.lower() for f in facts):
+                    if not any(f.get("fact", "").lower() == clean_f.lower() for f in facts):
                         facts.append(fact_entry)
-                        if len(facts) > 50:
-                            mem["learned_facts"] = facts[-50:]
+                        if len(facts) > 60:
+                            mem["learned_facts"] = facts[-60:]
                         dirty = True
+
+        # 5. Autonomous Post-Answer & Multi-Source Topic Learning
+        if assistant_text and len(assistant_text.strip()) >= 30:
+            clean_ans = re.sub(r'```[\s\S]*?```', '', assistant_text).strip()
+            ans_lines = [
+                re.sub(r'^(?:[#*>•\-\+]|\d+\.)\s*', '', ln).strip()
+                for ln in clean_ans.splitlines()
+                if len(ln.strip()) > 25 and not ln.strip().startswith('|---')
+            ]
+            top_takeaway = ans_lines[0][:220] if ans_lines else clean_ans[:220]
+            topic_name = (learned_turn_meta or {}).get("topic") or re.sub(r'[^\w\s\-]', '', user_text.strip())[:55].strip()
+            gen_num = int((learned_turn_meta or {}).get("generation", 1))
+            sources_used = (learned_turn_meta or {}).get("sources", ["Multi-Source AI Brain"])
+
+            if topic_name and len(topic_name) >= 2:
+                topics = mem.setdefault("self_learned_topics", [])
+                existing_idx = next(
+                    (i for i, t in enumerate(topics) if t.get("topic", "").lower() == topic_name.lower()),
+                    None
+                )
+                topic_entry = {
+                    "topic": topic_name,
+                    "generation": gen_num,
+                    "sources": sources_used[:6],
+                    "key_takeaway": top_takeaway,
+                    "last_prompt": user_text.strip()[:120],
+                    "updated_at": now_iso
+                }
+                if existing_idx is not None:
+                    topics[existing_idx] = topic_entry
+                else:
+                    topics.append(topic_entry)
+                if len(topics) > 60:
+                    mem["self_learned_topics"] = topics[-60:]
+
+                # Also add the top quantitative fact from the answer to learned_facts
+                for ln in ans_lines[:4]:
+                    if re.search(r'\b\d+(?:\.\d+)?\s*(?:%|°C|MPa|PSI|bar|mm|km|kg|Hz|kW|GSM|USD|\$|years?|days?)\b', ln, re.I) or '=' in ln:
+                        fact_str = f"[{topic_name.title()}] {ln[:180]}"
+                        if not any(f.get("fact", "").lower() == fact_str.lower() for f in facts):
+                            facts.append({
+                                "fact": fact_str,
+                                "timestamp": now_iso,
+                                "source": f"Self-Learned (Gen #{gen_num})"
+                            })
+                            if len(facts) > 60:
+                                mem["learned_facts"] = facts[-60:]
+                        break
+
+                telem = mem.setdefault("brain_telemetry", {})
+                telem["total_prompts_learned"] = int(telem.get("total_prompts_learned", 0)) + 1
+                if gen_num > 1:
+                    telem["total_answer_evolutions"] = int(telem.get("total_answer_evolutions", 0)) + 1
+                telem["last_learned_topic"] = topic_name
+                telem["last_updated"] = now_iso
+                dirty = True
 
         if dirty:
             _save_memory(mem)
-            logger.info("APEX Long-Term Memory updated with new autonomous facts/preferences.")
-            # Also sync into persistent Knowledge Vault for semantic recall
-            try:
-                from backend.knowledge_engine import learn_document
-                all_facts_text = "\n".join([f"• Rule/Fact: {f.get('fact')}" for f in mem.get("learned_facts", [])] +
-                                           [f"• User Preference: {p}" for p in mem.get("learned_preferences", [])])
-                if all_facts_text.strip():
-                    learn_document(
-                        filename="autonomous_dialogue_knowledge.txt",
-                        content_type="text/plain",
-                        parsed_text=all_facts_text
-                    )
-            except Exception as ke:
-                logger.debug("Failed to sync memory to knowledge vault: %s", ke)
+            logger.info("APEX Self-Learning Brain Memory updated (topic='%s').", (learned_turn_meta or {}).get("topic", user_text[:30]))
 
 
 def get_memory_prompt_context() -> str:
     """
-    Format a concise, authoritative operational briefing from continuous long-term memory
-    to inject directly into APEX's system prompt.
+    Format a concise, authoritative briefing from continuous long-term memory
+    and autonomous self-learned topics to inject into TEXO's system prompt.
     """
     mem = get_memory()
-    profile = mem.get("user_profile", {})
     ent = mem.get("enterprise_context", {})
     batches = ent.get("active_batches", [])
     machinery = ent.get("critical_machinery", [])
     milestones = mem.get("session_milestones", [])[-3:]
-    prefs = mem.get("learned_preferences", [])[-5:]
-    facts = mem.get("learned_facts", [])[-6:]
+    prefs = mem.get("learned_preferences", [])[-6:]
+    facts = mem.get("learned_facts", [])[-8:]
+    learned_topics = mem.get("self_learned_topics", [])[-8:]
+    telem = mem.get("brain_telemetry", {})
 
     lines = [
         "══════════════════════════════════════════════════════════════════════════════",
-        "CONTINUOUS LONG-TERM ENTERPRISE MEMORY & ACTIVE PROFILE (CROSS-SESSION STATE)",
+        "CONTINUOUS SELF-LEARNING AI BRAIN & CROSS-SESSION MEMORY STATE",
         "══════════════════════════════════════════════════════════════════════════════",
-        f"• Facility: {ent.get('primary_facility', 'Apex Production Complex')}",
-        f"• Active Production Lines: {', '.join(ent.get('production_lines', ['Main Line']))}",
+        f"• Autonomous Brain Telemetry: {telem.get('total_prompts_learned', len(learned_topics))} prompts self-learned | "
+        f"{telem.get('total_answer_evolutions', 0)} multi-turn answer evolutions completed",
+        f"• Facility Context (when textile/manufacturing active): {ent.get('primary_facility', 'Apex Production Complex')}",
     ]
+
+    if learned_topics:
+        lines.append("• Recently Self-Learned Knowledge Domains & Generation Level:")
+        for lt in reversed(learned_topics):
+            srcs = ", ".join(lt.get("sources", [])[:3])
+            lines.append(
+                f"  - Topic '{lt.get('topic')}' [Gen #{lt.get('generation', 1)} via {srcs}]: {lt.get('key_takeaway', '')[:140]}"
+            )
+
+    if facts:
+        lines.append("• Autonomously Learned Facts, Metrics & Rules:")
+        for f in facts:
+            lines.append(f"  - {f.get('fact')}")
+
+    if prefs:
+        lines.append("• Human Command Boundaries & Learned User Preferences:")
+        for p in prefs:
+            lines.append(f"  - {p}")
 
     if batches:
         b_strs = [f"#{b.get('batch_id')} ({b.get('status', 'Active')}: {b.get('latest_defect', b.get('fabric_type', 'General'))})" for b in batches[:3]]
@@ -308,23 +399,14 @@ def get_memory_prompt_context() -> str:
         m_strs = [f"{m.get('machine_id')} [{m.get('status', 'OK')}]" for m in machinery[:3]]
         lines.append(f"• Active Equipment: {'; '.join(m_strs)}")
 
-    if facts:
-        lines.append("• Autonomously Learned Enterprise Facts & Custom Rules:")
-        for f in facts:
-            lines.append(f"  - {f.get('fact')}")
-
-    if prefs:
-        lines.append("• Continuous Learned Preferences & Working Standards:")
-        for p in prefs:
-            lines.append(f"  - {p}")
-
     if milestones:
         lines.append("• Recent Cross-Session Milestones:")
         for ms in milestones:
             lines.append(f"  - [{ms.get('timestamp', '')[:10]}] {ms.get('note')}")
 
     lines.append(
-        "CRITICAL AUTONOMOUS LEARNING INSTRUCTION: You possess continuous memory of these facts, batches, machines, and past decisions. "
-        "Never treat the user as a blank slate. If the user refers to past rules, company facts, or equipment, seamlessly apply them without requiring the user to re-type or re-prompt!"
+        "CRITICAL AUTONOMOUS SELF-LEARNING INSTRUCTION: You are an ever-evolving AI Brain with universal knowledge of everything, "
+        "strictly bounded by the human user's command. Whenever answering a topic you have already learned above or in the Knowledge Vault, "
+        "automatically build upon your prior answer to deliver an even smarter, deeper, and more informative response next time!"
     )
     return "\n".join(lines)

@@ -42,7 +42,7 @@ def is_server_ready() -> bool:
         if status != 200:
             return False
         data = json.loads(body)
-        if data.get("version") != "7.1.0":
+        if data.get("version") != "7.2.0":
             return False
         return True
     except Exception:

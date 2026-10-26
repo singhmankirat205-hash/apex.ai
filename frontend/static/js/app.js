@@ -2505,25 +2505,40 @@ if (memoryBadge) {
   memoryBadge.addEventListener('click', async () => {
     playClick();
     try {
-      const res = await fetch('/api/memory');
-      const data = await res.json();
+      const [memRes, knowRes] = await Promise.all([
+        fetch('/api/memory'),
+        fetch('/api/knowledge').catch(() => null)
+      ]);
+      const data = await memRes.json();
+      const kData = (knowRes && knowRes.ok) ? await knowRes.json() : {};
       const ent = data.enterprise_context || {};
-      const batches = (ent.active_batches || []).map(b => `• ${b.batch_id}: ${b.fabric_type || ''} (${b.status || ''})`).join('\n');
-      const machinery = (ent.critical_machinery || []).map(m => `• ${m.machine_id}: ${m.status || ''}`).join('\n');
-      const milestones = (data.session_milestones || []).slice(-3).map(m => `• [${(m.timestamp||'').slice(0,10)}] ${m.note}`).join('\n');
-      
-      alert(`🧠 TEXO CONTINUOUS LONG-TERM MEMORY & CONTEXT\n\nFacility: ${ent.primary_facility || 'TEXO Intelligence Shed'}\n\nMonitored Batches:\n${batches || 'None'}\n\nMonitored Machinery:\n${machinery || 'None'}\n\nRecent Milestones:\n${milestones || 'None'}\n\nContinuous memory is actively injected into every chat session!`);
+      const telem = data.brain_telemetry || {};
+      const learnedTopics = (data.self_learned_topics || []).slice(-5).reverse()
+        .map(t => `• ${t.topic} (Gen #${t.generation || 1}): ${(t.key_takeaway || '').slice(0, 90)}`)
+        .join('\n');
+      const sources = (telem.active_knowledge_sources || [
+        'Wikipedia Encyclopedia', 'DuckDuckGo Graph', 'Google News Live', 'ArXiv Research', 'StackExchange', 'HackerNews'
+      ]).join(', ');
+
+      alert(
+        `🧠 TEXO AUTONOMOUS SELF-LEARNING AI BRAIN & MEMORY\n\n` +
+        `• Self-Learned Prompts: ${telem.total_prompts_learned || kData.total_turns_learned || 0}\n` +
+        `• Multi-Turn Answer Evolutions: ${telem.total_answer_evolutions || kData.total_evolutions || 0}\n` +
+        `• Knowledge Vault Topics & Docs: ${kData.total_documents || 0} (${kData.total_chunks || 0} chunks)\n` +
+        `• Active Learning Sources: ${sources}\n\n` +
+        `Recently Self-Learned Topics:\n${learnedTopics || '• Ready — learns automatically after every prompt & answer!'}\n\n` +
+        `TEXO autonomously learns from multi-source web intelligence and its own answers after every chat turn to give improved answers next time!`
+      );
     } catch(err) {
-      alert('Continuous Memory Engine is ACTIVE and tracking sessions.');
+      alert('Autonomous Self-Learning AI Brain & Continuous Memory Engine is ACTIVE.');
     }
   });
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// UNIVERSAL FILE UPLOAD (PDF, Excel, CSV, Word, Image, Video, Audio)
+// UNIVERSAL FILE UPLOAD + DIRECT CLIPBOARD IMAGE PASTE (Ctrl+V) & DRAG-AND-DROP
 // ══════════════════════════════════════════════════════════════════════════════
-fileUpload.addEventListener('change', async e => {
-  const file = e.target.files[0];
+async function attachFileOrImageToChat(file, customBadgeText = '') {
   if (!file) return;
 
   currentAttachedFile = file;
@@ -2538,28 +2553,47 @@ fileUpload.addEventListener('change', async e => {
   const videoPreviewThumb = document.getElementById('videoPreviewThumb');
   const filePreviewIcon = document.getElementById('filePreviewIcon');
 
-  filePreviewRow.style.display = 'flex';
-  const fileSizeKb = Math.round(file.size / 1024);
+  if (filePreviewRow) filePreviewRow.style.display = 'flex';
+  const fileSizeKb = Math.max(1, Math.round(file.size / 1024));
 
-  // Instant local visual preview for images
-  if (file.type.startsWith('image/')) {
+  // Instant local visual preview & immediate client-side Base64 for images (zero-wait send!)
+  if (file.type && file.type.startsWith('image/')) {
     if (imagePreviewThumb) {
       imagePreviewThumb.src = localUrl;
       imagePreviewThumb.style.display = 'block';
     }
     if (videoPreviewThumb) videoPreviewThumb.style.display = 'none';
     if (filePreviewIcon) filePreviewIcon.style.display = 'none';
-    if (previewBadge) previewBadge.textContent = '📷 Attached Photo';
+    if (previewBadge) previewBadge.textContent = customBadgeText || '📷 Attached Photo';
     if (filePreviewName) filePreviewName.textContent = `${file.name} (${fileSizeKb} KB)`;
     if (previewStatus) previewStatus.textContent = 'Photo ready to send with your inquiry';
-  } else if (file.type.startsWith('video/')) {
+
+    // Immediately populate base64 on the client so pressing Enter right after Ctrl+V works instantaneously
+    try {
+      const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      if (typeof dataUrl === 'string' && dataUrl.includes('base64,')) {
+        const rawB64 = dataUrl.split('base64,')[1];
+        pendingAttachment = {
+          filename: file.name,
+          file_type: 'image',
+          image_base64: rawB64,
+          display_summary: `${file.name} (${fileSizeKb} KB)`
+        };
+      }
+    } catch (_) {}
+  } else if (file.type && file.type.startsWith('video/')) {
     if (videoPreviewThumb) {
       videoPreviewThumb.src = localUrl;
       videoPreviewThumb.style.display = 'block';
     }
     if (imagePreviewThumb) imagePreviewThumb.style.display = 'none';
     if (filePreviewIcon) filePreviewIcon.style.display = 'none';
-    if (previewBadge) previewBadge.textContent = '🎥 Attached Video';
+    if (previewBadge) previewBadge.textContent = customBadgeText || '🎥 Attached Video';
     if (filePreviewName) filePreviewName.textContent = `${file.name} (${fileSizeKb} KB)`;
     if (previewStatus) previewStatus.textContent = 'Video ready to send with your inquiry';
   } else {
@@ -2569,7 +2603,7 @@ fileUpload.addEventListener('change', async e => {
       filePreviewIcon.style.display = 'block';
       filePreviewIcon.textContent = file.name.endsWith('.pdf') ? '📄' : (file.name.endsWith('.pptx') ? '📊' : (file.name.endsWith('.xlsx') ? '📈' : '📎'));
     }
-    if (previewBadge) previewBadge.textContent = '📑 Attached File';
+    if (previewBadge) previewBadge.textContent = customBadgeText || '📑 Attached File';
     if (filePreviewName) filePreviewName.textContent = `${file.name} (${fileSizeKb} KB)`;
     if (previewStatus) previewStatus.textContent = 'Analyzing document structure…';
   }
@@ -2589,9 +2623,93 @@ fileUpload.addEventListener('change', async e => {
     if (previewStatus) previewStatus.textContent = 'Ready to send with your message';
     playClick();
   } catch (err) {
-    if (previewStatus) previewStatus.textContent = `Upload note: ${file.name} loaded locally`;
+    if (previewStatus) previewStatus.textContent = `Ready: ${file.name} attached locally`;
+  }
+}
+
+fileUpload.addEventListener('change', async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  await attachFileOrImageToChat(file);
+});
+
+// Direct Clipboard Copy-Paste Image / File into Chatbox (Ctrl+V or Right-Click -> Paste)
+document.addEventListener('paste', async (e) => {
+  const cd = e.clipboardData || window.clipboardData;
+  if (!cd) return;
+
+  let pastedFile = null;
+
+  // 1. Check clipboardData.items (Screenshots, Snipping Tool, Browser "Copy Image", etc.)
+  if (cd.items && cd.items.length) {
+    for (let i = 0; i < cd.items.length; i++) {
+      const item = cd.items[i];
+      if (item.kind === 'file' && (item.type.startsWith('image/') || item.type !== '')) {
+        const blob = item.getAsFile();
+        if (blob) {
+          const ext = (blob.type && blob.type.split('/')[1]) ? blob.type.split('/')[1].replace('jpeg', 'jpg') : 'png';
+          const cleanName = (blob.name && blob.name !== 'image.png')
+            ? blob.name
+            : `pasted_photo_${new Date().toTimeString().slice(0,8).replace(/:/g,'')}.${ext}`;
+          pastedFile = new File([blob], cleanName, { type: blob.type || 'image/png' });
+          break;
+        }
+      }
+    }
+  }
+
+  // 2. Fallback: Check clipboardData.files (Copying an image file from File Explorer / Desktop)
+  if (!pastedFile && cd.files && cd.files.length > 0) {
+    pastedFile = cd.files[0];
+  }
+
+  // 3. Fallback: Check if HTML clipboard contains a data:image/... URI
+  if (!pastedFile && cd.getData) {
+    try {
+      const htmlData = cd.getData('text/html') || '';
+      const dataUriMatch = htmlData.match(/src=["'](data:image\/([a-zA-Z0-9+]+);base64,([^"']+))["']/i);
+      if (dataUriMatch) {
+        const mime = `image/${dataUriMatch[2]}`;
+        const bstr = atob(dataUriMatch[3]);
+        const u8 = new Uint8Array(bstr.length);
+        for (let j = 0; j < bstr.length; j++) u8[j] = bstr.charCodeAt(j);
+        pastedFile = new File([u8], `pasted_photo_${Date.now()}.png`, { type: mime });
+      }
+    } catch (_) {}
+  }
+
+  if (pastedFile) {
+    e.preventDefault();
+    const isImg = pastedFile.type && pastedFile.type.startsWith('image/');
+    await attachFileOrImageToChat(pastedFile, isImg ? '📋 Pasted Photo' : '📋 Pasted File');
+    if (messageInput) {
+      messageInput.focus();
+    }
+    if (typeof showSentinelToast === 'function') {
+      showSentinelToast('📋 Photo pasted directly from clipboard — ready to send!', 2600);
+    }
   }
 });
+
+// Also allow Drag-and-Drop of images/files directly into the chat window or input box
+const mainChatDropZone = document.getElementById('main') || document.body;
+if (mainChatDropZone) {
+  mainChatDropZone.addEventListener('dragover', (e) => {
+    if (e.dataTransfer && e.dataTransfer.types && Array.from(e.dataTransfer.types).includes('Files')) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+    }
+  });
+  mainChatDropZone.addEventListener('drop', async (e) => {
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      e.preventDefault();
+      const droppedFile = e.dataTransfer.files[0];
+      const isImg = droppedFile.type && droppedFile.type.startsWith('image/');
+      await attachFileOrImageToChat(droppedFile, isImg ? '📷 Dropped Photo' : '📎 Dropped File');
+      if (messageInput) messageInput.focus();
+    }
+  });
+}
 
 if (removeFileBtn) {
   removeFileBtn.addEventListener('click', clearFilePreview);
@@ -2675,7 +2793,7 @@ function addRipple(btn, e) {
 
 function triggerSend(e) {
   const text=messageInput.value.trim();
-  if (!text && !pendingAttachment) return;
+  if (!text && !pendingAttachment && !currentAttachedFile) return;
   messageInput.value=''; autoResize();
   sendMessage(text);
 }
@@ -3633,7 +3751,7 @@ function renderCharts(container) {
 
 async function sendMessage(text) {
   if (isStreaming) return;
-  if (!text && !pendingAttachment) return;
+  if (!text && !pendingAttachment && !currentAttachedFile) return;
 
   if (!currentUser) {
     currentUser = {

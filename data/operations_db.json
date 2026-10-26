@@ -67,6 +67,16 @@
       "id": "REC-0010",
       "created_at": "2026-10-12T03:31:55.439931+00:00",
       "updated_at": "2026-10-12T03:31:55.439931+00:00"
+    },
+    {
+      "id": "REC-0011",
+      "created_at": "2026-10-24T09:49:22.104687+00:00",
+      "updated_at": "2026-10-24T09:49:22.104687+00:00"
+    },
+    {
+      "id": "REC-0012",
+      "created_at": "2026-10-25T01:59:00.759385+00:00",
+      "updated_at": "2026-10-25T01:59:00.759385+00:00"
     }
   ],
   "inventory": [
@@ -424,6 +434,36 @@
         "id": "REC-0010",
         "created_at": "2026-10-12T03:31:55.439931+00:00",
         "updated_at": "2026-10-12T03:31:55.439931+00:00"
+      }
+    },
+    {
+      "execution_id": "EXEC-1792835362104",
+      "tool": "update_record",
+      "target": "qc_records",
+      "status": "EXECUTED_AND_COMMITTED",
+      "timestamp": "2026-10-24T09:49:22.104687+00:00",
+      "author": "TEXO Autonomous (FOOD_OPERATOR)",
+      "summary": "Created new record 'REC-0011' in 'qc_records'.",
+      "action_type": "RECORD_CREATED",
+      "record": {
+        "id": "REC-0011",
+        "created_at": "2026-10-24T09:49:22.104687+00:00",
+        "updated_at": "2026-10-24T09:49:22.104687+00:00"
+      }
+    },
+    {
+      "execution_id": "EXEC-1792893540759",
+      "tool": "update_record",
+      "target": "qc_records",
+      "status": "EXECUTED_AND_COMMITTED",
+      "timestamp": "2026-10-25T01:59:00.759385+00:00",
+      "author": "TEXO Autonomous (WAREHOUSE_OP)",
+      "summary": "Created new record 'REC-0012' in 'qc_records'.",
+      "action_type": "RECORD_CREATED",
+      "record": {
+        "id": "REC-0012",
+        "created_at": "2026-10-25T01:59:00.759385+00:00",
+        "updated_at": "2026-10-25T01:59:00.759385+00:00"
       }
     }
   ]

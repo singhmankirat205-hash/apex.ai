@@ -1,0 +1,144 @@
+{
+  "base_subject": "Spider-Man",
+  "modifiers": [],
+  "style_preferences": [],
+  "call_idx": 0,
+  "seen_urls": [
+    "https://w.wallhaven.cc/full/zm/wallhaven-zm825o.jpg",
+    "https://creator.nightcafe.studio/jobs/ME8PifYMFqFfGjSYgnvR/ME8PifYMFqFfGjSYgnvR--1--1gyxz.jpg",
+    "https://images6.alphacoders.com/133/thumb-1920-1336949.png",
+    "https://pics.craiyon.com/2023-06-27/a9a6cb1c16764ee98243256435ec9360.webp",
+    "https://m.media-amazon.com/images/I/71lQzA5eAfL._AC_UF894,1000_QL80_.jpg",
+    "https://wallpapercave.com/wp/wp7684256.jpg",
+    "https://i.pinimg.com/originals/0d/27/1b/0d271b420377632fbc6c4848968047c1.jpg",
+    "https://image-static.collegedunia.com/public/college_data/images/appImage/1676286868wall11.png",
+    "https://wallpapercave.com/wp/wp13591603.jpg",
+    "https://admistay.blr1.cdn.digitaloceanspaces.com/Institutes/gallery_images/academic-building/lm-thapar-school-of-management-derabassi_003.jpg",
+    "https://i.pinimg.com/originals/fb/9f/13/fb9f13e60427bbbe52184afc4eb12e2e.png",
+    "https://wallpaperaccess.com/full/14773421.jpg",
+    "https://i.pinimg.com/originals/4e/c1/1f/4ec11fa15f20c1b2609881ad57af2979.jpg",
+    "https://i.pinimg.com/originals/3e/9a/42/3e9a42199902f86e0a741bf29c2bc810.jpg",
+    "https://static.vecteezy.com/system/resources/thumbnails/077/346/590/small_2x/breathtaking-sunrise-illuminating-a-sea-of-clouds-nestled-between-majestic-mountain-peaks-painting-the-sky-with-fiery-orange-and-golden-hues-over-a-serene-valley-landscape-free-video.jpg",
+    "https://static.vecteezy.com/system/resources/previews/055/502/229/large_2x/stunning-coastal-sunrise-over-serene-beach-with-distant-mountain-photo.jpg",
+    "https://thumbs.dreamstime.com/b/breathtaking-japanese-sunrise-coastal-majesty-paints-eastern-isles-vibrant-hues-witness-magic-as-bathes-island-353098827.jpg",
+    "https://thumbs.dreamstime.com/z/serene-coastal-sunrise-illuminates-islands-surrounding-ocean-waters-beautiful-greenery-rocks-waves-tranquil-365440884.jpg"
+  ],
+  "seen_hashes": [
+    "ec011cf967eff94434a1ed4c4806dc5b",
+    "c89fa02129d61faed1ecf040aab5f75d",
+    "6a552cfa8efe69605d7727fbc777fbc2",
+    "d3da4548764fdaa61263e76f44a69b26",
+    "34d2a19b861405d7c977880bc8f9ba65",
+    "843c5e41a8d39ad32725ce8cb4e4e50c",
+    "a41031c57f3567e1f9c301c1bef05a06",
+    "daf2a5164dcdce77db7acd83b459d4b0",
+    "a19c0d41ad5cdd9679dcc4ea2bf9c456",
+    "6f5f3e30d5dd48a4f53415e7f5d32c9f",
+    "d76d27bb44e16c4c3bc7418e1c43f835",
+    "ffd853758b63670b25deaf3e62c4ef57",
+    "67643100b0b15c1193048e915014930c",
+    "e25712d1c188c39d43d12b703aaafe32",
+    "1ed11d485a85f2bd093f58cd3ae23167",
+    "3b9d85ca2828aade2adfc106682cba61",
+    "d257ec3777b145e09e5d69f74e3e4fa0",
+    "4573353d7f70aae6c8cd134ac16cbcce"
+  ],
+  "history": [
+    {
+      "q": "make the photo of spiderman",
+      "resolved": "Spider-Man",
+      "type": "new"
+    },
+    {
+      "q": "do it better",
+      "resolved": "Spider-Man",
+      "type": "better"
+    },
+    {
+      "q": "add black suit in rain",
+      "resolved": "Spider-Man black suit in rain",
+      "type": "modify"
+    },
+    {
+      "q": "generate an image of marvel",
+      "resolved": "marvel",
+      "type": "new"
+    },
+    {
+      "q": "generate the image of captain america and avengers",
+      "resolved": "Captain America and avengers",
+      "type": "new"
+    },
+    {
+      "q": "do it better",
+      "resolved": "Captain America and avengers black suit in rain dynamic action pose",
+      "type": "better"
+    },
+    {
+      "q": "in rain at night",
+      "resolved": "Captain America and avengers black suit in rain dynamic action pose rain at night",
+      "type": "modify"
+    },
+    {
+      "q": "generate image of lm thapar school of managment",
+      "resolved": "lm thapar school of managment",
+      "type": "new"
+    },
+    {
+      "q": "in rain at night",
+      "resolved": "lm thapar school of managment black suit in rain dynamic action pose rain at night",
+      "type": "modify"
+    },
+    {
+      "q": "do it better",
+      "resolved": "lm thapar school of managment black suit in rain dynamic action pose rain at night",
+      "type": "better"
+    },
+    {
+      "q": "generate the image of krishna",
+      "resolved": "krishna",
+      "type": "new"
+    },
+    {
+      "q": "do it better",
+      "resolved": "krishna black suit in rain dynamic action pose rain at night",
+      "type": "better"
+    },
+    {
+      "q": "do it better",
+      "resolved": "krishna black suit in rain dynamic action pose rain at night",
+      "type": "better"
+    },
+    {
+      "q": "do it better",
+      "resolved": "krishna black suit in rain dynamic action pose rain at night",
+      "type": "better"
+    },
+    {
+      "q": "generate an image of A serene, cinematic landscape featuring snow-capped mountain peaks bathed in golden hour sunrise light, paired with a vibrant composition of fresh, dewy oranges and a tranquil coastal beach at sunset]",
+      "resolved": "serene, cinematic landscape featuring snow-capped mountain peaks bathed in golden hour sunrise light, paired with a vibrant composition of fresh, dewy oranges and a tranquil coastal beach at sunset]",
+      "type": "new"
+    },
+    {
+      "q": "do it better",
+      "resolved": "serene, cinematic landscape featuring snow-capped mountain peaks bathed in golden hour sunrise light, paired with a vibrant composition of fresh, dewy oranges and a tranquil coastal beach at sunset]",
+      "type": "better"
+    },
+    {
+      "q": "do it better",
+      "resolved": "serene, cinematic landscape featuring snow-capped mountain peaks bathed in golden hour sunrise light, paired with a vibrant composition of fresh, dewy oranges and a tranquil coastal beach at sunset]",
+      "type": "better"
+    },
+    {
+      "q": "do it better",
+      "resolved": "serene, cinematic landscape featuring snow-capped mountain peaks bathed in golden hour sunrise light, paired with a vibrant composition of fresh, dewy oranges and a tranquil coastal beach at sunset]",
+      "type": "better"
+    },
+    {
+      "q": "Spider-Man",
+      "resolved": "Spider-Man",
+      "type": "new"
+    }
+  ],
+  "updated_at": 1792986968.6405346
+}

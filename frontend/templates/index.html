@@ -74,7 +74,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Syne:wght@700;800;900&family=Orbitron:wght@600;700;900&family=Space+Grotesk:wght@600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/static/css/style.css?v=7.1.0"/>
+  <link rel="stylesheet" href="/static/css/style.css?v=7.2.0"/>
 </head>
 <body data-industry="textile">
 
@@ -559,12 +559,12 @@
         </button>
       </div>
       <button class="mic-btn" id="quickVideoBtn" title="Generate AI Video / Cinematic Motion Clip">🎬</button>
-      <label class="attach-btn" for="fileUpload" title="Attach Photo, Video, PowerPoint (.pptx), PDF, Excel, Word, CSV">📎
+      <label class="attach-btn" for="fileUpload" title="Attach Photo, Video, PPT, PDF, Excel, Word (or press Ctrl+V to paste photo directly)">📎
         <input type="file" id="fileUpload" accept=".pptx,.ppt,.pdf,.xlsx,.xls,.csv,.docx,.doc,.txt,.json,.jpg,.jpeg,.png,.webp,.mp4,.mov,.webm,.mp3,*/*" style="display:none"/>
       </label>
       <div class="input-wrapper">
         <textarea id="messageInput" rows="1"
-          placeholder="Ask anything… defect, calculation, process question, or execute action"
+          placeholder="Ask anything or press Ctrl+V to paste a photo directly into chat…"
           autocomplete="off"></textarea>
         <div class="image-preview-row" id="filePreviewRow" style="display:none">
           <div class="file-preview-card" id="filePreviewCard">
@@ -591,8 +591,8 @@
       </button>
     </div>
     <p class="input-hint">
-      <kbd>Enter</kbd> send · <kbd>Shift+Enter</kbd> new line ·
-      🎤 speak input · ⚡ neural audio listen · 🕐 history ·
+      <kbd>Enter</kbd> send · <kbd>Ctrl+V</kbd> paste photo · <kbd>Shift+Enter</kbd> new line ·
+      🎤 speak input · 🧠 self-learning AI brain ·
       Industry: <strong id="currentIndustryLabel">General</strong> · Role: <strong id="currentRoleLabel">Universal Consultant</strong> · Lang: <strong id="currentLangLabel">English</strong>
     </p>
   </div>
@@ -1414,6 +1414,6 @@
 </script>
 <script src="/static/js/chart.min.js"></script>
 <script src="/static/js/marked.min.js"></script>
-<script src="/static/js/app.js?v=7.1.0"></script>
+<script src="/static/js/app.js?v=7.2.0"></script>
 </body>
 </html>

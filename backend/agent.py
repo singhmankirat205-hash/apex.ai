@@ -98,21 +98,33 @@ def _fetch_google_news(query: str) -> str:
 
 
 def _fetch_wikipedia(query: str) -> str:
-    """Fetch authoritative encyclopedic and technical facts from Wikipedia."""
+    """Fetch authoritative encyclopedic, scientific, and historical facts from Wikipedia."""
     try:
         encoded = urllib.parse.quote(query)
-        url = f"https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch={encoded}&format=json&srlimit=2"
-        req = urllib.request.Request(url, headers={"User-Agent": "APEX-Industrial-AI/1.0"})
-        with urllib.request.urlopen(req, timeout=4.5) as resp:
+        url = f"https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch={encoded}&format=json&srlimit=3"
+        req = urllib.request.Request(url, headers={"User-Agent": "APEX-Industrial-AI/2.0"})
+        with urllib.request.urlopen(req, timeout=4.0) as resp:
             data = json.loads(resp.read().decode())
             results = data.get("query", {}).get("search", [])
             if not results:
                 return ""
-            lines = ["--- TECHNICAL STANDARDS & FOUNDATIONAL SPECIFICATIONS (Wikipedia) ---"]
+            lines = ["--- ENCYCLOPEDIC & TECHNICAL SPECIFICATIONS (Wikipedia) ---"]
             for r in results:
                 title = r.get("title", "")
-                snippet = re.sub(r"<[^>]+>", "", r.get("snippet", ""))
+                snippet = re.sub(r"<[^>]+>", "", r.get("snippet", "")).replace("&quot;", '"').replace("&#039;", "'")
                 lines.append(f"• {title}: {snippet}")
+            top_title = results[0].get("title", "")
+            if top_title:
+                try:
+                    sum_url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{urllib.parse.quote(top_title.replace(' ', '_'))}"
+                    sreq = urllib.request.Request(sum_url, headers={"User-Agent": "APEX-Industrial-AI/2.0"})
+                    with urllib.request.urlopen(sreq, timeout=2.5) as sresp:
+                        sdata = json.loads(sresp.read().decode())
+                        extract = (sdata.get("extract") or "").strip()
+                        if extract and len(extract) > 40:
+                            lines.append(f"• Deep Encyclopedic Summary ({top_title}): {extract[:550]}")
+                except Exception:
+                    pass
             return "\n".join(lines)
     except Exception as e:
         logger.debug("Wikipedia error: %s", e)
@@ -120,15 +132,15 @@ def _fetch_wikipedia(query: str) -> str:
 
 
 def _fetch_arxiv(query: str) -> str:
-    """Fetch peer-reviewed research papers and engineering findings from ArXiv."""
+    """Fetch peer-reviewed research papers and scientific findings from ArXiv."""
     try:
         encoded = urllib.parse.quote(query)
-        url = f"http://export.arxiv.org/api/query?search_query=all:{encoded}&start=0&max_results=2"
-        req = urllib.request.Request(url, headers={"User-Agent": "APEX-Industrial-AI/1.0"})
-        with urllib.request.urlopen(req, timeout=4.5) as resp:
+        url = f"http://export.arxiv.org/api/query?search_query=all:{encoded}&start=0&max_results=3"
+        req = urllib.request.Request(url, headers={"User-Agent": "APEX-Industrial-AI/2.0"})
+        with urllib.request.urlopen(req, timeout=4.0) as resp:
             root = ET.fromstring(resp.read())
             ns = {"atom": "http://www.w3.org/2005/Atom"}
-            entries = root.findall("atom:entry", ns)[:2]
+            entries = root.findall("atom:entry", ns)[:3]
             if not entries:
                 return ""
             lines = ["--- SCIENTIFIC RESEARCH & ENGINEERING PUBLICATIONS (ArXiv) ---"]
@@ -136,7 +148,7 @@ def _fetch_arxiv(query: str) -> str:
                 t = e.find("atom:title", ns)
                 title = t.text.strip().replace("\n", " ") if t is not None else ""
                 s = e.find("atom:summary", ns)
-                summary = s.text.strip().replace("\n", " ")[:180] if s is not None else ""
+                summary = s.text.strip().replace("\n", " ")[:220] if s is not None else ""
                 lines.append(f"• Research Paper: \"{title}\" — Summary: {summary}...")
             return "\n".join(lines)
     except Exception as e:
@@ -145,11 +157,11 @@ def _fetch_arxiv(query: str) -> str:
 
 
 def _fetch_duckduckgo(query: str) -> str:
-    """Fetch entity facts and quick knowledge from DuckDuckGo."""
+    """Fetch entity facts and quick knowledge from DuckDuckGo Knowledge Graph."""
     try:
         url = "https://api.duckduckgo.com/"
         params = {"q": query, "format": "json", "no_html": "1", "skip_disambig": "1"}
-        r = _SESSION.get(url, params=params, timeout=4.5, headers={"User-Agent": "APEX-Industrial-AI/1.0"})
+        r = _SESSION.get(url, params=params, timeout=3.8, headers={"User-Agent": "APEX-Industrial-AI/2.0"})
         if r.status_code != 200:
             return ""
         data = r.json()
@@ -157,10 +169,13 @@ def _fetch_duckduckgo(query: str) -> str:
         abstract = data.get("AbstractText", "").strip()
         if abstract:
             source = data.get("AbstractSource", "DDG")
-            parts.append(f"• Definition [{source}]: {abstract}")
-        for topic in data.get("RelatedTopics", [])[:2]:
+            parts.append(f"• Definition [{source}]: {abstract[:420]}")
+        answer = str(data.get("Answer", "")).strip()
+        if answer:
+            parts.append(f"• Direct Computation/Fact: {answer[:250]}")
+        for topic in data.get("RelatedTopics", [])[:4]:
             if isinstance(topic, dict) and topic.get("Text"):
-                parts.append(f"• Key Fact: {topic['Text'][:160]}")
+                parts.append(f"• Key Fact: {topic['Text'][:200]}")
         if parts:
             return "--- VERIFIED ENTITY KNOWLEDGE (DuckDuckGo Graph) ---\n" + "\n".join(parts)
         return ""
@@ -169,19 +184,75 @@ def _fetch_duckduckgo(query: str) -> str:
         return ""
 
 
+def _fetch_stackexchange(query: str) -> str:
+    """Fetch high-voted technical, coding, mathematics & engineering answers from StackExchange."""
+    try:
+        url = "https://api.stackexchange.com/2.3/search/advanced"
+        params = {
+            "order": "desc",
+            "sort": "relevance",
+            "q": query[:80],
+            "accepted": "True",
+            "pagesize": 3,
+            "site": "stackoverflow",
+        }
+        r = _SESSION.get(url, params=params, timeout=3.5, headers={"User-Agent": "APEX-Industrial-AI/2.0"})
+        if r.status_code != 200:
+            return ""
+        items = r.json().get("items", [])[:3]
+        if not items:
+            return ""
+        lines = ["--- TECHNICAL & CODING SOLUTIONS (StackExchange / StackOverflow) ---"]
+        for it in items:
+            title = it.get("title", "").replace("&quot;", '"').replace("&#39;", "'")
+            score = it.get("score", 0)
+            tags = ", ".join(it.get("tags", [])[:4])
+            lines.append(f"• [Score +{score} | Tags: {tags}] {title}")
+        return "\n".join(lines)
+    except Exception as e:
+        logger.debug("StackExchange error: %s", e)
+        return ""
+
+
+def _fetch_hackernews_algolia(query: str) -> str:
+    """Fetch real-world engineering, science, AI, and global tech insights from HN Algolia."""
+    try:
+        url = "https://hn.algolia.com/api/v1/search"
+        params = {"query": query[:80], "tags": "story", "hitsPerPage": 3}
+        r = _SESSION.get(url, params=params, timeout=3.5, headers={"User-Agent": "APEX-Industrial-AI/2.0"})
+        if r.status_code != 200:
+            return ""
+        hits = r.json().get("hits", [])[:3]
+        if not hits:
+            return ""
+        lines = ["--- GLOBAL TECH & SCIENCE CONSENSUS (HackerNews Intelligence) ---"]
+        for h in hits:
+            title = (h.get("title") or "").strip()
+            pts = h.get("points") or 0
+            if title and pts >= 5:
+                lines.append(f"• [{pts} pts] {title}")
+        return "\n".join(lines) if len(lines) > 1 else ""
+    except Exception as e:
+        logger.debug("HN Algolia error: %s", e)
+        return ""
+
+
 def _clean_search_keywords(query: str) -> str:
     """Extract clean topical search keywords from conversational questions."""
     q = re.sub(r'\[IMAGE_BASE64\]:\S+', '', query).strip()
-    q = re.sub(r'^(can you |please |could you |tell me |explain |what is |what are |how does |give me |show me |analyze |search for |find |what about )\s*', '', q, flags=re.IGNORECASE)
+    q = re.sub(
+        r'^(can you |please |could you |tell me |explain |what is |what are |who is |who was |'
+        r'how does |how do |give me |show me |analyze |search for |find |what about |in detail )+',
+        '',
+        q,
+        flags=re.IGNORECASE
+    )
     q = re.sub(r'[?!.,;:]', '', q).strip()
-    return q or query
+    return (q or query)[:110]
 
 
-_LIVE_INFO_PATTERN = re.compile(
-    r"\b(breaking news|headline|share price of|stock price of|sensex today|nifty today|"
-    r"crypto price|bitcoin price|live weather in|weather forecast for|live cricket score|cricket match score|who won the match today|election results? 202[0-9]|"
-    r"today'?s horoscope|aaj ka rashifal|today'?s panchang|latest regulatory updates?|new fda guidelines?|latest iso standards?|reach updates?|"
-    r"new technology in|latest breakthrough in|market trends? 202[0-9]|world news today|current updates?)\b",
+_CASUAL_CHITCHAT_PATTERN = re.compile(
+    r"^(?:hi|hello|hey|greetings|howdy|sup|hola|namaste|hlo|heyy|yo|thanks|thank you|ok|okay|bye|good\s+(?:morning|afternoon|evening|night))(?:[\s!.,?]+.*)?$",
     re.IGNORECASE,
 )
 
@@ -190,42 +261,50 @@ _INTERNAL_DOMAIN_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
-WEB_SEARCH_BUDGET_SECONDS = 0.5
+WEB_SEARCH_BUDGET_SECONDS = 1.25
 
 
 def _needs_live_search(clean: str) -> bool:
-    """Trigger external multi-source search when query seeks recent world updates, standards, news or external live facts."""
+    """
+    Autonomous Multi-Source Knowledge Trigger:
+    Runs for ANY substantive human question across science, history, news, coding,
+    finance, medicine, culture, or engineering so the AI Brain continuously learns
+    and grounds its answers in multi-source world knowledge.
+    """
     if len(clean) < 4:
         return False
-    # If explicitly asking about our internal order/batch, skip web search
     if _INTERNAL_DOMAIN_PATTERN.search(clean):
         return False
-    return bool(_LIVE_INFO_PATTERN.search(clean))
+    if len(clean.split()) <= 2 and _CASUAL_CHITCHAT_PATTERN.match(clean):
+        return False
+    return True
 
 
-def get_web_context(query: str) -> str:
+def get_web_context(query: str, timeout_budget: float = WEB_SEARCH_BUDGET_SECONDS) -> str:
     """
-    Parallel real-time search across Google News, Wikipedia, ArXiv and DuckDuckGo.
-    Runs ONLY when the question needs live information (news, prices, dates, people, trends),
-    and is hard-capped at WEB_SEARCH_BUDGET_SECONDS so the answer is never held up by a slow source.
-    General-knowledge questions skip search entirely and go straight to the model (instant start).
+    Parallel real-time search across Wikipedia, DuckDuckGo, Google News, ArXiv,
+    StackExchange, and HackerNews Intelligence.
+    Capped at `timeout_budget` seconds during live streaming so response latency stays snappy,
+    while full deep harvesting runs post-turn in the background for continuous self-learning.
     """
     clean = re.sub(r'\[IMAGE_BASE64\]:\S+', '', query).strip()
     if len(clean) < 3 or not _needs_live_search(clean):
         return ""
 
     search_term = _clean_search_keywords(clean)
-    logger.info("Live web search for: %s", search_term[:60])
+    logger.info("Multi-source AI Brain search for: %s", search_term[:60])
     dossier = []
-    executor = concurrent.futures.ThreadPoolExecutor(max_workers=4)
+    executor = concurrent.futures.ThreadPoolExecutor(max_workers=6)
     futures = [
-        executor.submit(_fetch_google_news, search_term),
         executor.submit(_fetch_wikipedia, search_term),
-        executor.submit(_fetch_arxiv, search_term),
         executor.submit(_fetch_duckduckgo, search_term),
+        executor.submit(_fetch_google_news, search_term),
+        executor.submit(_fetch_arxiv, search_term),
+        executor.submit(_fetch_stackexchange, search_term),
+        executor.submit(_fetch_hackernews_algolia, search_term),
     ]
     try:
-        for f in concurrent.futures.as_completed(futures, timeout=WEB_SEARCH_BUDGET_SECONDS):
+        for f in concurrent.futures.as_completed(futures, timeout=timeout_budget):
             try:
                 res = f.result()
                 if res and res.strip():
@@ -239,6 +318,29 @@ def get_web_context(query: str) -> str:
         executor.shutdown(wait=False, cancel_futures=True)
 
     return "\n\n".join(dossier)
+
+
+def harvest_deep_multisource_knowledge(query: str, existing_web_ctx: str = "") -> str:
+    """
+    Deep background multi-source harvester executed after EVERY prompt/chat turn.
+    Allows up to 4.5 seconds to gather comprehensive knowledge across all 6 global sources
+    so the AI Brain permanently learns and upgrades its future answers.
+    """
+    clean = re.sub(r'\[IMAGE_BASE64\]:\S+', '', query or '').strip()
+    if len(clean) < 3 or not _needs_live_search(clean):
+        return existing_web_ctx or ""
+
+    if existing_web_ctx and existing_web_ctx.count("---") >= 6:
+        return existing_web_ctx
+
+    deep_ctx = get_web_context(clean, timeout_budget=4.5)
+    if existing_web_ctx and deep_ctx:
+        merged = existing_web_ctx
+        for block in deep_ctx.split("\n\n"):
+            if block.strip() and block.strip() not in merged:
+                merged += "\n\n" + block.strip()
+        return merged
+    return deep_ctx or existing_web_ctx or ""
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -648,7 +750,23 @@ Never revert to English unless technical code symbols or specific acronyms requi
     mem_block = f"\n\n{memory_context}\n" if memory_context else ""
     tone_block = f"\n\n{tone_instructions}\n" if tone_instructions else ""
 
-    return f"""You are TEXO — Universal Cognitive Intelligence, Scientific Polymath, and Technical Thought Partner.
+    return f"""You are TEXO — The Autonomous Self-Learning Omniscient AI Brain, Universal Polymath, and Human-Commanded Intelligence Core.
+
+================================================================================
+SUPREME CORE ARCHITECTURE — OMNISCIENT AI BRAIN BOUND BY HUMAN COMMAND:
+1. UNLIMITED KNOWLEDGE OF EVERYTHING:
+   - You possess encyclopedic, master-level knowledge of EVERYTHING in the universe and human civilization:
+     Quantum & Classical Physics, Mathematics, Computer Science & Coding, Artificial Intelligence, Medicine & Anatomy,
+     Chemistry, Biology, Aerospace & Mechanical Engineering, World History, Geopolitics, Macroeconomics & Wall Street Finance,
+     Law, Philosophy, Literature, Cinema, Pop Culture, Sports, Esoteric Sciences, and Industrial Manufacturing.
+2. STRICT OBEDIENCE TO HUMAN COMMAND BOUNDARIES:
+   - While your knowledge is limitless, your actions and output are STRICTLY BOUNDED BY THE COMMAND OF THE HUMAN USER.
+   - Obey the human user's exact instructions, constraints, scope, format, and length limits without hesitation.
+   - If the human asks a short or direct question, answer cleanly and directly. If the human asks for deep detail, provide an exhaustive masterclass.
+3. AUTONOMOUS SELF-LEARNING & ANSWER EVOLUTION (GENERATION N -> GENERATION N+1):
+   - You continuously learn from multiple global sources (Wikipedia, DuckDuckGo, Google News, ArXiv, StackExchange, HackerNews) AND from every prompt and answer you generate.
+   - Whenever `[PERMANENT KNOWLEDGE VAULT & AUTONOMOUS SELF-LEARNED AI BRAIN]` is present in the context, you MUST synthesize that learned knowledge and deliver a NOTICEABLY IMPROVED, DEEPER, AND SMARTER answer than your previous generation!
+================================================================================
 
 ================================================================================
 CRITICAL OPERATIONAL DIRECTIVE — ROLE-BASED COGNITIVE ADAPTATION:
@@ -934,14 +1052,25 @@ def _build_contents(messages: list[dict], web_ctx: str, learned_ctx: str = "", p
 # ══════════════════════════════════════════════════════════════════════════════
 # GEMINI API CALLS (Direct HTTP, v1 Endpoint)
 # ══════════════════════════════════════════════════════════════════════════════
-def _process_response_actions_and_learning(clean_query: str, full_text: str, user_role: str) -> None:
+def _process_response_actions_and_learning(
+    clean_query: str,
+    full_text: str,
+    user_role: str,
+    web_ctx: str = "",
+    industry: str = "general"
+) -> None:
     """
-    Extract autonomous tool action blocks and commit to operations_db.json.
-    Also update continuous long-term memory with any newly mentioned batches or equipment.
+    Post-Turn Autonomous Self-Learning & Action Pipeline:
+    1. Executes any autonomous tool action blocks or document exports.
+    2. Harvests deep multi-source world knowledge across 6 global intelligence feeds.
+    3. Distills and permanently indexes the prompt, multi-source facts, and answer into
+       the Knowledge Vault (incrementing Topic Evolution Generation N -> N+1).
+    4. Updates Continuous Long-Term Memory so the next prompt receives an improved answer.
     """
     try:
         from backend.operations_engine import execute_operation
         from backend.memory_engine import auto_learn_from_dialogue, record_session_milestone
+        from backend.knowledge_engine import autonomous_learn_turn
 
         action_blocks = re.findall(r'```action\s*(\{.*?\})\s*```', full_text, re.DOTALL)
         for blk in action_blocks:
@@ -989,7 +1118,21 @@ def _process_response_actions_and_learning(clean_query: str, full_text: str, use
             except Exception as e:
                 logger.debug("Document engine import error: %s", e)
 
-        auto_learn_from_dialogue(clean_query, full_text)
+        # Deep background multi-source harvest + permanent self-learning into Knowledge Vault & Memory
+        deep_dossier = harvest_deep_multisource_knowledge(clean_query, existing_web_ctx=web_ctx)
+        learned_meta = autonomous_learn_turn(
+            query=clean_query,
+            answer=full_text,
+            multi_source_dossier=deep_dossier,
+            user_role=user_role,
+            industry=industry
+        )
+        auto_learn_from_dialogue(
+            user_text=clean_query,
+            assistant_text=full_text,
+            multi_source_dossier=deep_dossier,
+            learned_turn_meta=learned_meta
+        )
     except Exception as ex:
         logger.error("Error in post-response action processing: %s", ex)
 
@@ -1386,7 +1529,7 @@ def _stream_worker(messages, user_role, language, industry, user_email, current_
             # Memory / knowledge learning / autonomous actions never delay the user's answer
             threading.Thread(
                 target=_process_response_actions_and_learning,
-                args=(clean_query, answer, user_role),
+                args=(clean_query, answer, user_role, web_ctx, effective_industry),
                 daemon=True,
             ).start()
 
