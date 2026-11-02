@@ -57,6 +57,8 @@ async def add_no_cache_headers(request: Request, call_next):
     if request.url.path.startswith("/static/") or request.url.path == "/":
         response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
         response.headers["Pragma"] = "no-cache"
+    # Ensure seamless embedding on Google Sites (sites.google.com), Google Workspace, and external web portals
+    response.headers["Content-Security-Policy"] = "frame-ancestors 'self' https://sites.google.com https://*.google.com https://*.googleusercontent.com https://*.trycloudflare.com *;"
     return response
 
 
@@ -337,6 +339,12 @@ async def serve_robots():
 async def serve_sitemap():
     sitemap_path = os.path.join(_base, "frontend", "static", "sitemap.xml")
     return FileResponse(sitemap_path, media_type="application/xml")
+
+
+@app.get("/manifest.json", response_class=FileResponse)
+async def serve_manifest():
+    manifest_path = os.path.join(_base, "frontend", "static", "manifest.json")
+    return FileResponse(manifest_path, media_type="application/json")
 
 
 @app.get("/google{code}.html", response_class=PlainTextResponse)

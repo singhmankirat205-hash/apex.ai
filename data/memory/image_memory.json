@@ -1,8 +1,8 @@
 {
-  "base_subject": "Spider-Man",
+  "base_subject": "TAJ MAHAL FOR",
   "modifiers": [],
   "style_preferences": [],
-  "call_idx": 0,
+  "call_idx": 2,
   "seen_urls": [
     "https://w.wallhaven.cc/full/zm/wallhaven-zm825o.jpg",
     "https://creator.nightcafe.studio/jobs/ME8PifYMFqFfGjSYgnvR/ME8PifYMFqFfGjSYgnvR--1--1gyxz.jpg",
@@ -138,7 +138,17 @@
       "q": "Spider-Man",
       "resolved": "Spider-Man",
       "type": "new"
+    },
+    {
+      "q": "TAJ MAHAL FOR",
+      "resolved": "TAJ MAHAL FOR",
+      "type": "new"
+    },
+    {
+      "q": "do it better",
+      "resolved": "TAJ MAHAL FOR",
+      "type": "better"
     }
   ],
-  "updated_at": 1792986968.6405346
+  "updated_at": 1793002339.200207
 }

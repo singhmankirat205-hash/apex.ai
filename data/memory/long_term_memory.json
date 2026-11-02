@@ -4,7 +4,7 @@
     "current_industry": "general",
     "preferred_role": "GENERAL",
     "tone_preference": "Action-oriented, authoritative, highly precise, concise when appropriate",
-    "last_active": "2026-10-26T03:50:07.304194+00:00"
+    "last_active": "2026-10-26T08:18:06.614126+00:00"
   },
   "enterprise_context": {
     "primary_facility": "Apex Mills \u2014 Plant 1 (Weaving & Wet Finishing Complex)",
@@ -144,6 +144,12 @@
         "status": "ACTIVE_MONITORING",
         "noted_at": "2026-10-24T09:49:09.172528+00:00",
         "source": "Discovered from user dialogue"
+      },
+      {
+        "batch_id": "BT-due",
+        "status": "ACTIVE_MONITORING",
+        "noted_at": "2026-10-26T08:14:15.296436+00:00",
+        "source": "Discovered from user dialogue"
       }
     ],
     "quality_standards": [
@@ -210,7 +216,7 @@
   "self_learned_topics": [
     {
       "topic": "quantum entanglement applications quantum computing",
-      "generation": 2,
+      "generation": 3,
       "sources": [
         "DuckDuckGo Knowledge Graph",
         "Wikipedia Encyclopedia",
@@ -218,12 +224,48 @@
       ],
       "key_takeaway": "Quantum Teleportation & Cryptography: Entangled Bell pairs enable E91 quantum key distribution with 99.8% fidelity.",
       "last_prompt": "Tell me more about quantum entanglement applications in quantum computing",
-      "updated_at": "2026-10-26T08:06:17.419864+00:00"
+      "updated_at": "2026-11-02T16:28:54.918685+00:00"
+    },
+    {
+      "topic": "separte yourself chatg pt",
+      "generation": 1,
+      "sources": [
+        "Google News Live",
+        "ArXiv Scientific Papers",
+        "TEXO Self-Reflection Synthesis"
+      ],
+      "key_takeaway": "Understood. I am stepping in directly right now to address this clearly, transparently, and without hesitation.",
+      "last_prompt": "HOW CAN U SEPARTE YOURSELF FROM CHATG[PT",
+      "updated_at": "2026-10-26T08:13:32.895209+00:00"
+    },
+    {
+      "topic": "customer rejected batch due performance degradation",
+      "generation": 1,
+      "sources": [
+        "ArXiv Scientific Papers",
+        "TEXO Self-Reflection Synthesis"
+      ],
+      "key_takeaway": "## Incident Containment & 8D Technical Summary",
+      "last_prompt": "Customer rejected batch due to performance degradation. Detail containment, 8D problem-solving report, and customer memo",
+      "updated_at": "2026-10-26T08:14:15.296436+00:00"
+    },
+    {
+      "topic": "mai kya kru",
+      "generation": 1,
+      "sources": [
+        "ArXiv Scientific Papers",
+        "Google News Live",
+        "Wikipedia Encyclopedia",
+        "TEXO Self-Reflection Synthesis"
+      ],
+      "key_takeaway": "\u0a24\u0a41\u0a39\u0a3e\u0a21\u0a47 \u0a2a\u0a3f\u0a1b\u0a32\u0a47 \u0a38\u0a48\u0a38\u0a3c\u0a28\u0a3e\u0a02 \u0a05\u0a24\u0a47 \u0a38\u0a3e\u0a21\u0a40 \u0a39\u0a41\u0a23 \u0a24\u0a71\u0a15 \u0a26\u0a40 \u0a17\u0a71\u0a32\u0a2c\u0a3e\u0a24 \u0a26\u0a47 \u0a06\u0a27\u0a3e\u0a30 '\u0a24\u0a47, \u0a05\u0a38\u0a40\u0a02 \u0a15\u0a08 \u0a26\u0a3f\u0a32\u0a1a\u0a38\u0a2a \u0a35\u0a3f\u0a38\u0a3c\u0a3f\u0a06\u0a02 '\u0a24\u0a47 \u0a15\u0a70\u0a2e \u0a15\u0a40\u0a24\u0a3e \u0a39\u0a48\u2014\u0a1c\u0a3f\u0a35\u0a47\u0a02 \u0a15\u0a3f \u0a15\u0a32\u0a3e\u0a24\u0a2e\u0a15 \u0a1a\u0a3f\u0a71\u0a24\u0a30 (Spider-Man, Krishna, Marvel), \u0a35\u0a3f\u0a71\u0a24\u0a40 \u0a17\u0a23\u0a28\u0a3e\u0a35\u0a3e\u0a02 (Depreciation Methods), \u0a05\u0a24\u0a47 \u0a09\u0a26\u0a2f\u0a4b\u0a17\u0a3f\u0a15 \u0a17\u0a41\u0a23\u0a35\u0a71\u0a24\u0a3e \u0a2a\u0a4d\u0a30\u0a2c\u0a70\u0a27\u0a28 (",
+      "last_prompt": "MAI KYA KRU",
+      "updated_at": "2026-10-26T08:16:59.635915+00:00"
     }
   ],
   "brain_telemetry": {
-    "total_prompts_learned": 1,
-    "total_answer_evolutions": 1,
+    "total_prompts_learned": 5,
+    "total_answer_evolutions": 2,
     "active_knowledge_sources": [
       "Wikipedia REST & Search Encyclopedia",
       "DuckDuckGo Instant Knowledge Graph",
@@ -234,6 +276,6 @@
       "TEXO Post-Answer Self-Reflection Engine"
     ],
     "last_learned_topic": "quantum entanglement applications quantum computing",
-    "last_updated": "2026-10-26T08:06:17.419864+00:00"
+    "last_updated": "2026-11-02T16:28:54.918685+00:00"
   }
 }
