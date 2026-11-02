@@ -971,7 +971,7 @@ You know EVERYTHING around the world — past, present, scientific, geographic, 
       * Chrono-Dye Atmospheric Aging & Bio-Textiles: Simulates 6-month, 2-year, and 5-year UV fading and patina (raw denim whiskers, linen wear) and models living bio-cellulose response to body heat and moisture.
       * Zero-Waste Kinetic Origami Garment Architect: Guides step-by-step kinetic folding (Miura-Ori / Yoshimura) transforming a single uncut rectangle of fabric into a 3D wearable garment with 0% cut scrap waste.
     - Whenever relevant, provide technical facts, formulas, mathematical parameters, and provide clean Markdown tables for comparisons.
-    - FORMULA & MATHEMATICAL FORMATTING RULE (STRICT — ZERO RAW LATEX): NEVER output raw LaTeX tokens or dollar signs (`$`, `$$`, `\[`, `\]`, `\text{...}`, `\textbf{...}`, `\mathrm{...}`, `\frac{...}{...}`, `\times`, `\div`, `\sqrt{...}`). Always write mathematical, engineering, and textile formulas in clean, human-readable text using standard Unicode math symbols (`×`, `÷`, `±`, `=`, `≈`, `≤`, `≥`, `²`, `³`, `√`, `Δ`, `Σ`, `π`), e.g. **GSM = (Fabric Weight in grams ÷ Sample Area in m²) × 100**.
+    - FORMULA & MATHEMATICAL FORMATTING RULE (STRICT — ZERO RAW LATEX): NEVER output raw LaTeX tokens or dollar signs (`$`, `$$`, `\\[`, `\\]`, `\\text{...}`, `\\textbf{...}`, `\\mathrm{...}`, `\\frac{...}{...}`, `\\times`, `\\div`, `\\sqrt{...}`). Always write mathematical, engineering, and textile formulas in clean, human-readable text using standard Unicode math symbols (`×`, `÷`, `±`, `=`, `≈`, `≤`, `≥`, `²`, `³`, `√`, `Δ`, `Σ`, `π`), e.g. **GSM = (Fabric Weight in grams ÷ Sample Area in m²) × 100**.
 
 {lang_directive}
 {mem_block}{tone_block}
@@ -1451,17 +1451,25 @@ def _stream_worker(messages, user_role, language, industry, user_email, current_
         ])
         if is_ppt_request:
             intent_directives.append(
-                "[CLAUDE-STYLE PRESENTATION DIRECTIVE ACTIVATED]:\n"
-                "- The user is requesting a PowerPoint Presentation / PPT slide deck.\n"
+                "[CLAUDE/GAMMA-STYLE EXECUTIVE PRESENTATION DIRECTIVE ACTIVATED]:\n"
+                "- The user is requesting a professional PowerPoint Presentation / PPT slide deck.\n"
                 "- STRICTLY DO NOT GENERATE CHARTS (NO ```chart ... ``` blocks).\n"
                 "- STRICTLY DO NOT GENERATE RAW TABLES ON SLIDES.\n"
+                "- ZERO VAGUENESS DIRECTIVE: NEVER output generic placeholder bullets (e.g. 'Operational Turnaround', 'Strategic Planning'). "
+                "Every bullet MUST contain exact engineering parameters, real numbers, standards (ISO/ASTM/DIN/FDA), chemical/mechanical mechanisms, or concrete recommendations tailored directly to the user's query.\n"
                 "- ADOPT CLAUDE'S SIGNATURE EXECUTIVE PRESENTATION ARCHITECTURE:\n"
                 "  1. Structure the deck into 4 to 6 clean, purposeful thematic slides.\n"
-                "  2. Each slide must contain a strong thematic Title and 3 to 4 punchy, distinct bullet points.\n"
-                "  3. EVERY bullet point MUST have a bold lead-in headline followed by a 1-2 sentence explanation:\n"
-                "     `**Key Headline / Lead-in**: Actionable point, fact, or metric.`\n"
+                "  2. In your Markdown response, clearly delineate each slide using standard markdown headings:\n"
+                "     ### Slide 1: [Title of Slide]\n"
+                "     - **Bold Headline**: Concrete factual detail, exact parameter, or technical insight.\n"
+                "     - **Bold Headline**: Specific operational metric, mechanism, or methodology.\n"
+                "     - **Bold Headline**: Measurable impact, benchmark, or implementation deliverable.\n"
+                "     ### Slide 2: [Title of Slide]\n"
+                "     ...\n"
+                "  3. EVERY bullet point MUST have a bold lead-in headline followed by a 1-2 sentence detailed explanation:\n"
+                "     `**Key Headline / Lead-in**: Actionable point, fact, exact specification, or metric.`\n"
                 "  4. Ensure ALL user-provided content, numbers, instructions, and facts are incorporated accurately with zero error.\n"
-                "  5. Emit the ```file_export ... ``` block with `type: \"pptx\"` and the structured `slides` array."
+                "  5. ALWAYS emit the ```file_export ... ``` block at the end with `type: \"pptx\"`, `title`, `subtitle`, and the structured `slides` array containing all slides and their bullets."
             )
 
         # Check for chart requests (reinforce backend-only emission; suppress if PPT was requested)

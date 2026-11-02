@@ -6711,12 +6711,581 @@ function renderDocumentCards(container, fullText = '') {
     const card = createDocumentCardElement(docData, fullText);
     preEl.parentNode.replaceChild(card, preEl);
   });
+
+  // 3. Fallback: If no document card was created, but response contains markdown presentation slides
+  if (!container.querySelector('.apex-presentation-deck') && !container.querySelector('.apex-doc-card')) {
+    if (hasMarkdownSlides(fullText)) {
+      const extracted = extractSlidesFromMarkdown(fullText);
+      if (extracted && extracted.length >= 2) {
+        let deckTitle = 'TEXO Strategic Presentation';
+        const hMatch = fullText.match(/^#+\s*(.+)$/m) || fullText.match(/\*\*Slide\s*\d+[:\-]?\s*(.+?)\*\*/i);
+        if (hMatch && hMatch[1]) {
+          deckTitle = hMatch[1].replace(/[#*_`]/g, '').trim().slice(0, 50);
+        }
+        const deckEl = createPresentationDeckElement({
+          type: 'pptx',
+          title: deckTitle,
+          subtitle: 'Claude Design Architecture • 16:9 Widescreen',
+          slides: extracted,
+          raw_markdown: fullText
+        }, fullText);
+        container.appendChild(deckEl);
+      }
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// CLAUDE/GAMMA-STYLE INTERACTIVE PRESENTATION DECK VIEWER ENGINE
+// ══════════════════════════════════════════════════════════════════════════════
+function parseSlideBullet(rawBullet) {
+  let clean = String(rawBullet || '').trim();
+  clean = clean.replace(/^[•\-\*0-9\.\s]+/, '').trim();
+
+  // 1. Markdown bold lead-in: **Headline**: Body or **Headline** - Body
+  const mBold = clean.match(/^\*\*(.+?)\*\*[:\s—–-]*(.*)$/);
+  if (mBold) {
+    return {
+      lead: mBold[1].trim(),
+      body: mBold[2].trim()
+    };
+  }
+
+  // 2. Colon lead-in: 'Headline: Body'
+  const mColon = clean.match(/^([A-Z0-9][A-Za-z0-9\s/&\-]{1,35}):\s+(.+)$/);
+  if (mColon && mColon[1].split(' ').length <= 6) {
+    return {
+      lead: mColon[1].trim(),
+      body: mColon[2].trim()
+    };
+  }
+
+  return {
+    lead: '',
+    body: clean.replace(/[*_`]/g, '')
+  };
+}
+
+function extractSlidesFromMarkdown(md, defaultTitle = 'Strategic Architecture') {
+  const slides = [];
+  let currentSlide = null;
+  const cleanMd = md.replace(/```(?:chart|file_export|export|document|json)[\s\S]*?```/gi, '');
+  const lines = cleanMd.split('\n');
+
+  for (let line of lines) {
+    const lineS = line.trim();
+    if (!lineS || lineS.startsWith('```')) continue;
+
+    let detectedTitle = null;
+    const mHash = lineS.match(/^#{1,4}\s*(?:Slide\s*\d+\s*[:\-]\s*)?(.*)/i);
+    if (mHash && mHash[1].trim() && mHash[1].trim().length >= 3 && !mHash[1].toLowerCase().startsWith('presentation')) {
+      detectedTitle = mHash[1].replace(/[*_`]/g, '').trim();
+    } else {
+      const mBold = lineS.match(/^\*\*(?:Slide\s*\d+\s*[:\-]?\s*)(.*?)\*\*/i);
+      if (mBold) {
+        detectedTitle = mBold[1].replace(/[*_`]/g, '').trim() || 'Strategic Section';
+      } else {
+        const mPlain = lineS.match(/^Slide\s*\d+\s*[:\-]\s*(.+)/i);
+        if (mPlain) {
+          detectedTitle = mPlain[1].replace(/[*_`]/g, '').trim();
+        }
+      }
+    }
+
+    if (detectedTitle) {
+      if (currentSlide && currentSlide.bullets && currentSlide.bullets.length) {
+        slides.push(currentSlide);
+      }
+      currentSlide = {
+        title: detectedTitle.replace(/^Slide\s*\d+\s*[:\-]\s*/i, '').trim(),
+        bullets: []
+      };
+      continue;
+    }
+
+    if (lineS.startsWith('-') || lineS.startsWith('*') || lineS.startsWith('•') || /^\d+\./.test(lineS)) {
+      const bText = lineS.replace(/^[•\-\*0-9\.\s]+/, '').trim();
+      if (bText) {
+        if (!currentSlide) currentSlide = { title: `${defaultTitle}: Core Insights`, bullets: [] };
+        currentSlide.bullets.push(bText);
+      }
+    } else if (lineS.length > 20 && !lineS.startsWith('|')) {
+      if (!currentSlide) currentSlide = { title: `${defaultTitle}: Executive Overview`, bullets: [] };
+      currentSlide.bullets.push(lineS);
+    }
+  }
+
+  if (currentSlide && currentSlide.bullets && currentSlide.bullets.length) {
+    slides.push(currentSlide);
+  }
+
+  return slides;
+}
+
+function hasMarkdownSlides(text) {
+  if (!text) return false;
+  const slideMatches = text.match(/(?:^|\n)(?:#{1,4}\s*Slide\s*\d+|\*\*Slide\s*\d+|Slide\s*\d+\s*[:\-])/gi);
+  return slideMatches && slideMatches.length >= 2;
+}
+
+function createPresentationDeckElement(docData, fullText = '') {
+  const deckTitle = docData.title || 'TEXO Technical Presentation';
+  const deckSubtitle = docData.subtitle || '16:9 Widescreen Executive Presentation Deck';
+
+  let contentSlides = Array.isArray(docData.slides) && docData.slides.length > 0
+    ? docData.slides
+    : extractSlidesFromMarkdown(fullText || docData.raw_markdown || '', deckTitle);
+
+  if (!contentSlides || contentSlides.length === 0) {
+    contentSlides = [
+      {
+        title: "Executive Overview & Objectives",
+        bullets: [
+          "**Operational Architecture**: Rigorous operational standards verified against benchmarks.",
+          "**Diagnostics & Parameters**: Machine calibration aligned with precision limits.",
+          "**Target Deliverables**: Measurable quality and performance targets met."
+        ]
+      },
+      {
+        title: "Implementation Roadmap & Next Steps",
+        bullets: [
+          "**Phase 01 Stabilization**: Baseline audit and parameter normalization.",
+          "**Phase 02 Optimization**: Automated real-time telemetry tracking.",
+          "**Phase 03 Validation**: Verification against ASTM, ISO, and enterprise tolerances."
+        ]
+      }
+    ];
+  }
+
+  // Prepend Executive Cover Slide as Slide 0
+  const allSlides = [
+    {
+      isCover: true,
+      title: deckTitle,
+      subtitle: deckSubtitle,
+      category: "EXECUTIVE STRATEGIC DECK • CONFIDENTIAL & PROPRIETARY",
+      author: `Prepared by TEXO AI Core (${(currentUser && currentUser.name) || 'Auditor'})`,
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    },
+    ...contentSlides.map((s, idx) => ({
+      ...s,
+      isCover: false,
+      slideNumber: idx + 1,
+      totalContentSlides: contentSlides.length
+    }))
+  ];
+
+  let currentSlideIndex = 0;
+
+  const deckEl = document.createElement('div');
+  deckEl.className = 'apex-presentation-deck';
+
+  deckEl.innerHTML = `
+    <div class="apex-deck-header">
+      <div class="apex-deck-header-left">
+        <span class="apex-deck-badge-chip"><span>📊</span> <span>16:9 DECK</span></span>
+        <div class="apex-deck-titles">
+          <span class="apex-deck-title-text">${escapeHtml(deckTitle)}</span>
+          <span class="apex-deck-sub-text">${escapeHtml(deckSubtitle)}</span>
+        </div>
+      </div>
+      <div class="apex-deck-tools">
+        <button class="apex-deck-action-btn apex-deck-present-btn" type="button" title="Present in Fullscreen">
+          <span>⛶</span> <span>Present</span>
+        </button>
+        <button class="apex-deck-action-btn apex-deck-copy-btn" type="button" title="Copy Current Slide Text">
+          <span>📋</span> <span>Copy Slide</span>
+        </button>
+        <button class="apex-deck-action-btn apex-deck-dl-action-btn" type="button" title="Download .PPTX">
+          <span>⬇️</span> <span>.PPTX</span>
+        </button>
+      </div>
+    </div>
+    <div class="apex-deck-canvas" tabindex="0"></div>
+    <div class="apex-deck-nav">
+      <button class="apex-deck-nav-btn apex-deck-prev-btn" type="button">◀ Prev</button>
+      <div class="apex-deck-dots"></div>
+      <div class="apex-deck-slide-indicator">Slide 1 of ${allSlides.length}</div>
+      <button class="apex-deck-nav-btn apex-deck-next-btn" type="button">Next ▶</button>
+    </div>
+  `;
+
+  const canvas = deckEl.querySelector('.apex-deck-canvas');
+  const prevBtn = deckEl.querySelector('.apex-deck-prev-btn');
+  const nextBtn = deckEl.querySelector('.apex-deck-next-btn');
+  const dotsContainer = deckEl.querySelector('.apex-deck-dots');
+  const indicator = deckEl.querySelector('.apex-deck-slide-indicator');
+  const dlBtn = deckEl.querySelector('.apex-deck-dl-action-btn');
+  const copyBtn = deckEl.querySelector('.apex-deck-copy-btn');
+  const presentBtn = deckEl.querySelector('.apex-deck-present-btn');
+
+  // Build Dots
+  dotsContainer.innerHTML = '';
+  allSlides.forEach((s, idx) => {
+    const dot = document.createElement('div');
+    dot.className = `apex-deck-dot ${idx === 0 ? 'active' : ''}`;
+    dot.title = s.isCover ? 'Cover Slide' : `Slide ${s.slideNumber}: ${s.title}`;
+    dot.addEventListener('click', () => {
+      goToSlide(idx);
+      playClick();
+    });
+    dotsContainer.appendChild(dot);
+  });
+
+  function renderSlide(idx) {
+    const slide = allSlides[idx];
+    if (!slide) return;
+
+    if (slide.isCover) {
+      canvas.innerHTML = `
+        <div class="apex-slide-cover-view">
+          <div>
+            <div class="apex-cover-tag">${escapeHtml(slide.category || 'EXECUTIVE STRATEGIC DECK')}</div>
+            <div class="apex-cover-accent-line"></div>
+            <h2 class="apex-cover-main-title">${escapeHtml(slide.title)}</h2>
+            <div class="apex-cover-subtitle">${escapeHtml(slide.subtitle)}</div>
+          </div>
+          <div class="apex-cover-footer-badge">
+            <span>⚡ ${escapeHtml(slide.author)}</span>
+            <span>📅 ${escapeHtml(slide.date)}</span>
+            <span>🖥️ Widescreen 16:9 Deck</span>
+          </div>
+        </div>
+      `;
+    } else {
+      const bullets = Array.isArray(slide.bullets) ? slide.bullets : [];
+      let bodyHtml = '';
+
+      if (bullets.length === 3) {
+        // 3-Column Pillar Grid
+        const cardsHtml = bullets.map((b, bIdx) => {
+          const parsed = parseSlideBullet(b);
+          return `
+            <div class="apex-pillar-card">
+              <span class="apex-pillar-pill">PILLAR 0${bIdx + 1}</span>
+              ${parsed.lead ? `<div class="apex-pillar-lead">${escapeHtml(parsed.lead)}</div>` : ''}
+              <div class="apex-pillar-body">${escapeHtml(parsed.body)}</div>
+            </div>
+          `;
+        }).join('');
+        bodyHtml = `<div class="apex-slide-pillars-3">${cardsHtml}</div>`;
+      } else if (bullets.length === 2 || bullets.length === 4) {
+        // 2-Column Split Grid
+        const half = Math.ceil(bullets.length / 2);
+        const col1 = bullets.slice(0, half);
+        const col2 = bullets.slice(half);
+
+        const col1Items = col1.map(b => {
+          const p = parseSlideBullet(b);
+          return `<div class="apex-split-item">${p.lead ? `<span class="apex-split-item-lead">${escapeHtml(p.lead)}</span>` : ''}<span class="apex-split-item-body">${escapeHtml(p.body)}</span></div>`;
+        }).join('');
+
+        const col2Items = col2.map(b => {
+          const p = parseSlideBullet(b);
+          return `<div class="apex-split-item">${p.lead ? `<span class="apex-split-item-lead">${escapeHtml(p.lead)}</span>` : ''}<span class="apex-split-item-body">${escapeHtml(p.body)}</span></div>`;
+        }).join('');
+
+        bodyHtml = `
+          <div class="apex-slide-split-2">
+            <div class="apex-split-card">
+              <div class="apex-split-header">STRATEGIC PRINCIPLES & ANALYSIS</div>
+              ${col1Items}
+            </div>
+            <div class="apex-split-card">
+              <div class="apex-split-header">OPERATIONAL EXECUTION & DELIVERABLES</div>
+              ${col2Items}
+            </div>
+          </div>
+        `;
+      } else {
+        // Stacked Row Items
+        const rowsHtml = bullets.map((b, bIdx) => {
+          const p = parseSlideBullet(b);
+          return `
+            <div class="apex-stacked-row-item">
+              <span class="apex-stacked-badge">0${bIdx + 1}</span>
+              <div class="apex-stacked-text">
+                ${p.lead ? `<span class="apex-stacked-lead">${escapeHtml(p.lead)}:</span>` : ''}
+                <span>${escapeHtml(p.body)}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+        bodyHtml = `<div class="apex-slide-stacked-rows">${rowsHtml}</div>`;
+      }
+
+      canvas.innerHTML = `
+        <div class="apex-slide-content-view">
+          <div class="apex-slide-top-bar">
+            <div class="apex-slide-title-wrap">
+              <span class="apex-slide-category-pill">PILLAR 0${slide.slideNumber} • STRATEGIC ARCHITECTURE</span>
+              <h3 class="apex-slide-main-h">${escapeHtml(slide.title)}</h3>
+            </div>
+            <span class="apex-slide-index-counter">SLIDE ${slide.slideNumber} OF ${slide.totalContentSlides}</span>
+          </div>
+          <div class="apex-slide-body-grid">
+            ${bodyHtml}
+          </div>
+        </div>
+      `;
+    }
+
+    // Update Controls
+    prevBtn.disabled = idx === 0;
+    nextBtn.disabled = idx === allSlides.length - 1;
+    indicator.textContent = `Slide ${idx + 1} of ${allSlides.length}`;
+
+    // Update Dots
+    const dots = dotsContainer.querySelectorAll('.apex-deck-dot');
+    dots.forEach((d, dIdx) => {
+      d.classList.toggle('active', dIdx === idx);
+    });
+  }
+
+  function goToSlide(idx) {
+    if (idx < 0 || idx >= allSlides.length) return;
+    currentSlideIndex = idx;
+    renderSlide(currentSlideIndex);
+  }
+
+  prevBtn.addEventListener('click', () => {
+    goToSlide(currentSlideIndex - 1);
+    playClick();
+  });
+
+  nextBtn.addEventListener('click', () => {
+    goToSlide(currentSlideIndex + 1);
+    playClick();
+  });
+
+  // Keyboard Navigation inside canvas
+  deckEl.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+      goToSlide(currentSlideIndex + 1);
+      e.preventDefault();
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      goToSlide(currentSlideIndex - 1);
+      e.preventDefault();
+    }
+  });
+
+  // Copy Slide Button
+  copyBtn.addEventListener('click', async () => {
+    const s = allSlides[currentSlideIndex];
+    let copyText = '';
+    if (s.isCover) {
+      copyText = `${s.title}\n${s.subtitle}\n${s.category}\n${s.author} - ${s.date}`;
+    } else {
+      copyText = `### Slide ${s.slideNumber}: ${s.title}\n\n` + (s.bullets || []).map(b => `- ${b}`).join('\n');
+    }
+    try {
+      await navigator.clipboard.writeText(copyText);
+      const orig = copyBtn.innerHTML;
+      copyBtn.innerHTML = `<span>✅</span> <span>Copied!</span>`;
+      setTimeout(() => { copyBtn.innerHTML = orig; }, 2000);
+    } catch (_) {}
+  });
+
+  // Fullscreen Presentation Mode
+  presentBtn.addEventListener('click', () => {
+    openPresentationModal(allSlides, currentSlideIndex);
+  });
+
+  // Download PPTX Button
+  dlBtn.addEventListener('click', async () => {
+    const origHtml = dlBtn.innerHTML;
+    dlBtn.innerHTML = `<span>⏳</span> <span>Generating…</span>`;
+    dlBtn.disabled = true;
+    playClick();
+
+    try {
+      const res = await fetch('/api/documents/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'pptx',
+          title: deckTitle,
+          subtitle: deckSubtitle,
+          slides: contentSlides,
+          raw_markdown: fullText || '',
+          author: `TEXO Universal Intelligence (${(currentUser && currentUser.name) || 'Auditor'})`,
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || `Server returned HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+      if (data.download_url) {
+        dlBtn.innerHTML = `<span>✅</span> <span>Ready!</span>`;
+        const a = document.createElement('a');
+        a.href = data.download_url;
+        a.download = data.filename || `apex_presentation_deck.pptx`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        playDone();
+        setTimeout(() => {
+          dlBtn.innerHTML = origHtml;
+          dlBtn.disabled = false;
+        }, 3000);
+      } else {
+        throw new Error('Download URL missing in response');
+      }
+    } catch (e) {
+      console.error('PPTX download error:', e);
+      dlBtn.innerHTML = `<span>❌</span> <span>Failed</span>`;
+      setTimeout(() => {
+        dlBtn.innerHTML = origHtml;
+        dlBtn.disabled = false;
+      }, 2500);
+    }
+  });
+
+  // Render initial slide
+  renderSlide(0);
+
+  return deckEl;
+}
+
+// Presentation Fullscreen Modal Helper
+function openPresentationModal(slides, initialIndex = 0) {
+  let modalIndex = initialIndex;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'apex-pres-modal-overlay';
+  overlay.innerHTML = `
+    <div class="apex-pres-modal-container">
+      <div class="apex-pres-modal-bar">
+        <span style="font-size:12px; font-weight:700; color:#38bdf8;">🖥️ FULLSCREEN PRESENTATION MODE</span>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span class="apex-pres-modal-counter" style="font-size:11px; color:#94a3b8; font-weight:700;"></span>
+          <button class="apex-pres-modal-close-btn" type="button">✕ Close (Esc)</button>
+        </div>
+      </div>
+      <div class="apex-deck-canvas modal-canvas" style="flex:1; border-radius:0 0 12px 12px;"></div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  const modalCanvas = overlay.querySelector('.modal-canvas');
+  const modalCounter = overlay.querySelector('.apex-pres-modal-counter');
+  const closeBtn = overlay.querySelector('.apex-pres-modal-close-btn');
+
+  function renderModalSlide(idx) {
+    const slide = slides[idx];
+    if (!slide) return;
+    modalCounter.textContent = `Slide ${idx + 1} of ${slides.length}`;
+
+    if (slide.isCover) {
+      modalCanvas.innerHTML = `
+        <div class="apex-slide-cover-view">
+          <div>
+            <div class="apex-cover-tag">${escapeHtml(slide.category || 'EXECUTIVE STRATEGIC DECK')}</div>
+            <div class="apex-cover-accent-line"></div>
+            <h1 class="apex-cover-main-title" style="font-size:32px;">${escapeHtml(slide.title)}</h1>
+            <div class="apex-cover-subtitle" style="font-size:18px;">${escapeHtml(slide.subtitle)}</div>
+          </div>
+          <div class="apex-cover-footer-badge">
+            <span>⚡ ${escapeHtml(slide.author)}</span>
+            <span>📅 ${escapeHtml(slide.date)}</span>
+            <span>🖥️ Widescreen 16:9 Presentation</span>
+          </div>
+        </div>
+      `;
+    } else {
+      const bullets = Array.isArray(slide.bullets) ? slide.bullets : [];
+      let bodyHtml = '';
+
+      if (bullets.length === 3) {
+        const cardsHtml = bullets.map((b, bIdx) => {
+          const parsed = parseSlideBullet(b);
+          return `
+            <div class="apex-pillar-card" style="padding:16px;">
+              <span class="apex-pillar-pill">PILLAR 0${bIdx + 1}</span>
+              ${parsed.lead ? `<div class="apex-pillar-lead" style="font-size:15px;">${escapeHtml(parsed.lead)}</div>` : ''}
+              <div class="apex-pillar-body" style="font-size:13px;">${escapeHtml(parsed.body)}</div>
+            </div>
+          `;
+        }).join('');
+        bodyHtml = `<div class="apex-slide-pillars-3">${cardsHtml}</div>`;
+      } else {
+        const rowsHtml = bullets.map((b, bIdx) => {
+          const p = parseSlideBullet(b);
+          return `
+            <div class="apex-stacked-row-item" style="padding:12px 16px;">
+              <span class="apex-stacked-badge" style="font-size:12px;">0${bIdx + 1}</span>
+              <div class="apex-stacked-text" style="font-size:13px;">
+                ${p.lead ? `<span class="apex-stacked-lead">${escapeHtml(p.lead)}:</span>` : ''}
+                <span>${escapeHtml(p.body)}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+        bodyHtml = `<div class="apex-slide-stacked-rows">${rowsHtml}</div>`;
+      }
+
+      modalCanvas.innerHTML = `
+        <div class="apex-slide-content-view">
+          <div class="apex-slide-top-bar">
+            <div class="apex-slide-title-wrap">
+              <span class="apex-slide-category-pill">PILLAR 0${slide.slideNumber} • STRATEGIC ARCHITECTURE</span>
+              <h2 class="apex-slide-main-h" style="font-size:22px;">${escapeHtml(slide.title)}</h2>
+            </div>
+            <span class="apex-slide-index-counter" style="font-size:12px;">SLIDE ${slide.slideNumber} OF ${slide.totalContentSlides}</span>
+          </div>
+          <div class="apex-slide-body-grid">
+            ${bodyHtml}
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  function closeModal() {
+    window.removeEventListener('keydown', handleKey);
+    overlay.remove();
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Escape') {
+      closeModal();
+    } else if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+      if (modalIndex < slides.length - 1) {
+        modalIndex++;
+        renderModalSlide(modalIndex);
+      }
+      e.preventDefault();
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      if (modalIndex > 0) {
+        modalIndex--;
+        renderModalSlide(modalIndex);
+      }
+      e.preventDefault();
+    }
+  }
+
+  closeBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeModal();
+  });
+  window.addEventListener('keydown', handleKey);
+
+  renderModalSlide(modalIndex);
 }
 
 function createDocumentCardElement(docData, fullText = '') {
   const type = (docData.type || 'pdf').toLowerCase();
   const title = docData.title || 'TEXO Intelligence Report';
   const subtitle = docData.subtitle || 'Automated Technical Deliverable';
+
+  // Delegate PPTX decks directly to our interactive Claude/Gamma Presentation Viewer
+  if (type === 'pptx' || type === 'ppt' || type === 'presentation') {
+    return createPresentationDeckElement(docData, fullText);
+  }
 
   let icon = '📄';
   let badgeClass = 'pdf';

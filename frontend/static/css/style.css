@@ -3377,6 +3377,533 @@ pre:has(code.language-json\:action) {
   transform: translateY(-1px);
 }
 
+/* ══════════════════════════════════════════════════════════════════════════════
+   CLAUDE/GAMMA-STYLE INTERACTIVE PRESENTATION DECK VIEWER (16:9)
+   ══════════════════════════════════════════════════════════════════════════════ */
+.apex-presentation-deck {
+  background: linear-gradient(145deg, rgba(10, 16, 30, 0.98), rgba(5, 10, 20, 0.99));
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  border-radius: 14px;
+  margin: 16px 0;
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.6), inset 0 0 25px rgba(6, 182, 212, 0.06);
+  position: relative;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.apex-presentation-deck::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00f5a0, #06b6d4, #3b82f6);
+  z-index: 2;
+}
+
+.apex-deck-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: rgba(0, 0, 0, 0.35);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  gap: 12px;
+}
+
+.apex-deck-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.apex-deck-badge-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(6, 182, 212, 0.15);
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  color: #38bdf8;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.apex-deck-titles {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.apex-deck-title-text {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.3px;
+}
+
+.apex-deck-sub-text {
+  font-size: 11px;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.apex-deck-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.apex-deck-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #e2e8f0;
+  padding: 6px 11px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.apex-deck-action-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.apex-deck-dl-action-btn {
+  background: linear-gradient(135deg, rgba(0, 245, 160, 0.2), rgba(6, 182, 212, 0.3));
+  border-color: rgba(0, 245, 160, 0.5);
+  color: #00f5a0;
+  font-weight: 700;
+}
+
+.apex-deck-dl-action-btn:hover {
+  background: linear-gradient(135deg, #00f5a0, #06b6d4);
+  color: #030712;
+  box-shadow: 0 0 14px rgba(0, 245, 160, 0.45);
+}
+
+/* 16:9 Presentation Canvas Viewport */
+.apex-deck-canvas {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  min-height: 290px;
+  max-height: 480px;
+  background: radial-gradient(circle at 85% 15%, rgba(6, 182, 212, 0.08), transparent 60%), #080e1b;
+  color: #f8fafc;
+  padding: 22px 28px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  user-select: text;
+}
+
+/* Cover Slide Design */
+.apex-slide-cover-view {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.apex-cover-tag {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #00f5a0;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.apex-cover-accent-line {
+  height: 3px;
+  background: linear-gradient(90deg, #00f5a0, #06b6d4, transparent);
+  border-radius: 2px;
+  margin: 10px 0 16px;
+  box-shadow: 0 0 10px rgba(0, 245, 160, 0.4);
+}
+
+.apex-cover-main-title {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: #ffffff;
+  margin: 0;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.apex-cover-subtitle {
+  font-size: 14px;
+  color: #38bdf8;
+  margin-top: 10px;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.apex-cover-footer-badge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 14px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: auto;
+}
+
+/* Content Slide Design */
+.apex-slide-content-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.apex-slide-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 14px;
+  gap: 12px;
+}
+
+.apex-slide-title-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.apex-slide-category-pill {
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #38bdf8;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.apex-slide-main-h {
+  font-size: 17px;
+  font-weight: 700;
+  color: #00f5a0;
+  margin: 2px 0 0;
+  line-height: 1.25;
+}
+
+.apex-slide-index-counter {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* Layout Variations */
+.apex-slide-body-grid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* 3-Column Pillar Grid */
+.apex-slide-pillars-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  height: 100%;
+}
+
+.apex-pillar-card {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.apex-pillar-card:hover {
+  border-color: rgba(0, 245, 160, 0.4);
+  transform: translateY(-2px);
+}
+
+.apex-pillar-pill {
+  font-size: 9px;
+  font-weight: 800;
+  color: #00f5a0;
+  background: rgba(0, 245, 160, 0.12);
+  border: 1px solid rgba(0, 245, 160, 0.3);
+  padding: 2px 6px;
+  border-radius: 4px;
+  width: fit-content;
+  text-transform: uppercase;
+}
+
+.apex-pillar-lead {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f1f5f9;
+  line-height: 1.3;
+}
+
+.apex-pillar-body {
+  font-size: 11.5px;
+  color: #cbd5e1;
+  line-height: 1.45;
+  flex: 1;
+}
+
+/* 2-Column Split Grid */
+.apex-slide-split-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  height: 100%;
+}
+
+.apex-split-card {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.apex-split-header {
+  font-size: 10px;
+  font-weight: 800;
+  color: #38bdf8;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.apex-split-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.apex-split-item-lead {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.apex-split-item-body {
+  font-size: 11.5px;
+  color: #cbd5e1;
+  line-height: 1.4;
+}
+
+/* Stacked Row Items (4-5 bullets) */
+.apex-slide-stacked-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  height: 100%;
+  justify-content: center;
+}
+
+.apex-stacked-row-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 8px 12px;
+  transition: all 0.2s ease;
+}
+
+.apex-stacked-row-item:hover {
+  background: rgba(15, 23, 42, 0.9);
+  border-color: rgba(6, 182, 212, 0.35);
+}
+
+.apex-stacked-badge {
+  font-size: 10px;
+  font-weight: 800;
+  color: #00f5a0;
+  background: rgba(0, 245, 160, 0.12);
+  border: 1px solid rgba(0, 245, 160, 0.3);
+  padding: 2px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.apex-stacked-text {
+  font-size: 11.5px;
+  color: #cbd5e1;
+  line-height: 1.4;
+}
+
+.apex-stacked-lead {
+  font-weight: 700;
+  color: #ffffff;
+  margin-right: 4px;
+}
+
+/* Slide Deck Navigation Bar */
+.apex-deck-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  background: rgba(0, 0, 0, 0.4);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  gap: 12px;
+}
+
+.apex-deck-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #f1f5f9;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.apex-deck-nav-btn:hover:not(:disabled) {
+  background: rgba(0, 245, 160, 0.15);
+  border-color: #00f5a0;
+  color: #00f5a0;
+  transform: translateY(-1px);
+}
+
+.apex-deck-nav-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.apex-deck-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.apex-deck-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.apex-deck-dot:hover {
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(1.2);
+}
+
+.apex-deck-dot.active {
+  width: 22px;
+  background: #00f5a0;
+  box-shadow: 0 0 10px rgba(0, 245, 160, 0.7);
+}
+
+.apex-deck-slide-indicator {
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  font-family: var(--font-mono, monospace);
+}
+
+/* Fullscreen Presentation Modal */
+.apex-pres-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 17, 0.95);
+  backdrop-filter: blur(16px);
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.apex-pres-modal-container {
+  width: 100%;
+  max-width: 1100px;
+  aspect-ratio: 16 / 9;
+  background: #080e1b;
+  border: 1px solid rgba(0, 245, 160, 0.4);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(6, 182, 212, 0.15);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.apex-pres-modal-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: rgba(0, 0, 0, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.apex-pres-modal-close-btn {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #f87171;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.apex-pres-modal-close-btn:hover {
+  background: #ef4444;
+  color: #fff;
+}
+
 /* Individual message action export buttons */
 .doc-export-btn {
   font-size: 11px !important;

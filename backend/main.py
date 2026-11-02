@@ -133,6 +133,7 @@ class DocumentGenerateRequest(BaseModel):
     subtitle: str = Field("")
     raw_markdown: str = Field("")
     sections: list[dict[str, Any]] = Field(default_factory=list)
+    slides: list[dict[str, Any]] = Field(default_factory=list)
     sheets: list[dict[str, Any]] = Field(default_factory=list)
     author: str = Field("TEXO Universal Intelligence")
 
@@ -530,6 +531,7 @@ async def generate_document_endpoint(req: DocumentGenerateRequest):
             res = generate_pptx_deck(
                 title=req.title,
                 subtitle=req.subtitle,
+                slides=req.slides,
                 raw_markdown=req.raw_markdown,
                 author=req.author,
             )
